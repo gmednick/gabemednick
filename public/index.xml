@@ -378,30 +378,6 @@
     </item>
     
     <item>
-      <title>stat545.com</title>
-      <link>/project/stat545.com/</link>
-      <pubDate>Tue, 21 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>/project/stat545.com/</guid>
-      <description>&lt;p&gt;This online book contains a full course where users can learn to:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;explore, groom, visualize, and analyze data,&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;make all of that reproducible, reusable, and shareable,&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;using R.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I led the effort, along with course author 
-&lt;a href=&#34;https://jennybryan.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Jenny Bryan&lt;/a&gt; and RStudio intern 
-&lt;a href=&#34;https://grace.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Grace Lawley&lt;/a&gt;, to port a vintage R Markdown website into bookdown. I worked with my former intern, 
-&lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to design the style of the bookdown website.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>tidymodels.org</title>
       <link>/project/tidymodels.org/</link>
       <pubDate>Tue, 21 Apr 2020 00:00:00 +0000</pubDate>
@@ -1231,20 +1207,6 @@ penguin_folds %&amp;gt;%
     </item>
     
     <item>
-      <title>education.rstudio.com</title>
-      <link>/project/education.rstudio.com/</link>
-      <pubDate>Tue, 24 Sep 2019 00:00:00 +0000</pubDate>
-      <guid>/project/education.rstudio.com/</guid>
-      <description>&lt;p&gt;RStudio’s mission is:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;“To equip everyone, regardless of means, to participate in a global economy that rewards data literacy.”&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Our education team supports this mission broadly by supporting people who want to learn R (or learn new things in R), and those who want to teach them. This website is designed for both. This website was built with Hugo, using a theme I developed and maintain. I worked with my former intern, 
-&lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to create the original artwork we used for the website.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>R Markdown for Medicine Workshop</title>
       <link>/talk/2019-rmed-rmd4medicine/</link>
       <pubDate>Thu, 12 Sep 2019 08:00:00 +0000</pubDate>
@@ -1253,17 +1215,6 @@ penguin_folds %&amp;gt;%
 
 
 
-</description>
-    </item>
-    
-    <item>
-      <title>R Markdown for Medicine</title>
-      <link>/project/rmd4medicine/</link>
-      <pubDate>Thu, 12 Sep 2019 00:00:00 +0000</pubDate>
-      <guid>/project/rmd4medicine/</guid>
-      <description>&lt;p&gt;Starting with a mock clinical trial dataset, we’ll use R Markdown to combine prose, R code, and figures and tables created with R code into a nicely formatted and reproducible final manuscript.&lt;/p&gt;
-&lt;p&gt;For the 
-&lt;a href=&#34;https://r-medicine.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;2019 R / Medicine conference&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
@@ -2515,18 +2466,6 @@ stickers_dict&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
-      <title>Labhub</title>
-      <link>/project/labhub/</link>
-      <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
-      <guid>/project/labhub/</guid>
-      <description>&lt;p&gt;In this workshop, Dr. Alison Hill and Robin Champieux demonstrated tools and methods for building transparency within a lab, and onboarding new graduate students and postdocs. We provided a 
-&lt;a href=&#34;https://github.com/apreshill/labhub&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;template GitHub repository&lt;/a&gt; and code of conduct designed to facilitate a healthy and productive learning and research environment. You are encouraged to use these tools to communicate expectations, document protocols, receive feedback, and facilitate the long-term value of students’ and trainees’ contributions.&lt;/p&gt;
-&lt;p&gt;Labhub is a &lt;em&gt;work in progress&lt;/em&gt;. We created 
-&lt;a href=&#34;https://github.com/apreshill/labhub&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this repository&lt;/a&gt; as an education and demonstration tool for faculty, postdocs, and students curious about how documentation, open science workflows, and tools like Github can contribute to a healthy and productive research environment. Your ideas and contributions are welcome!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Up &amp; Running with blogdown</title>
       <link>/project/up-running-blogdown/</link>
       <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
@@ -2602,50 +2541,6 @@ stickers_dict&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Code Your Graph Workshop</title>
-      <link>/project/code-your-graph/</link>
-      <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
-      <guid>/project/code-your-graph/</guid>
-      <description>
-
-
-
-
-
-  
-
-
-
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure &gt;
-
-
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/project/code-your-graph/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
-
-
-  &lt;img data-src=&#34;/project/code-your-graph/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;800&#34; height=&#34;800&#34;&gt;
-&lt;/a&gt;
-
-
-
-&lt;/figure&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Code Your Graph Workshop</title>
       <link>/talk/2016-ohsu-dataviz/</link>
       <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
       <guid>/talk/2016-ohsu-dataviz/</guid>
@@ -2696,178 +2591,6 @@ stickers_dict&lt;/code&gt;&lt;/pre&gt;
       <description>&lt;p&gt;This two-day workshop is designed for those who want to take their R Markdown skills to the next level. We’ll talk about many low-level details in the rmarkdown package and the whole R Markdown ecosystem. The two goals of this workshop are: 1) learn how to fully customize R Markdown output (HTML, LaTeX/PDF, Word, and PowerPoint); and 2) learn more about existing R Markdown extensions in the ecosystem, such as flexdashboard, bookdown, blogdown, pkgdown, xaringan, rticles, and learnr. We will also talk about how to use or develop new language engines (languages that are not R), how to develop HTML widgets, and integrate Shiny with R Markdown.&lt;/p&gt;
 &lt;p&gt;See the workshop website for more, and links to individual slides below.&lt;/p&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>Bakeoff</title>
-      <link>/project/bakeoff/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/bakeoff/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>blogdown: Creating Websites with R Markdown</title>
-      <link>/project/blogdown-book/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/blogdown-book/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Introduction to Data Wrangling, Analysis, &amp; Communication</title>
-      <link>/project/ohsu-biostats/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-biostats/</guid>
-      <description>&lt;p&gt;Part of a year-long curricula on open science, data, and research practice for incoming graduate students in the biomedical sciences, developed in collaboration with OHSU School of MedicineGraduate Studies. This course was offered at Oregon Health &amp;amp; Science University to graduate students in the biomedical sciences.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Principles &amp; Practice of Data Visualization</title>
-      <link>/project/ohsu-dataviz/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-dataviz/</guid>
-      <description>&lt;p&gt;This was a 12-week course with weekly 1.5 hour hands-on labs using R and the &lt;code&gt;ggplot2&lt;/code&gt; package. This course (CS631) was co-developed with Drs. Steven Bedrick and Jackie Wirz. This team-taught course was offered at Oregon Health &amp;amp; Science University to graduate students in the biomedical sciences.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Probability &amp; Statistics for Scientists and Engineers</title>
-      <link>/project/ohsu-cs-stats/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-cs-stats/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>RLadies xaringan theme</title>
-      <link>/project/rladies-xaringan/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/rladies-xaringan/</guid>
-      <description>
-
-
-&lt;p&gt;Here is a demo slide deck using the theme:&lt;/p&gt;
-&lt;iframe src=&#34;https://alison.rbind.io/slides/rladies-demo-slides.html#1&#34; width=&#34;672&#34; height=&#34;400px&#34;&gt;
-&lt;/iframe&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Summer of blogdown</title>
-      <link>/project/summer-of-blogdown/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/summer-of-blogdown/</guid>
-      <description>&lt;p&gt;Four daily 1-hour sessions plus 30-60 minutes of homework for 3 nights. See links to each day&amp;rsquo;s materials, including slides and homeworks, below.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Epidemiology of autism spectrum disorders</title>
-      <link>/publication/2016-primer-on-asd/</link>
-      <pubDate>Fri, 19 Feb 2016 00:00:00 +0000</pubDate>
-      <guid>/publication/2016-primer-on-asd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Uh and Um in Children With Autism Spectrum Disorders or Language Impairment</title>
-      <link>/publication/2016-uh-and-um-asd-sli/</link>
-      <pubDate>Fri, 22 Jan 2016 00:00:00 +0000</pubDate>
-      <guid>/publication/2016-uh-and-um-asd-sli/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Obesity and Autism</title>
-      <link>/publication/2015-obesity-in-asd-multisite/</link>
-      <pubDate>Thu, 03 Sep 2015 00:00:00 +0000</pubDate>
-      <guid>/publication/2015-obesity-in-asd-multisite/</guid>
-      <description>&lt;p&gt;METHODS: Participants were 5053 children with confirmed diagnosis of ASD in the Autism Speaks Autism Treatment Network. Measured values for weight and height were used to calculate BMI percentiles; Centers for Disease Control and Prevention criteria for BMI for gender and age were used to define overweight and obesity (85th and 95th percentiles, respectively).&lt;/p&gt;
-&lt;p&gt;RESULTS: In children age 2 to 17 years, 33.6% were overweight and 18% were obese. Compared with a general US population sample, rates of unhealthy weight were significantly higher among children with ASDs ages 2 to 5 years and among those of non-Hispanic white origin. Multivariate analyses revealed that older age, Hispanic or Latino ethnicity, lower parent education levels, and sleep and affective problems were all significant predictors of obesity.&lt;/p&gt;
-&lt;p&gt;CONCLUSIONS: Our results indicate that the prevalence of unhealthy weight is significantly greater among children with ASD compared with the general population, with differences present as early as ages 2 to 5 years. Because obesity is more prevalent among older children in the general population, these findings raise the question of whether there are different trajectories of weight gain among children with ASDs, possibly beginning in early childhood.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Memory in language-impaired children with and without autism</title>
-      <link>/publication/2015-memory-in-li-asd/</link>
-      <pubDate>Sun, 14 Jun 2015 00:00:00 +0000</pubDate>
-      <guid>/publication/2015-memory-in-li-asd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Epidemiology of autism spectrum disorders</title>
-      <link>/publication/2015-translational/</link>
-      <pubDate>Wed, 10 Jun 2015 00:00:00 +0000</pubDate>
-      <guid>/publication/2015-translational/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Aggressive Behavior Problems in Children with Autism Spectrum Disorders: Prevalence and Correlates in a Large Clinical Sample</title>
-      <link>/publication/2014-aggression-in-asd/</link>
-      <pubDate>Sun, 22 Jun 2014 00:00:00 +0000</pubDate>
-      <guid>/publication/2014-aggression-in-asd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Epidemiology of autism spectrum disorders</title>
-      <link>/publication/2014-handbook/</link>
-      <pubDate>Mon, 03 Mar 2014 00:00:00 +0000</pubDate>
-      <guid>/publication/2014-handbook/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Overweight and Obesity: Prevalence and Correlates in a Large Clinical Sample of Children with Autism Spectrum Disorder</title>
-      <link>/publication/2014-obesity-in-asd-oregon/</link>
-      <pubDate>Sun, 02 Feb 2014 00:00:00 +0000</pubDate>
-      <guid>/publication/2014-obesity-in-asd-oregon/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Epidemiology of Autism Spectrum Disorder</title>
-      <link>/publication/2014-asd-epidemiology-in-practice/</link>
-      <pubDate>Wed, 01 Jan 2014 00:00:00 +0000</pubDate>
-      <guid>/publication/2014-asd-epidemiology-in-practice/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Quantifying Repetitive Speech in Autism Spectrum Disorders and Language Impairment</title>
-      <link>/publication/2013-repetitive-speech-in-asd-sli/</link>
-      <pubDate>Fri, 12 Apr 2013 00:00:00 +0000</pubDate>
-      <guid>/publication/2013-repetitive-speech-in-asd-sli/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>‘It’s Not That We Hate You’: Understanding Children’s Gender Attitudes and Expectancies About Peer Relationships</title>
-      <link>/publication/2011-gender-attitudes/</link>
-      <pubDate>Tue, 08 Feb 2011 00:00:00 +0000</pubDate>
-      <guid>/publication/2011-gender-attitudes/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Effects of Different Attentional Cues on Responding to Joint Attention in Younger Siblings of Children with Autism Spectrum Disorders</title>
-      <link>/publication/2007-rja-in-sibs/</link>
-      <pubDate>Mon, 01 Jan 2007 00:00:00 +0000</pubDate>
-      <guid>/publication/2007-rja-in-sibs/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Item-specific Processing Reduces False Memories</title>
-      <link>/publication/2004-false-memories/</link>
-      <pubDate>Wed, 01 Dec 2004 00:00:00 +0000</pubDate>
-      <guid>/publication/2004-false-memories/</guid>
-      <description></description>
     </item>
     
   </channel>

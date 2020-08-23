@@ -180,14 +180,5 @@
 </description>
     </item>
     
-    <item>
-      <title>Principles &amp; Practice of Data Visualization</title>
-      <link>/project/ohsu-dataviz/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-dataviz/</guid>
-      <description>&lt;p&gt;This was a 12-week course with weekly 1.5 hour hands-on labs using R and the &lt;code&gt;ggplot2&lt;/code&gt; package. This course (CS631) was co-developed with Drs. Steven Bedrick and Jackie Wirz. This team-taught course was offered at Oregon Health &amp;amp; Science University to graduate students in the biomedical sciences.&lt;/p&gt;
-</description>
-    </item>
-    
   </channel>
 </rss>

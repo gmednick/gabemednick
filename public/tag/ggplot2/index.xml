@@ -66,50 +66,6 @@
     
     <item>
       <title>Code Your Graph Workshop</title>
-      <link>/project/code-your-graph/</link>
-      <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
-      <guid>/project/code-your-graph/</guid>
-      <description>
-
-
-
-
-
-  
-
-
-
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure &gt;
-
-
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/project/code-your-graph/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
-
-
-  &lt;img data-src=&#34;/project/code-your-graph/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;800&#34; height=&#34;800&#34;&gt;
-&lt;/a&gt;
-
-
-
-&lt;/figure&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Code Your Graph Workshop</title>
       <link>/talk/2016-ohsu-dataviz/</link>
       <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
       <guid>/talk/2016-ohsu-dataviz/</guid>
@@ -149,15 +105,6 @@
 
 &lt;/figure&gt;
 
-</description>
-    </item>
-    
-    <item>
-      <title>Principles &amp; Practice of Data Visualization</title>
-      <link>/project/ohsu-dataviz/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-dataviz/</guid>
-      <description>&lt;p&gt;This was a 12-week course with weekly 1.5 hour hands-on labs using R and the &lt;code&gt;ggplot2&lt;/code&gt; package. This course (CS631) was co-developed with Drs. Steven Bedrick and Jackie Wirz. This team-taught course was offered at Oregon Health &amp;amp; Science University to graduate students in the biomedical sciences.&lt;/p&gt;
 </description>
     </item>
     

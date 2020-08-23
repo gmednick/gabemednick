@@ -34,20 +34,6 @@
     </item>
     
     <item>
-      <title>education.rstudio.com</title>
-      <link>/project/education.rstudio.com/</link>
-      <pubDate>Tue, 24 Sep 2019 00:00:00 +0000</pubDate>
-      <guid>/project/education.rstudio.com/</guid>
-      <description>&lt;p&gt;RStudio’s mission is:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;“To equip everyone, regardless of means, to participate in a global economy that rewards data literacy.”&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Our education team supports this mission broadly by supporting people who want to learn R (or learn new things in R), and those who want to teach them. This website is designed for both. This website was built with Hugo, using a theme I developed and maintain. I worked with my former intern, 
-&lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to create the original artwork we used for the website.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Summer of blogdown: Day 04</title>
       <link>/talk/2019-summer-of-blogdown-04/</link>
       <pubDate>Thu, 13 Jun 2019 09:00:00 +0000</pubDate>
@@ -745,32 +731,6 @@ categories = []
       <guid>/project/advanced-r-markdown/</guid>
       <description>&lt;p&gt;This two-day workshop is designed for those who want to take their R Markdown skills to the next level. We’ll talk about many low-level details in the rmarkdown package and the whole R Markdown ecosystem. The two goals of this workshop are: 1) learn how to fully customize R Markdown output (HTML, LaTeX/PDF, Word, and PowerPoint); and 2) learn more about existing R Markdown extensions in the ecosystem, such as flexdashboard, bookdown, blogdown, pkgdown, xaringan, rticles, and learnr. We will also talk about how to use or develop new language engines (languages that are not R), how to develop HTML widgets, and integrate Shiny with R Markdown.&lt;/p&gt;
 &lt;p&gt;See the workshop website for more, and links to individual slides below.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>blogdown: Creating Websites with R Markdown</title>
-      <link>/project/blogdown-book/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/blogdown-book/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Principles &amp; Practice of Data Visualization</title>
-      <link>/project/ohsu-dataviz/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/ohsu-dataviz/</guid>
-      <description>&lt;p&gt;This was a 12-week course with weekly 1.5 hour hands-on labs using R and the &lt;code&gt;ggplot2&lt;/code&gt; package. This course (CS631) was co-developed with Drs. Steven Bedrick and Jackie Wirz. This team-taught course was offered at Oregon Health &amp;amp; Science University to graduate students in the biomedical sciences.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Summer of blogdown</title>
-      <link>/project/summer-of-blogdown/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/summer-of-blogdown/</guid>
-      <description>&lt;p&gt;Four daily 1-hour sessions plus 30-60 minutes of homework for 3 nights. See links to each day&amp;rsquo;s materials, including slides and homeworks, below.&lt;/p&gt;
 </description>
     </item>
     
