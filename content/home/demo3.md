@@ -5,15 +5,15 @@
 
 widget = "blank"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
-active = true  # Activate this widget? true/false
-weight = 35  # Order that this section will appear.
+active = true # Activate this widget? true/false
+weight = 50  # Order that this section will appear.
 
-title = "Insight and Imagination are the cornerstones"
+title = "Unveil your data's secrets today!"
 subtitle = ""
 
 [design]
   # Choose how many columns the section has. Valid values: 1 or 2.
-  columns = "2"
+  columns = "1"
 
 [design.background]
   # Apply a background color, gradient, or image.
@@ -28,7 +28,7 @@ subtitle = ""
   # gradient_start = "DeepSkyBlue"
   # gradient_end = "SkyBlue"
   
-  # Background image.
+   # Background image.
   image = "headers/fireball.jpg"  # Name of image in `static/img/`.
   image_darken = 0.2  # Darken the image? Range 0-1 where 0 is transparent and 1 is opaque.
   image_size = "cover"  #  Options are `cover` (default), `contain`, or `actual` size.
@@ -40,26 +40,12 @@ subtitle = ""
 
 [design.spacing]
   # Customize the section spacing. Order is top, right, bottom, left.
-  padding = ["20px", "0", "20px", "0"]
+  padding = ["0px", "0", "20px", "0"]
 
 [advanced]
  # Custom CSS. 
- css_style = ""
+ css_style = "text-align: center"
  
  # CSS class.
  css_class = ""
 +++
-
-**Professional Services**
-- Bioinformatics and applied data science (machine learning)
-- Biochemistry-based insights, technology and IP development
-- Dashboard deployment
-
-
-**Technologies**
-- R programming 
-- python programming
-- Command line tools and scripting
-- Snakemake workflow management
-- Git/Github version control
-- Shiny and Flex dashboards

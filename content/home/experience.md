@@ -34,6 +34,21 @@ date_format = "Jan 2006"
   * Reporting (HTML, pdf)
   * Dashboard reporting: flexdashboard & shinydashboard
   """
+[[experience]]
+  title = "Computational biologist intern"
+  company = "Claret biosciences"
+  company_url = ""
+  location = "California"
+  date_start = "2018-08-01"
+  date_end = "2020-04-01"
+  description = """
+  Responsibilities included:
+  
+  * R programming for proprietary genomics research
+  * Converting R scripts into command line tools and workflows
+  * Machine learning applied to biological problems using tidymodels
+  * Workflow and pipeline management
+  """
 
 [[experience]]
   title = "Senior scientist"
@@ -41,13 +56,13 @@ date_format = "Jan 2006"
   company_url = ""
   location = "California"
   date_start = "2018-01-01"
-  date_end = "2020-01-01"
+  date_end = "2020-04-01"
   description = """
   Responsibilities included:
   
   * siRNA R&D
   * Nanopore sequencing
-  * Basic chemical-informatics
+  * Bioinformatics
   """
 
 [[experience]]
