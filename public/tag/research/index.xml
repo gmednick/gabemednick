@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>research | Gabe Mednick</title>
-    <link>/tag/research/</link>
-      <atom:link href="/tag/research/index.xml" rel="self" type="application/rss+xml" />
+    <link>/gabemednick.com/tag/research/</link>
+      <atom:link href="/gabemednick.com/tag/research/index.xml" rel="self" type="application/rss+xml" />
     <description>research</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Fri, 08 Dec 2017 16:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>research</title>
-      <link>/tag/research/</link>
+      <link>/gabemednick.com/tag/research/</link>
     </image>
     
     <item>
       <title>Labhub Workshop</title>
-      <link>/talk/2017-ohsu-labhub/</link>
+      <link>/gabemednick.com/talk/2017-ohsu-labhub/</link>
       <pubDate>Fri, 08 Dec 2017 16:00:00 +0000</pubDate>
-      <guid>/talk/2017-ohsu-labhub/</guid>
+      <guid>/gabemednick.com/talk/2017-ohsu-labhub/</guid>
       <description>
 
 
@@ -43,10 +43,10 @@
 &lt;figure &gt;
 
 
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; &gt;
+  &lt;a data-fancybox=&#34;&#34; href=&#34;/gabemednick.com/gabemednick.com/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; &gt;
 
 
-  &lt;img data-src=&#34;/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;830&#34; height=&#34;1080&#34;&gt;
+  &lt;img data-src=&#34;/gabemednick.com/gabemednick.com/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;830&#34; height=&#34;1080&#34;&gt;
 &lt;/a&gt;
 
 

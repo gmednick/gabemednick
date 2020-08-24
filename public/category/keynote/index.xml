@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>keynote | Gabe Mednick</title>
-    <link>/category/keynote/</link>
-      <atom:link href="/category/keynote/index.xml" rel="self" type="application/rss+xml" />
+    <link>/gabemednick.com/category/keynote/</link>
+      <atom:link href="/gabemednick.com/category/keynote/index.xml" rel="self" type="application/rss+xml" />
     <description>keynote</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 02 Oct 2019 09:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>keynote</title>
-      <link>/category/keynote/</link>
+      <link>/gabemednick.com/category/keynote/</link>
     </image>
     
     <item>
       <title>The Art of Literate Projecting</title>
-      <link>/talk/2019-ysc-keynote/</link>
+      <link>/gabemednick.com/talk/2019-ysc-keynote/</link>
       <pubDate>Wed, 02 Oct 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-ysc-keynote/</guid>
+      <guid>/gabemednick.com/talk/2019-ysc-keynote/</guid>
       <description>
 
 
@@ -26,9 +26,9 @@
     
     <item>
       <title>Big Magic with R: Creative Learning Beyond Fear</title>
-      <link>/talk/2018-cascadia-bigmagic/</link>
+      <link>/gabemednick.com/talk/2018-cascadia-bigmagic/</link>
       <pubDate>Sat, 02 Jun 2018 08:00:00 +0000</pubDate>
-      <guid>/talk/2018-cascadia-bigmagic/</guid>
+      <guid>/gabemednick.com/talk/2018-cascadia-bigmagic/</guid>
       <description>&lt;p&gt;Inspired by the book “Big Magic: Creative Living Beyond Fear” by Elizabeth Gilbert, Alison will talk about the five essential ingredients needed to creatively learn R and why these elements are also essential for advanced users to take their R skills to the next level. You will hear practical advice for when, where, and how to start a project in R, and how your learning can add value- both to your own knowledge and to contribute to the larger community of R learners. Along the way, she will share recommended resources and evidence-based strategies for project-based learning. Alison’s background working with both new and advanced R users gives her a unique perspective on this topic.&lt;/p&gt;
 </description>
     </item>

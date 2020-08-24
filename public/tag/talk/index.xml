@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>talk | Gabe Mednick</title>
-    <link>/tag/talk/</link>
-      <atom:link href="/tag/talk/index.xml" rel="self" type="application/rss+xml" />
+    <link>/gabemednick.com/tag/talk/</link>
+      <atom:link href="/gabemednick.com/tag/talk/index.xml" rel="self" type="application/rss+xml" />
     <description>talk</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Mon, 29 Jul 2019 14:00:01 -0700</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>talk</title>
-      <link>/tag/talk/</link>
+      <link>/gabemednick.com/tag/talk/</link>
     </image>
     
     <item>
       <title>Teaching Students to Talk about Data Science</title>
-      <link>/talk/2019-jsm-talk-ds/</link>
+      <link>/gabemednick.com/talk/2019-jsm-talk-ds/</link>
       <pubDate>Mon, 29 Jul 2019 14:00:01 -0700</pubDate>
-      <guid>/talk/2019-jsm-talk-ds/</guid>
+      <guid>/gabemednick.com/talk/2019-jsm-talk-ds/</guid>
       <description>
 
 

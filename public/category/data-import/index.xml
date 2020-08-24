@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>data import | Gabe Mednick</title>
-    <link>/category/data-import/</link>
-      <atom:link href="/category/data-import/index.xml" rel="self" type="application/rss+xml" />
+    <link>/gabemednick.com/category/data-import/</link>
+      <atom:link href="/gabemednick.com/category/data-import/index.xml" rel="self" type="application/rss+xml" />
     <description>data import</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Sun, 08 Jul 2018 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>data import</title>
-      <link>/category/data-import/</link>
+      <link>/gabemednick.com/category/data-import/</link>
     </image>
     
     <item>
       <title>Read Data with Multiple Header Rows into R</title>
-      <link>/post/2018-02-23-read-multiple-header-rows/</link>
+      <link>/gabemednick.com/post/2018-02-23-read-multiple-header-rows/</link>
       <pubDate>Sun, 08 Jul 2018 00:00:00 +0000</pubDate>
-      <guid>/post/2018-02-23-read-multiple-header-rows/</guid>
+      <guid>/gabemednick.com/post/2018-02-23-read-multiple-header-rows/</guid>
       <description>
 
 

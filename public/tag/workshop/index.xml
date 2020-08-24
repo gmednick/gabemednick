@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>workshop | Gabe Mednick</title>
-    <link>/tag/workshop/</link>
-      <atom:link href="/tag/workshop/index.xml" rel="self" type="application/rss+xml" />
+    <link>/gabemednick.com/tag/workshop/</link>
+      <atom:link href="/gabemednick.com/tag/workshop/index.xml" rel="self" type="application/rss+xml" />
     <description>workshop</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Mon, 27 Jan 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>workshop</title>
-      <link>/tag/workshop/</link>
+      <link>/gabemednick.com/tag/workshop/</link>
     </image>
     
     <item>
       <title>Introduction to Machine Learning with the Tidyverse</title>
-      <link>/project/tidyml/</link>
+      <link>/gabemednick.com/project/tidyml/</link>
       <pubDate>Mon, 27 Jan 2020 00:00:00 +0000</pubDate>
-      <guid>/project/tidyml/</guid>
+      <guid>/gabemednick.com/project/tidyml/</guid>
       <description>&lt;p&gt;These workshops provide a gentle introduction to supervised machine learning: concepts, methods, and R code. Participants learn how to train and assess predictive models with several common machine learning algorithms, as well as how to do feature engineering to improve the predictive accuracy of their models. We focus on teaching intuitive explanations of the models and best practices for predictive modeling. Along the way, we introduce several core 
 &lt;a href=&#34;https://github.com/tidymodels&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tidymodels&lt;/a&gt; packages, which provide a grammar for modeling that makes it easy to the right thing, and harder to accidentally do the wrong thing.&lt;/p&gt;
 &lt;p&gt;See the workshop websites for more, including links to the GitHub repositories for all workshop materials.&lt;/p&gt;
@@ -25,9 +25,9 @@
     
     <item>
       <title>R Markdown for Medicine Workshop</title>
-      <link>/talk/2019-rmed-rmd4medicine/</link>
+      <link>/gabemednick.com/talk/2019-rmed-rmd4medicine/</link>
       <pubDate>Thu, 12 Sep 2019 08:00:00 +0000</pubDate>
-      <guid>/talk/2019-rmed-rmd4medicine/</guid>
+      <guid>/gabemednick.com/talk/2019-rmed-rmd4medicine/</guid>
       <description>
 
 
@@ -37,9 +37,9 @@
     
     <item>
       <title>Summer of blogdown: Day 04</title>
-      <link>/talk/2019-summer-of-blogdown-04/</link>
+      <link>/gabemednick.com/talk/2019-summer-of-blogdown-04/</link>
       <pubDate>Thu, 13 Jun 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-summer-of-blogdown-04/</guid>
+      <guid>/gabemednick.com/talk/2019-summer-of-blogdown-04/</guid>
       <description>&lt;p&gt;A hands-on workshop to creating a personal website using blogdown and the Hugo Academic theme.&lt;/p&gt;
 &lt;p&gt;Four daily 1-hour sessions (see slides) plus 30-60 minutes of homework for 3 nights.&lt;/p&gt;
 &lt;p&gt;See the project link for all the days of the summer of blogdown.&lt;/p&gt;
@@ -48,9 +48,9 @@
     
     <item>
       <title>Summer of blogdown: Day 03</title>
-      <link>/talk/2019-summer-of-blogdown-03/</link>
+      <link>/gabemednick.com/talk/2019-summer-of-blogdown-03/</link>
       <pubDate>Wed, 12 Jun 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-summer-of-blogdown-03/</guid>
+      <guid>/gabemednick.com/talk/2019-summer-of-blogdown-03/</guid>
       <description>&lt;p&gt;A hands-on workshop to creating a personal website using blogdown and the Hugo Academic theme.&lt;/p&gt;
 &lt;p&gt;Four daily 1-hour sessions (see slides) plus 30-60 minutes of homework for 3 nights.&lt;/p&gt;
 &lt;p&gt;See the project link for all the days of the summer of blogdown.&lt;/p&gt;
@@ -59,9 +59,9 @@
     
     <item>
       <title>Summer of blogdown: Day 02</title>
-      <link>/talk/2019-summer-of-blogdown-02/</link>
+      <link>/gabemednick.com/talk/2019-summer-of-blogdown-02/</link>
       <pubDate>Tue, 11 Jun 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-summer-of-blogdown-02/</guid>
+      <guid>/gabemednick.com/talk/2019-summer-of-blogdown-02/</guid>
       <description>&lt;p&gt;A hands-on workshop to creating a personal website using blogdown and the Hugo Academic theme.&lt;/p&gt;
 &lt;p&gt;Four daily 1-hour sessions (see slides) plus 30-60 minutes of homework for 3 nights.&lt;/p&gt;
 &lt;p&gt;See the project link for all the days of the summer of blogdown.&lt;/p&gt;
@@ -70,9 +70,9 @@
     
     <item>
       <title>Summer of blogdown: Day 01</title>
-      <link>/talk/2019-summer-of-blogdown-01/</link>
+      <link>/gabemednick.com/talk/2019-summer-of-blogdown-01/</link>
       <pubDate>Mon, 10 Jun 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-summer-of-blogdown-01/</guid>
+      <guid>/gabemednick.com/talk/2019-summer-of-blogdown-01/</guid>
       <description>&lt;p&gt;A hands-on workshop to creating a personal website using blogdown and the Hugo Academic theme.&lt;/p&gt;
 &lt;p&gt;Four daily 1-hour sessions (see slides) plus 30-60 minutes of homework for 3 nights.&lt;/p&gt;
 &lt;p&gt;See the project link for all the days of the summer of blogdown.&lt;/p&gt;
@@ -81,9 +81,9 @@
     
     <item>
       <title>Meet blogdown</title>
-      <link>/talk/2019-rsc-blogdown/</link>
+      <link>/gabemednick.com/talk/2019-rsc-blogdown/</link>
       <pubDate>Tue, 15 Jan 2019 16:00:00 +0000</pubDate>
-      <guid>/talk/2019-rsc-blogdown/</guid>
+      <guid>/gabemednick.com/talk/2019-rsc-blogdown/</guid>
       <description>
 
 
@@ -93,9 +93,9 @@
     
     <item>
       <title>Meet bookdown</title>
-      <link>/talk/2019-rsc-bookdown/</link>
+      <link>/gabemednick.com/talk/2019-rsc-bookdown/</link>
       <pubDate>Tue, 15 Jan 2019 14:00:00 +0000</pubDate>
-      <guid>/talk/2019-rsc-bookdown/</guid>
+      <guid>/gabemednick.com/talk/2019-rsc-bookdown/</guid>
       <description>
 
 
@@ -105,9 +105,9 @@
     
     <item>
       <title>Meet flexdashboard</title>
-      <link>/talk/2019-rsc-flexdashboard/</link>
+      <link>/gabemednick.com/talk/2019-rsc-flexdashboard/</link>
       <pubDate>Tue, 15 Jan 2019 11:00:00 +0000</pubDate>
-      <guid>/talk/2019-rsc-flexdashboard/</guid>
+      <guid>/gabemednick.com/talk/2019-rsc-flexdashboard/</guid>
       <description>
 
 
@@ -117,9 +117,9 @@
     
     <item>
       <title>Meet xaringan</title>
-      <link>/talk/2019-rsc-xaringan/</link>
+      <link>/gabemednick.com/talk/2019-rsc-xaringan/</link>
       <pubDate>Tue, 15 Jan 2019 09:00:00 +0000</pubDate>
-      <guid>/talk/2019-rsc-xaringan/</guid>
+      <guid>/gabemednick.com/talk/2019-rsc-xaringan/</guid>
       <description>
 
 
@@ -129,9 +129,9 @@
     
     <item>
       <title>Labhub Workshop</title>
-      <link>/talk/2017-ohsu-labhub/</link>
+      <link>/gabemednick.com/talk/2017-ohsu-labhub/</link>
       <pubDate>Fri, 08 Dec 2017 16:00:00 +0000</pubDate>
-      <guid>/talk/2017-ohsu-labhub/</guid>
+      <guid>/gabemednick.com/talk/2017-ohsu-labhub/</guid>
       <description>
 
 
@@ -158,10 +158,10 @@
 &lt;figure &gt;
 
 
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; &gt;
+  &lt;a data-fancybox=&#34;&#34; href=&#34;/gabemednick.com/gabemednick.com/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; &gt;
 
 
-  &lt;img data-src=&#34;/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;830&#34; height=&#34;1080&#34;&gt;
+  &lt;img data-src=&#34;/gabemednick.com/gabemednick.com/talk/2017-ohsu-labhub/ohsu-os-panel_hue8aa4c5db6853c95c13db53ca8de7678_415362_2000x2000_fit_lanczos_2.png&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;830&#34; height=&#34;1080&#34;&gt;
 &lt;/a&gt;
 
 
@@ -216,9 +216,9 @@
     
     <item>
       <title>Up &amp; Running with blogdown</title>
-      <link>/project/up-running-blogdown/</link>
+      <link>/gabemednick.com/project/up-running-blogdown/</link>
       <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
-      <guid>/project/up-running-blogdown/</guid>
+      <guid>/gabemednick.com/project/up-running-blogdown/</guid>
       <description>&lt;p&gt;We will cover:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The &lt;strong&gt;blogdown&lt;/strong&gt; R package&lt;/li&gt;
@@ -258,10 +258,10 @@
 &lt;figure &gt;
 
 
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
+  &lt;a data-fancybox=&#34;&#34; href=&#34;/gabemednick.com/gabemednick.com/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
 
 
-  &lt;img data-src=&#34;/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;2550&#34; height=&#34;3300&#34;&gt;
+  &lt;img data-src=&#34;/gabemednick.com/gabemednick.com/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;2550&#34; height=&#34;3300&#34;&gt;
 &lt;/a&gt;
 
 
@@ -273,18 +273,18 @@
     
     <item>
       <title>Up &amp; Running with blogdown</title>
-      <link>/talk/2017-pdxr-blogdown/</link>
+      <link>/gabemednick.com/talk/2017-pdxr-blogdown/</link>
       <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
-      <guid>/talk/2017-pdxr-blogdown/</guid>
+      <guid>/gabemednick.com/talk/2017-pdxr-blogdown/</guid>
       <description>&lt;p&gt;See project links for more details.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Code Your Graph Workshop</title>
-      <link>/talk/2016-ohsu-dataviz/</link>
+      <link>/gabemednick.com/talk/2016-ohsu-dataviz/</link>
       <pubDate>Fri, 24 Jun 2016 00:00:00 +0000</pubDate>
-      <guid>/talk/2016-ohsu-dataviz/</guid>
+      <guid>/gabemednick.com/talk/2016-ohsu-dataviz/</guid>
       <description>
 
 
@@ -311,10 +311,10 @@
 &lt;figure &gt;
 
 
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/talk/2016-ohsu-dataviz/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
+  &lt;a data-fancybox=&#34;&#34; href=&#34;/gabemednick.com/gabemednick.com/talk/2016-ohsu-dataviz/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
 
 
-  &lt;img data-src=&#34;/talk/2016-ohsu-dataviz/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;800&#34; height=&#34;800&#34;&gt;
+  &lt;img data-src=&#34;/gabemednick.com/gabemednick.com/talk/2016-ohsu-dataviz/code-your-graph_hu9ebcd1d99c0a236c25b6db9f0e87e85d_160690_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;800&#34; height=&#34;800&#34;&gt;
 &lt;/a&gt;
 
 
@@ -326,9 +326,9 @@
     
     <item>
       <title>Advanced R Markdown</title>
-      <link>/project/advanced-r-markdown/</link>
+      <link>/gabemednick.com/project/advanced-r-markdown/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/project/advanced-r-markdown/</guid>
+      <guid>/gabemednick.com/project/advanced-r-markdown/</guid>
       <description>&lt;p&gt;This two-day workshop is designed for those who want to take their R Markdown skills to the next level. We’ll talk about many low-level details in the rmarkdown package and the whole R Markdown ecosystem. The two goals of this workshop are: 1) learn how to fully customize R Markdown output (HTML, LaTeX/PDF, Word, and PowerPoint); and 2) learn more about existing R Markdown extensions in the ecosystem, such as flexdashboard, bookdown, blogdown, pkgdown, xaringan, rticles, and learnr. We will also talk about how to use or develop new language engines (languages that are not R), how to develop HTML widgets, and integrate Shiny with R Markdown.&lt;/p&gt;
 &lt;p&gt;See the workshop website for more, and links to individual slides below.&lt;/p&gt;
 </description>
