@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>website | Gabe Mednick</title>
-    <link>/gabemednick.com/category/website/</link>
-      <atom:link href="/gabemednick.com/category/website/index.xml" rel="self" type="application/rss+xml" />
+    <link>/category/website/</link>
+      <atom:link href="/category/website/index.xml" rel="self" type="application/rss+xml" />
     <description>website</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Tue, 21 Apr 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>website</title>
-      <link>/gabemednick.com/category/website/</link>
+      <link>/category/website/</link>
     </image>
     
     <item>
       <title>tidymodels.org</title>
-      <link>/gabemednick.com/project/tidymodels.org/</link>
+      <link>/project/tidymodels.org/</link>
       <pubDate>Tue, 21 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/tidymodels.org/</guid>
+      <guid>/project/tidymodels.org/</guid>
       <description>&lt;p&gt;The tidymodels framework is a collection of R packages for modeling and machine learning using tidyverse principles. This website was built with Hugo, using a theme I developed and maintain. I worked with my former intern, 
 &lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to design the style of the website.&lt;/p&gt;
 </description>

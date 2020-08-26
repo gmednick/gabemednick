@@ -3,587 +3,587 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/gabemednick.com/talk/</loc>
+    <loc>/talk/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/</loc>
+    <loc>/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2020-rmedicine-tidyml/</loc>
+    <loc>/talk/2020-rmedicine-tidyml/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/machine-learning/</loc>
+    <loc>/tag/machine-learning/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/tidymodels/</loc>
+    <loc>/tag/tidymodels/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/workshop/</loc>
+    <loc>/category/workshop/</loc>
     <lastmod>2020-01-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/palmerpenguins/</loc>
+    <loc>/project/palmerpenguins/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/</loc>
+    <loc>/project/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/r/</loc>
+    <loc>/tag/r/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/software/</loc>
+    <loc>/tag/software/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/</loc>
+    <loc>/post/</loc>
     <lastmod>2020-06-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2020-06-02-tidymodels-virtually/</loc>
+    <loc>/post/2020-06-02-tidymodels-virtually/</loc>
     <lastmod>2020-06-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/rmarkdown/</loc>
+    <loc>/tag/rmarkdown/</loc>
     <lastmod>2020-06-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2020-05-28-how-i-teach-r-markdown/</loc>
+    <loc>/post/2020-05-28-how-i-teach-r-markdown/</loc>
     <lastmod>2020-05-28T20:45:57-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/blogdown/</loc>
+    <loc>/tag/blogdown/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/tidymodels.org/</loc>
+    <loc>/project/tidymodels.org/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/website/</loc>
+    <loc>/tag/website/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/website/</loc>
+    <loc>/category/website/</loc>
     <lastmod>2020-04-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/alison/</loc>
+    <loc>/author/alison/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/authors/</loc>
+    <loc>/authors/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/desiree-de-leon/</loc>
+    <loc>/author/desiree-de-leon/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2020-sharing-short-notice/</loc>
+    <loc>/talk/2020-sharing-short-notice/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/talk/</loc>
+    <loc>/category/talk/</loc>
     <lastmod>2020-03-31T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/machine-learning/</loc>
+    <loc>/category/machine-learning/</loc>
     <lastmod>2020-02-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2020-02-27-better-tidymodels/</loc>
+    <loc>/post/2020-02-27-better-tidymodels/</loc>
     <lastmod>2020-02-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/tidymodels/</loc>
+    <loc>/category/tidymodels/</loc>
     <lastmod>2020-02-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2020-rsc-tidyml/</loc>
+    <loc>/talk/2020-rsc-tidyml/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/tidyml/</loc>
+    <loc>/project/tidyml/</loc>
     <lastmod>2020-01-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/workshop/</loc>
+    <loc>/tag/workshop/</loc>
     <lastmod>2020-01-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2019-12-23-learning-to-teach-machines-to-learn/</loc>
+    <loc>/post/2019-12-23-learning-to-teach-machines-to-learn/</loc>
     <lastmod>2019-12-23T08:51:41-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/data-visualization/</loc>
+    <loc>/tag/data-visualization/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/ggplot2/</loc>
+    <loc>/tag/ggplot2/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/oz2019/</loc>
+    <loc>/tag/oz2019/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rladies-sydney/</loc>
+    <loc>/talk/2019-rladies-sydney/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/tidy-data/</loc>
+    <loc>/tag/tidy-data/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/xaringan/</loc>
+    <loc>/tag/xaringan/</loc>
     <lastmod>2019-10-04T18:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/keynote/</loc>
+    <loc>/category/keynote/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-ysc-keynote/</loc>
+    <loc>/talk/2019-ysc-keynote/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-ysc-workshop/</loc>
+    <loc>/talk/2019-ysc-workshop/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rladies-melbourne/</loc>
+    <loc>/talk/2019-rladies-melbourne/</loc>
     <lastmod>2019-09-26T18:15:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rmed-rmd4medicine/</loc>
+    <loc>/talk/2019-rmed-rmd4medicine/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/talk/</loc>
+    <loc>/tag/talk/</loc>
     <lastmod>2019-06-18T22:43:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-jsm-talk-ds/</loc>
+    <loc>/talk/2019-jsm-talk-ds/</loc>
     <lastmod>2019-06-18T22:43:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/blogdown/</loc>
+    <loc>/category/blogdown/</loc>
     <lastmod>2019-06-13T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-summer-of-blogdown-04/</loc>
+    <loc>/talk/2019-summer-of-blogdown-04/</loc>
     <lastmod>2019-06-13T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-summer-of-blogdown-03/</loc>
+    <loc>/talk/2019-summer-of-blogdown-03/</loc>
     <lastmod>2019-06-12T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-summer-of-blogdown-02/</loc>
+    <loc>/talk/2019-summer-of-blogdown-02/</loc>
     <lastmod>2019-06-11T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-summer-of-blogdown-01/</loc>
+    <loc>/talk/2019-summer-of-blogdown-01/</loc>
     <lastmod>2019-06-10T09:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-sdss-blogdown/</loc>
+    <loc>/talk/2019-sdss-blogdown/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2019-03-04-hugo-troubleshooting/</loc>
+    <loc>/post/2019-03-04-hugo-troubleshooting/</loc>
     <lastmod>2019-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/hugo/</loc>
+    <loc>/category/hugo/</loc>
     <lastmod>2019-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2019-02-21-hugo-page-bundles/</loc>
+    <loc>/post/2019-02-21-hugo-page-bundles/</loc>
     <lastmod>2019-02-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2019-02-19-hugo-netlify-toml/</loc>
+    <loc>/post/2019-02-19-hugo-netlify-toml/</loc>
     <lastmod>2019-02-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/hugo/</loc>
+    <loc>/tag/hugo/</loc>
     <lastmod>2019-02-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/netlify/</loc>
+    <loc>/tag/netlify/</loc>
     <lastmod>2019-02-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/netlify/</loc>
+    <loc>/category/netlify/</loc>
     <lastmod>2019-02-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2019-02-19-hugo-archetypes/</loc>
+    <loc>/post/2019-02-19-hugo-archetypes/</loc>
     <lastmod>2019-02-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rsc-blogdown/</loc>
+    <loc>/talk/2019-rsc-blogdown/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/bookdown/</loc>
+    <loc>/tag/bookdown/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rsc-bookdown/</loc>
+    <loc>/talk/2019-rsc-bookdown/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/flexdashboard/</loc>
+    <loc>/tag/flexdashboard/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rsc-flexdashboard/</loc>
+    <loc>/talk/2019-rsc-flexdashboard/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2019-rsc-xaringan/</loc>
+    <loc>/talk/2019-rsc-xaringan/</loc>
     <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/projects/</loc>
+    <loc>/projects/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/about/</loc>
+    <loc>/about/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talks/</loc>
+    <loc>/talks/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2018-uo-plotoff/</loc>
+    <loc>/talk/2018-uo-plotoff/</loc>
     <lastmod>2018-10-29T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/data-import/</loc>
+    <loc>/category/data-import/</loc>
     <lastmod>2018-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2018-02-23-read-multiple-header-rows/</loc>
+    <loc>/post/2018-02-23-read-multiple-header-rows/</loc>
     <lastmod>2018-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/readr/</loc>
+    <loc>/category/readr/</loc>
     <lastmod>2018-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/readxl/</loc>
+    <loc>/category/readxl/</loc>
     <lastmod>2018-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/license/</loc>
+    <loc>/license/</loc>
     <lastmod>2018-06-28T00:00:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2018-cascadia-bigmagic/</loc>
+    <loc>/talk/2018-cascadia-bigmagic/</loc>
     <lastmod>2018-06-02T08:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2018-ohsu-sad-plot-better/</loc>
+    <loc>/talk/2018-ohsu-sad-plot-better/</loc>
     <lastmod>2018-04-06T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication-type/2/</loc>
+    <loc>/publication-type/2/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/beth-hoover-langhorst/</loc>
+    <loc>/author/beth-hoover-langhorst/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/damien-fair/</loc>
+    <loc>/author/damien-fair/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/damion-demeter/</loc>
+    <loc>/author/damion-demeter/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/eric-feczko/</loc>
+    <loc>/author/eric-feczko/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/eric-fombonne/</loc>
+    <loc>/author/eric-fombonne/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/jan-van-santen/</loc>
+    <loc>/author/jan-van-santen/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/joel-nigg/</loc>
+    <loc>/author/joel-nigg/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/julia-grieser-painter/</loc>
+    <loc>/author/julia-grieser-painter/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/lourdes-irwin/</loc>
+    <loc>/author/lourdes-irwin/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/michaela-cordova/</loc>
+    <loc>/author/michaela-cordova/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/nadir-balba/</loc>
+    <loc>/author/nadir-balba/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/oscar-miranda-dominguez/</loc>
+    <loc>/author/oscar-miranda-dominguez/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication_types/</loc>
+    <loc>/publication_types/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication/</loc>
+    <loc>/publication/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/sarah-karalunas/</loc>
+    <loc>/author/sarah-karalunas/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication/2017-subtyping/</loc>
+    <loc>/publication/2017-subtyping/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/post/2017-12-18-r-ladies-presentation-ninja/</loc>
+    <loc>/post/2017-12-18-r-ladies-presentation-ninja/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/rladies/</loc>
+    <loc>/category/rladies/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/category/xaringan/</loc>
+    <loc>/category/xaringan/</loc>
     <lastmod>2017-12-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication-type/5/</loc>
+    <loc>/publication-type/5/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/amber-thomas/</loc>
+    <loc>/author/amber-thomas/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication/2017-blogdown/</loc>
+    <loc>/publication/2017-blogdown/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/yihui-xie/</loc>
+    <loc>/author/yihui-xie/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2017-ohsu-labhub/</loc>
+    <loc>/talk/2017-ohsu-labhub/</loc>
     <lastmod>2017-12-08T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/research/</loc>
+    <loc>/tag/research/</loc>
     <lastmod>2017-12-08T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/robin-champieux/</loc>
+    <loc>/author/robin-champieux/</loc>
     <lastmod>2017-12-08T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/science/</loc>
+    <loc>/tag/science/</loc>
     <lastmod>2017-12-08T16:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/up-running-blogdown/</loc>
+    <loc>/project/up-running-blogdown/</loc>
     <lastmod>2017-09-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2017-pdxr-blogdown/</loc>
+    <loc>/talk/2017-pdxr-blogdown/</loc>
     <lastmod>2017-09-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/geza-kiss/</loc>
+    <loc>/author/geza-kiss/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/heather-macfarlane/</loc>
+    <loc>/author/heather-macfarlane/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/katina-papadakis/</loc>
+    <loc>/author/katina-papadakis/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/kyle-gorman/</loc>
+    <loc>/author/kyle-gorman/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/publication/2017-mazes-asd-sli/</loc>
+    <loc>/publication/2017-mazes-asd-sli/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/rosemary-ingham/</loc>
+    <loc>/author/rosemary-ingham/</loc>
     <lastmod>2017-03-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/talk/2016-ohsu-dataviz/</loc>
+    <loc>/talk/2016-ohsu-dataviz/</loc>
     <lastmod>2016-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/tag/dataviz/</loc>
+    <loc>/tag/dataviz/</loc>
     <lastmod>2016-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/julianne-myers/</loc>
+    <loc>/author/julianne-myers/</loc>
     <lastmod>2016-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/project/advanced-r-markdown/</loc>
+    <loc>/project/advanced-r-markdown/</loc>
     <lastmod>2016-04-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/gabemednick.com/author/</loc>
+    <loc>/author/</loc>
   </url>
   
 </urlset>

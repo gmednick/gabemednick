@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Geza Kiss | Gabe Mednick</title>
-    <link>/gabemednick.com/author/geza-kiss/</link>
-      <atom:link href="/gabemednick.com/author/geza-kiss/index.xml" rel="self" type="application/rss+xml" />
+    <link>/author/geza-kiss/</link>
+      <atom:link href="/author/geza-kiss/index.xml" rel="self" type="application/rss+xml" />
     <description>Geza Kiss</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 15 Mar 2017 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>Geza Kiss</title>
-      <link>/gabemednick.com/author/geza-kiss/</link>
+      <link>/author/geza-kiss/</link>
     </image>
     
     <item>
       <title>Quantitative Analysis of Disfluency in Children with Autism Spectrum Disorder or Language Impairment</title>
-      <link>/gabemednick.com/publication/2017-mazes-asd-sli/</link>
+      <link>/publication/2017-mazes-asd-sli/</link>
       <pubDate>Wed, 15 Mar 2017 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/publication/2017-mazes-asd-sli/</guid>
+      <guid>/publication/2017-mazes-asd-sli/</guid>
       <description></description>
     </item>
     

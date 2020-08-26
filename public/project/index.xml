@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Projects | Gabe Mednick</title>
-    <link>/gabemednick.com/project/</link>
-      <atom:link href="/gabemednick.com/project/index.xml" rel="self" type="application/rss+xml" />
+    <link>/project/</link>
+      <atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
     <description>Projects</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/gabemednick.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>Projects</title>
-      <link>/gabemednick.com/project/</link>
+      <link>/project/</link>
     </image>
     
     <item>
       <title>palmerpenguins</title>
-      <link>/gabemednick.com/project/palmerpenguins/</link>
+      <link>/project/palmerpenguins/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/palmerpenguins/</guid>
+      <guid>/project/palmerpenguins/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tidymodels.org</title>
-      <link>/gabemednick.com/project/tidymodels.org/</link>
+      <link>/project/tidymodels.org/</link>
       <pubDate>Tue, 21 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/tidymodels.org/</guid>
+      <guid>/project/tidymodels.org/</guid>
       <description>&lt;p&gt;The tidymodels framework is a collection of R packages for modeling and machine learning using tidyverse principles. This website was built with Hugo, using a theme I developed and maintain. I worked with my former intern, 
 &lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to design the style of the website.&lt;/p&gt;
 </description>
@@ -32,9 +32,9 @@
     
     <item>
       <title>Introduction to Machine Learning with the Tidyverse</title>
-      <link>/gabemednick.com/project/tidyml/</link>
+      <link>/project/tidyml/</link>
       <pubDate>Mon, 27 Jan 2020 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/tidyml/</guid>
+      <guid>/project/tidyml/</guid>
       <description>&lt;p&gt;These workshops provide a gentle introduction to supervised machine learning: concepts, methods, and R code. Participants learn how to train and assess predictive models with several common machine learning algorithms, as well as how to do feature engineering to improve the predictive accuracy of their models. We focus on teaching intuitive explanations of the models and best practices for predictive modeling. Along the way, we introduce several core 
 &lt;a href=&#34;https://github.com/tidymodels&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tidymodels&lt;/a&gt; packages, which provide a grammar for modeling that makes it easy to the right thing, and harder to accidentally do the wrong thing.&lt;/p&gt;
 &lt;p&gt;See the workshop websites for more, including links to the GitHub repositories for all workshop materials.&lt;/p&gt;
@@ -43,9 +43,9 @@
     
     <item>
       <title>Up &amp; Running with blogdown</title>
-      <link>/gabemednick.com/project/up-running-blogdown/</link>
+      <link>/project/up-running-blogdown/</link>
       <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/up-running-blogdown/</guid>
+      <guid>/project/up-running-blogdown/</guid>
       <description>&lt;p&gt;We will cover:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The &lt;strong&gt;blogdown&lt;/strong&gt; R package&lt;/li&gt;
@@ -85,10 +85,10 @@
 &lt;figure &gt;
 
 
-  &lt;a data-fancybox=&#34;&#34; href=&#34;/gabemednick.com/gabemednick.com/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
+  &lt;a data-fancybox=&#34;&#34; href=&#34;/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; &gt;
 
 
-  &lt;img data-src=&#34;/gabemednick.com/gabemednick.com/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;2550&#34; height=&#34;3300&#34;&gt;
+  &lt;img data-src=&#34;/project/up-running-blogdown/blogdown-meetup_hu63626b89c4debd1240b389a830474d85_3596239_2000x2000_fit_q90_lanczos.jpg&#34; class=&#34;lazyload&#34; alt=&#34;&#34; width=&#34;2550&#34; height=&#34;3300&#34;&gt;
 &lt;/a&gt;
 
 
@@ -100,9 +100,9 @@
     
     <item>
       <title>Advanced R Markdown</title>
-      <link>/gabemednick.com/project/advanced-r-markdown/</link>
+      <link>/project/advanced-r-markdown/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      <guid>/gabemednick.com/project/advanced-r-markdown/</guid>
+      <guid>/project/advanced-r-markdown/</guid>
       <description>&lt;p&gt;This two-day workshop is designed for those who want to take their R Markdown skills to the next level. We’ll talk about many low-level details in the rmarkdown package and the whole R Markdown ecosystem. The two goals of this workshop are: 1) learn how to fully customize R Markdown output (HTML, LaTeX/PDF, Word, and PowerPoint); and 2) learn more about existing R Markdown extensions in the ecosystem, such as flexdashboard, bookdown, blogdown, pkgdown, xaringan, rticles, and learnr. We will also talk about how to use or develop new language engines (languages that are not R), how to develop HTML widgets, and integrate Shiny with R Markdown.&lt;/p&gt;
 &lt;p&gt;See the workshop website for more, and links to individual slides below.&lt;/p&gt;
 </description>
