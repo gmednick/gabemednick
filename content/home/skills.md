@@ -2,10 +2,10 @@
 # A Skills section created with the Featurette widget.
 widget = "featurette"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
-active = false  # Activate this widget? true/false
+active = true  # Activate this widget? true/false
 weight = 50  # Order that this section will appear.
 
-title = "Essential Toolkit"
+title = "Technology Toolkit"
 subtitle = "Developmental modeling and machine learning"
 
 # Showcase personal skills or business features.
@@ -31,6 +31,9 @@ subtitle = "Developmental modeling and machine learning"
   icon = "python"
   icon_pack = "fab"
   name = "Python: pandas, scikitlearn and tensorflow"
+  
+
+
 
 # Uncomment to use emoji icons.
 # [[feature]]
@@ -49,3 +52,10 @@ subtitle = "Developmental modeling and machine learning"
 #  description = "90%"
 
 +++
+- R programming 
+- python programming
+- Command line tools and scripting
+- Snakemake workflow management
+- Git/Github version control
+- Shiny and Flex dashboards
+- SQL

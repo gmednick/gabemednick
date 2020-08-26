@@ -6,9 +6,9 @@
 widget = "blank"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
 active = true  # Activate this widget? true/false
-weight = 35  # Order that this section will appear.
+weight = 40  # Order that this section will appear.
 
-title = "Insight and Imagination are the cornerstones"
+title = "Insight and Imagination are Cornerstones"
 subtitle = ""
 
 [design]
@@ -50,16 +50,17 @@ subtitle = ""
  css_class = ""
 +++
 
-**Professional Services**
+**Drylab**
 - Bioinformatics and applied data science (machine learning)
 - Biochemistry-based insights, technology and IP development
 - Dashboard deployment
+- Database queries
 
 
-**Technologies**
-- R programming 
-- python programming
-- Command line tools and scripting
-- Snakemake workflow management
-- Git/Github version control
-- Shiny and Flex dashboards
+**Wetlab**
+
+- Cellular metablism
+- Enzymatic Biochemistry
+- Protein Biochemistry
+- Chromatography
+- Spectroscopy
