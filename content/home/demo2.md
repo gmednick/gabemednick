@@ -59,7 +59,7 @@ subtitle = ""
 
 **Wetlab**
 
-- Cellular metablism
+- Cellular metabolism
 - Enzymatic Biochemistry
 - Protein Biochemistry
 - Chromatography
