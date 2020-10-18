@@ -52,7 +52,7 @@ superuser: true
 
 ---
 
-I started my journey into the physical and biological sciences with an interest in osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, I developed a deep interest in both physical chemistry and biochemistry. My curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria. After which, I spent two years in a teaching postdoctorate role that implemented innovative teaching practices in chemistry and biology. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. 
+My journey into the physical and biological sciences started with an interest in osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, my interest in the structure and function of the human body turned into a fascination with the invisible structure and function of the cell. I developed a deep interest in both physical chemistry and biochemistry, and my curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria. After finishing my PhD, I developed and implemented innovative teaching practices in chemistry and biology at the university level. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. I love R&D, innovation and invention but my current professional passions are data science and bioinformatics. The ability to drive development and decision making, create and optimize value, and draw insight are central aspects of my professional passion. 
 
-My current passion and professional pursuit includes **computational biology** and **data science**. 
+
 
