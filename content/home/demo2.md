@@ -8,7 +8,7 @@ headless = true  # This file represents a page section.
 active = true  # Activate this widget? true/false
 weight = 40  # Order that this section will appear.
 
-title = "Insight and Imagination are Cornerstones"
+title = "Insight and Imagination are the Cornerstones"
 subtitle = ""
 
 [design]
@@ -50,17 +50,17 @@ subtitle = ""
  css_class = ""
 +++
 
-**Drylab**
+**Drylab** (computational) skills
 - Bioinformatics and applied data science (machine learning)
 - Biochemistry-based insights, technology and IP development
 - Dashboard deployment
-- Database queries
+- Workflow and Database management
 
 
-**Wetlab**
+**Wetlab** skills
 
 - Cellular metabolism
-- Enzymatic Biochemistry
+- Molecular Biology
 - Protein Biochemistry
 - Chromatography
 - Spectroscopy
