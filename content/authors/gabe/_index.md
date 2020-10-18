@@ -31,10 +31,10 @@ role: Data Scientist, Computational Biologist, Educator & Biochemist
 social:
 - icon: envelope
   icon_pack: far
-  link: 
+  link: '#contact'
 - icon: twitter
   icon_pack: fab
-  link: https://twitter.com/
+  link: https://twitter.com/GabeMednick
   
 - icon: github
   icon_pack: fab
@@ -43,7 +43,7 @@ social:
 
 - icon: linkedin-in
   icon_pack: fab
-  link:
+  link: https://www.linkedin.com/in/gabe-mednick-77a000199/
   
 - icon: google-scholar
   icon_pack: ai
@@ -52,5 +52,7 @@ superuser: true
 
 ---
 
-I started my journey into the physical and biological sciences with an interest in osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, I developed a deep interest in both physical chemistry and biochemistry. Already down a rabbit hole, I had to learn more. That lead to a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria. After which, I spent two years in a wonderful teaching postdoctorate role that implemented innovative teaching practices in chemistry and biology. More recently, I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. My current passions and professional pursuits include **computational biology** and **data science**. 
+I started my journey into the physical and biological sciences with an interest in osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, I developed a deep interest in both physical chemistry and biochemistry. My curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria. After which, I spent two years in a teaching postdoctorate role that implemented innovative teaching practices in chemistry and biology. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. 
+
+My current passion and professional pursuit includes **computational biology** and **data science**. 
 

@@ -39,8 +39,8 @@ date_format = "Jan 2006"
   company = "Claret biosciences"
   company_url = ""
   location = "California"
-  date_start = "2018-08-01"
-  date_end = "2020-04-01"
+  date_start = "2020-04-01" 
+  date_end = "2018-08-01"
   description = """
   Responsibilities included:
   

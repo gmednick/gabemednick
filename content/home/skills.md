@@ -15,22 +15,21 @@ subtitle = "Developmental modeling and machine learning"
 # For available icons, see: https://sourcethemes.com/academic/docs/page-builder/#icons
 
 [[feature]]
-  icon = "chart-line"
+  icon = "database"
   icon_pack = "fas"
-  name = "exploratory data analysis with dplyr and ggplot2"
-   
+  name = "SQL"
   
   
 [[feature]]
   icon = "r-project"
   icon_pack = "fab"
-  name = "tidyverse and tidymodels"
+  name = "Tidyverse and Tidymodels framework"
  
   
 [[feature]]
   icon = "python"
   icon_pack = "fab"
-  name = "Python: pandas, scikitlearn and tensorflow"
+  name = "Python"
   
 
 
@@ -52,10 +51,3 @@ subtitle = "Developmental modeling and machine learning"
 #  description = "90%"
 
 +++
-- R programming 
-- python programming
-- Command line tools and scripting
-- Snakemake workflow management
-- Git/Github version control
-- Shiny and Flex dashboards
-- SQL

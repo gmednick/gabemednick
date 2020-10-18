@@ -1,0 +1,130 @@
+---
+title: Hello Tidyverse
+author: Gabe Mednick
+date: '2020-09-03'
+slug: hello-tidyverse
+categories: []
+tags: []
+subtitle: ''
+summary: 'Data wrangling and visualization: insights into data analysis with the tidyverse'
+authors: []
+lastmod: '2020-09-03T22:12:24-07:00'
+featured: no
+disable_jquery: no
+image:
+  caption: '[Photo by Jesse Gardner on Unsplash](https://unsplash.com/photos/JYU14tnbfOA)'
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+This dataset was made available by the TidyTuesday project on 2020-09-01. There are five related datasets in total but we will only look at the 'key_crop_yields' csv here. The data contains crop yield by country over time. Let's get started by loading the packages that we will most likely need for this analysis.
+
+```{r, out.width="100%", include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
+                      echo = TRUE, dpi = 300, cache.lazy = FALSE,
+                      tidy = "styler", fig.width = 8, fig.height = 5)
+options(cli.width = 70, width = 70)
+
+library(tidyverse)
+library(tidymodels)
+library(shiny)
+library(gt)
+library(scales)
+theme_set(theme_light())
+```
+
+- find out how to make it display in a wider or format when viewing
+- use readr
+- Include DT for looking at the data
+- Plot with facet wrap
+- add some predictive analysis
+- and conclusion
+
+Next up, let's download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, for loading and exploring the TidyTuesday data but today I will use the readr package from the tidyverse since we are only going to look at the crop yields dataset. 
+```{r}
+
+# There are 5 datasets available.
+crop_yields <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv")
+
+# We will just use the key crop yield dataset.
+skimr::skim(crop_yields)
+```
+
+It's time for some basic cleaning, wrangling and maybe feature engineering. The function `pivot_longer` is fantastic tool for tidying the data and preparing it for downstream analysis, such as plotting and modeling.
+```{r}
+# Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
+crop_yield_tidy <- crop_yields %>% 
+  janitor::clean_names() %>% 
+  rename_all(str_remove, "_tonnes.*") %>% 
+  rename(country = entity) %>% 
+  pivot_longer(wheat:bananas, names_to = 'crop', values_to = 'yield_hectare') %>% 
+  drop_na(yield_hectare)
+
+gt(head(crop_yield_tidy, n = 10))
+
+
+```
+Now that we have the data in tidy format, let's do some visualizations to get a better idea about the data. There are too many countries to include in one graph so I will use `slice_sample()` to randomly select 8 countries. We will set a seed so that `slice_sample` chooses the same 8 countries each time for now.
+
+```{r}
+# Randomly select 4 country codes
+set.seed(1014)
+country_random <- crop_yield_tidy %>% 
+  select(country) %>% 
+  distinct() %>% 
+  slice_sample(n = 9) %>% 
+  pull()
+
+# another option would be to set the code equal to a set selection of countries: E.g., countries <- c('GUM',	'IND',	'YEM',	'NAM',	'URY', 'USA')
+
+# Plot crop yield per hectare.
+library(tidytext)
+column_plot <- crop_yield_tidy %>% 
+  filter(country == country_random) %>% 
+  mutate(crop = reorder_within(crop, yield_hectare, country)) %>%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  facet_wrap(~country, scales = 'free_y') +
+  theme(legend.position =  'none') +
+  scale_y_reordered() +
+  labs(
+    title = 'Crop Yield',
+    y = 'Crop',
+    x = 'yield per hectare'
+  )
+column_plot
+```
+
+
+```{r}
+# Plot crop yield per hectare per year.
+line_plot <- crop_yield_tidy %>% 
+  filter(country == country_random) %>% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line() +
+  facet_wrap(~country, scales = 'free_y') +
+  labs(
+     y = 'yield per hectare',
+    title = 'Crop Yield'
+  )
+line_plot
+
+# Plot crop yield per hectare per year.
+box_plot <- crop_yield_tidy %>% 
+  filter(country == country_random) %>% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
+  ggplot(aes(yield_hectare, crop, color = crop)) +
+  geom_boxplot() +
+  theme(legend.position =  'none') +
+  facet_wrap(~country, scales = 'free') +
+  labs(
+    x = 'Yield',
+    title = 'Crop Yield',
+    y = ''
+  )
+box_plot
+
+```
+
