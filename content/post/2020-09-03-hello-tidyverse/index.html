@@ -5,10 +5,10 @@ date: '2020-09-03'
 slug: hello-tidyverse
 categories: []
 tags: []
-subtitle: ''
+subtitle: 'Work in progress'
 summary: 'Data wrangling and visualization: insights into data analysis with the tidyverse'
 authors: []
-lastmod: '2020-09-03T22:12:24-07:00'
+lastmod: '2020-10-20'
 featured: no
 disable_jquery: no
 image:
@@ -22,91 +22,289 @@ projects: []
 
 <div id="intro" class="section level1">
 <h1>Intro</h1>
-<p>This dataset was made available by the TidyTuesday project on the first of September, 2020. There are five related datasets in total but we will only look at <code>key_crop_yields</code> in this exploration. The data contains crop yield by country and year. Let’s get started by loading the packages that we will need for this analysis.</p>
-<p>Next up, let’s download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, for loading and exploring the TidyTuesday data but today I will use the readr package from the tidyverse since we are only going to look at the crop yields dataset. <code>read_csv</code> will load the data as modern data frame called a tibble.</p>
+<p>This data comes from the R4DS TidyTuesday project. There are five related datasets but we will only look at <code>key_crop_yields</code> dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.</p>
+<p>Next up, let’s download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using <code>read_csv</code> to import our data as a modern data frame or tibble.</p>
 <pre class="r"><code># Load the data with a readr function
 crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;)
 
+land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% janitor::clean_names()
 # The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
-# skimr::skim(crop_yields)
-glimpse(crop_yields)</code></pre>
-<pre><code>## Rows: 13,075
-## Columns: 14
-## $ Entity                             &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanis…
-## $ Code                               &lt;chr&gt; &quot;AFG&quot;, &quot;AFG&quot;, &quot;AFG&quot;, &quot;AF…
-## $ Year                               &lt;dbl&gt; 1961, 1962, 1963, 1964, …
-## $ `Wheat (tonnes per hectare)`       &lt;dbl&gt; 1.0220, 0.9735, 0.8317, …
-## $ `Rice (tonnes per hectare)`        &lt;dbl&gt; 1.5190, 1.5190, 1.5190, …
-## $ `Maize (tonnes per hectare)`       &lt;dbl&gt; 1.4000, 1.4000, 1.4260, …
-## $ `Soybeans (tonnes per hectare)`    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …
-## $ `Potatoes (tonnes per hectare)`    &lt;dbl&gt; 8.6667, 7.6667, 8.1333, …
-## $ `Beans (tonnes per hectare)`       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …
-## $ `Peas (tonnes per hectare)`        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …
-## $ `Cassava (tonnes per hectare)`     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …
-## $ `Barley (tonnes per hectare)`      &lt;dbl&gt; 1.0800, 1.0800, 1.0800, …
-## $ `Cocoa beans (tonnes per hectare)` &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …
-## $ `Bananas (tonnes per hectare)`     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, …</code></pre>
-<pre class="r"><code>summary(crop_yields)</code></pre>
-<pre><code>##     Entity              Code                Year     
-##  Length:13075       Length:13075       Min.   :1961  
-##  Class :character   Class :character   1st Qu.:1976  
-##  Mode  :character   Mode  :character   Median :1991  
-##                                        Mean   :1990  
-##                                        3rd Qu.:2005  
-##                                        Max.   :2018  
-##                                                      
-##  Wheat (tonnes per hectare) Rice (tonnes per hectare)
-##  Min.   : 0.000             Min.   : 0.203           
-##  1st Qu.: 1.228             1st Qu.: 1.767           
-##  Median : 1.990             Median : 2.744           
-##  Mean   : 2.435             Mean   : 3.162           
-##  3rd Qu.: 3.124             3rd Qu.: 4.157           
-##  Max.   :10.668             Max.   :10.683           
-##  NA&#39;s   :4974               NA&#39;s   :4604             
-##  Maize (tonnes per hectare) Soybeans (tonnes per hectare)
-##  Min.   : 0.0343            Min.   :0.005                
-##  1st Qu.: 1.1423            1st Qu.:0.860                
-##  Median : 1.8251            Median :1.334                
-##  Mean   : 3.0245            Mean   :1.449                
-##  3rd Qu.: 3.9220            3rd Qu.:1.905                
-##  Max.   :36.7619            Max.   :5.947                
-##  NA&#39;s   :2301               NA&#39;s   :7114                 
-##  Potatoes (tonnes per hectare) Beans (tonnes per hectare)
-##  Min.   : 0.8406               Min.   :0.027             
-##  1st Qu.: 8.6383               1st Qu.:0.586             
-##  Median :13.4144               Median :0.832             
-##  Mean   :15.3977               Mean   :1.086             
-##  3rd Qu.:20.0521               3rd Qu.:1.346             
-##  Max.   :75.2987               Max.   :9.178             
-##  NA&#39;s   :3059                  NA&#39;s   :5066              
-##  Peas (tonnes per hectare) Cassava (tonnes per hectare)
-##  Min.   :0.044             Min.   : 1.000              
-##  1st Qu.:0.723             1st Qu.: 5.553              
-##  Median :1.146             Median : 8.667              
-##  Mean   :1.480             Mean   : 9.345              
-##  3rd Qu.:1.992             3rd Qu.:11.989              
-##  Max.   :7.164             Max.   :38.582              
-##  NA&#39;s   :6840              NA&#39;s   :5887                
-##  Barley (tonnes per hectare) Cocoa beans (tonnes per hectare)
-##  Min.   :0.094               Min.   :0.000                   
-##  1st Qu.:1.047               1st Qu.:0.244                   
-##  Median :1.877               Median :0.363                   
-##  Mean   :2.232               Mean   :0.395                   
-##  3rd Qu.:3.024               3rd Qu.:0.487                   
-##  Max.   :9.146               Max.   :3.429                   
-##  NA&#39;s   :6342                NA&#39;s   :8466                    
-##  Bananas (tonnes per hectare)
-##  Min.   : 0.664              
-##  1st Qu.: 5.944              
-##  Median :11.775              
-##  Mean   :15.201              
-##  3rd Qu.:20.791              
-##  Max.   :77.592              
-##  NA&#39;s   :4166</code></pre>
+skimr::skim(crop_yields)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">crop_yields</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">13075</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">14</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">2</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">12</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Entity</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">4</td>
+<td align="right">39</td>
+<td align="right">0</td>
+<td align="right">249</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Code</td>
+<td align="right">1919</td>
+<td align="right">0.85</td>
+<td align="right">3</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">214</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="28%" />
+<col width="8%" />
+<col width="11%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">1990.37</td>
+<td align="right">16.73</td>
+<td align="right">1961.00</td>
+<td align="right">1976.00</td>
+<td align="right">1991.00</td>
+<td align="right">2005.00</td>
+<td align="right">2018.00</td>
+<td align="left">▇▆▇▇▇</td>
+</tr>
+<tr class="even">
+<td align="left">Wheat (tonnes per hectare)</td>
+<td align="right">4974</td>
+<td align="right">0.62</td>
+<td align="right">2.43</td>
+<td align="right">1.69</td>
+<td align="right">0.00</td>
+<td align="right">1.23</td>
+<td align="right">1.99</td>
+<td align="right">3.12</td>
+<td align="right">10.67</td>
+<td align="left">▇▅▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Rice (tonnes per hectare)</td>
+<td align="right">4604</td>
+<td align="right">0.65</td>
+<td align="right">3.16</td>
+<td align="right">1.85</td>
+<td align="right">0.20</td>
+<td align="right">1.77</td>
+<td align="right">2.74</td>
+<td align="right">4.16</td>
+<td align="right">10.68</td>
+<td align="left">▇▇▃▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Maize (tonnes per hectare)</td>
+<td align="right">2301</td>
+<td align="right">0.82</td>
+<td align="right">3.02</td>
+<td align="right">3.13</td>
+<td align="right">0.03</td>
+<td align="right">1.14</td>
+<td align="right">1.83</td>
+<td align="right">3.92</td>
+<td align="right">36.76</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Soybeans (tonnes per hectare)</td>
+<td align="right">7114</td>
+<td align="right">0.46</td>
+<td align="right">1.45</td>
+<td align="right">0.75</td>
+<td align="right">0.00</td>
+<td align="right">0.86</td>
+<td align="right">1.33</td>
+<td align="right">1.90</td>
+<td align="right">5.95</td>
+<td align="left">▇▇▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Potatoes (tonnes per hectare)</td>
+<td align="right">3059</td>
+<td align="right">0.77</td>
+<td align="right">15.40</td>
+<td align="right">9.29</td>
+<td align="right">0.84</td>
+<td align="right">8.64</td>
+<td align="right">13.41</td>
+<td align="right">20.05</td>
+<td align="right">75.30</td>
+<td align="left">▇▅▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Beans (tonnes per hectare)</td>
+<td align="right">5066</td>
+<td align="right">0.61</td>
+<td align="right">1.09</td>
+<td align="right">0.82</td>
+<td align="right">0.03</td>
+<td align="right">0.59</td>
+<td align="right">0.83</td>
+<td align="right">1.35</td>
+<td align="right">9.18</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Peas (tonnes per hectare)</td>
+<td align="right">6840</td>
+<td align="right">0.48</td>
+<td align="right">1.48</td>
+<td align="right">1.01</td>
+<td align="right">0.04</td>
+<td align="right">0.72</td>
+<td align="right">1.15</td>
+<td align="right">1.99</td>
+<td align="right">7.16</td>
+<td align="left">▇▃▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Cassava (tonnes per hectare)</td>
+<td align="right">5887</td>
+<td align="right">0.55</td>
+<td align="right">9.34</td>
+<td align="right">5.11</td>
+<td align="right">1.00</td>
+<td align="right">5.55</td>
+<td align="right">8.67</td>
+<td align="right">11.99</td>
+<td align="right">38.58</td>
+<td align="left">▇▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Barley (tonnes per hectare)</td>
+<td align="right">6342</td>
+<td align="right">0.51</td>
+<td align="right">2.23</td>
+<td align="right">1.50</td>
+<td align="right">0.09</td>
+<td align="right">1.05</td>
+<td align="right">1.88</td>
+<td align="right">3.02</td>
+<td align="right">9.15</td>
+<td align="left">▇▆▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Cocoa beans (tonnes per hectare)</td>
+<td align="right">8466</td>
+<td align="right">0.35</td>
+<td align="right">0.39</td>
+<td align="right">0.28</td>
+<td align="right">0.00</td>
+<td align="right">0.24</td>
+<td align="right">0.36</td>
+<td align="right">0.49</td>
+<td align="right">3.43</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Bananas (tonnes per hectare)</td>
+<td align="right">4166</td>
+<td align="right">0.68</td>
+<td align="right">15.20</td>
+<td align="right">12.08</td>
+<td align="right">0.66</td>
+<td align="right">5.94</td>
+<td align="right">11.78</td>
+<td align="right">20.79</td>
+<td align="right">77.59</td>
+<td align="left">▇▃▁▁▁</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Here are a few other options for getting to know our data
+# glimpse(crop_yields) 
+# summary(crop_yields)
+# View(crop_yields)</code></pre>
 </div>
 <div id="data-cleaning-and-reshaping" class="section level1">
 <h1>Data cleaning and reshaping</h1>
-<p>It’s time for a little data cleaning! For starters, we can see from the skimr summary that there are a bunch of NAs that we need to decide what to do with. We can also standarize our feature names with the janitor package. We should also consider whether our data is in a tidy format where each column is a feature and each row a sample since this is fundamental necessity for working with data in the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature <code>crops</code>. The function <code>pivot_longer</code> is fantastic function from the tidyr package that allows us to reshape our data and preparing it for This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning).</p>
+<p>Let’s start with a little data cleaning! Using <code>skim</code> from <code>skimr</code> provides a convenient summary. We can see that there are plenty of NAs that we will most likely need to remove. We can also standardize our feature names with the janitor package. Lastly, we should consider the shape of our data and make sure that it’s in a tidy format where each column is a feature and each row a sample.This long or tidy format is a prerequisite for fluent analysis with the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature <code>crops</code>. The function <code>pivot_longer</code> is fantastic function from the tidyr package that allows us to reshape our data and preparing it for This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning).</p>
 <pre class="r"><code>crop_yields %&gt;% count(Year)</code></pre>
 <pre><code>## # A tibble: 58 x 2
 ##     Year     n
@@ -217,7 +415,7 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 </div>
 <div id="visual-analysis" class="section level1">
 <h1>Visual analysis</h1>
-<p>Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at all of them at once. <code>slice_sample()</code> can be used to randomly select a subset of the total countries. A seed can be set if you want <code>slice_sample</code> to return the same 8 countries each time. We will use the results to visualize a subset of the countries with the idea that this will help us understand our data better and generate questions that can guide our predictive modeling.</p>
+<p>Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. <code>slice_sample()</code> can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.</p>
 <pre class="r"><code># Randomly select 4 country codes
 # set.seed(1014)
 country_random &lt;- crop_yield_tidy %&gt;% 
@@ -230,13 +428,14 @@ country_random &lt;- crop_yield_tidy %&gt;%
 
 # Plot crop yield per hectare.
 library(tidytext)
+
 column_plot &lt;- crop_yield_tidy %&gt;% 
   filter(year &gt;= 2000,
          country == country_random) %&gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
-  facet_wrap(~country, scales = &#39;free&#39;) +
+  facet_wrap(~country, scales = &#39;free_y&#39;) +
   theme(legend.position =  &#39;none&#39;) +
   scale_y_reordered() +
   labs(
@@ -245,7 +444,8 @@ column_plot &lt;- crop_yield_tidy %&gt;%
     x = &#39;yield per hectare&#39;
   )
 column_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-4-1.png" width="2400" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-4-1.png" width="3000" />
+<strong>Figure 1.</strong> This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.</p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 line_plot &lt;- crop_yield_tidy %&gt;% 
   filter(year &gt;= 2000,
@@ -259,7 +459,7 @@ line_plot &lt;- crop_yield_tidy %&gt;%
     title = &#39;Crop Yield&#39;
   )
 line_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="2400" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 box_plot &lt;- crop_yield_tidy %&gt;% 
   filter(year &gt;= 2000,
@@ -275,5 +475,5 @@ box_plot &lt;- crop_yield_tidy %&gt;%
     y = &#39;&#39;
   )
 box_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="2400" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="3000" /></p>
 </div>

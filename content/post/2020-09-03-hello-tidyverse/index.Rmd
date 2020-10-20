@@ -5,10 +5,10 @@ date: '2020-09-03'
 slug: hello-tidyverse
 categories: []
 tags: []
-subtitle: ''
+subtitle: 'Work in progress'
 summary: 'Data wrangling and visualization: insights into data analysis with the tidyverse'
 authors: []
-lastmod: '2020-09-03T22:12:24-07:00'
+lastmod: '2020-10-20'
 featured: no
 disable_jquery: no
 image:
@@ -18,37 +18,38 @@ image:
 projects: []
 ---
 # Intro
-This dataset was made available by the TidyTuesday project on the first of September, 2020. There are five related datasets in total but we will only look at `key_crop_yields` in this exploration. The data contains crop yield by country and year. Let's get started by loading the packages that we will need for this analysis.
+This data comes from the R4DS TidyTuesday project. There are five related datasets but we will only look at `key_crop_yields` dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let's get started by loading the packages that we will need for this analysis.
 
 ```{r, out.width="100%", include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                       echo = TRUE, dpi = 300, cache.lazy = FALSE,
-                      tidy = "styler", fig.width = 8, fig.height = 5)
+                      tidy = "styler", fig.width = 10, fig.height = 6)
 options(cli.width = 70, width = 70)
 
 library(tidyverse)
 library(tidymodels)
-library(shiny)
-library(gt)
 library(scales)
 theme_set(theme_light())
 ```
 
-Next up, let's download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, for loading and exploring the TidyTuesday data but today I will use the readr package from the tidyverse since we are only going to look at the crop yields dataset. `read_csv` will load the data as modern data frame called a tibble.
+Next up, let's download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using `read_csv` to import our data as a modern data frame or tibble.
 ```{r}
 
 # Load the data with a readr function
 crop_yields <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv")
 
+land_use <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv") %>% janitor::clean_names()
 # The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
-# skimr::skim(crop_yields)
-glimpse(crop_yields)
-summary(crop_yields)
+skimr::skim(crop_yields)
 
+# Here are a few other options for getting to know our data
+# glimpse(crop_yields) 
+# summary(crop_yields)
+# View(crop_yields)
 ```
 # Data cleaning and reshaping
-It's time for a little data cleaning! For starters, we can see from the skimr summary that there are a bunch of NAs that we need to decide what to do with. We can also standarize our feature names with the janitor package. We should also consider whether our data is in a tidy format where each column is a feature and each row a sample since this is fundamental necessity for working with data in the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature `crops`. The function `pivot_longer` is fantastic function from the tidyr package that allows us to reshape our data and preparing it for  This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning). 
+Let's start with a little data cleaning! Using `skim` from `skimr` provides a convenient summary. We can see that there are plenty of NAs that we will most likely need to remove. We can also standardize our feature names with the janitor package. Lastly, we should consider the shape of our data and make sure that it's in a tidy format where each column is a feature and each row a sample.This long or tidy format is a prerequisite for fluent analysis with the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature `crops`. The function `pivot_longer` is fantastic function from the tidyr package that allows us to reshape our data and preparing it for  This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning). 
 ```{r}
 crop_yields %>% count(Year)
 # Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
@@ -62,8 +63,10 @@ crop_yield_tidy <- crop_yields %>%
 kable(head(crop_yield_tidy, n = 10))
 
 ```
+
+
 # Visual analysis
-Now that we have the data in tidy format, let's see what we can learn from it. We want to look at crop production by country but there are too many countries to look at all of them at once. `slice_sample()` can be used to randomly select a subset of the total countries. A seed can be set if you want `slice_sample` to return the same 8 countries each time. We will use the results to visualize a subset of the countries with the idea that this will help us understand our data better and generate questions that can guide our predictive modeling. 
+Now that we have the data in tidy format, let's see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. `slice_sample()` can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs. 
 
 ```{r}
 # Randomly select 4 country codes
@@ -78,13 +81,14 @@ country_random <- crop_yield_tidy %>%
 
 # Plot crop yield per hectare.
 library(tidytext)
+
 column_plot <- crop_yield_tidy %>% 
   filter(year >= 2000,
          country == country_random) %>% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %>%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
-  facet_wrap(~country, scales = 'free') +
+  facet_wrap(~country, scales = 'free_y') +
   theme(legend.position =  'none') +
   scale_y_reordered() +
   labs(
@@ -94,7 +98,7 @@ column_plot <- crop_yield_tidy %>%
   )
 column_plot
 ```
-
+**Figure 1.** This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.
 
 ```{r}
 # Plot crop yield per hectare per year.
