@@ -5,7 +5,7 @@
     <link>/tag/machine-learning/</link>
       <atom:link href="/tag/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     <description>machine learning</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Thu, 27 Aug 2020 13:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 21 Oct 2020 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>machine learning</title>
@@ -13,46 +13,229 @@
     </image>
     
     <item>
-      <title>Introduction to Machine Learning with the Tidyverse</title>
-      <link>/talk/2020-rmedicine-tidyml/</link>
-      <pubDate>Thu, 27 Aug 2020 13:00:00 +0000</pubDate>
-      <guid>/talk/2020-rmedicine-tidyml/</guid>
+      <title>Iris Classification</title>
+      <link>/post/iris-classification/</link>
+      <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>/post/iris-classification/</guid>
       <description>
-&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
-&lt;p&gt;This four-hour workshop will provide a gentle introduction to machine learning with R using the modern suite of predictive modeling packages called &lt;a href=&#34;https://github.com/tidymodels&#34;&gt;tidymodels&lt;/a&gt;. We will build, evaluate, compare, and tune predictive models. Along the way, we’ll learn about key concepts in machine learning including overfitting, the holdout method, the bias-variance trade-off, ensembling, cross-validation, and feature engineering. Learners will gain knowledge about good predictive modeling practices, as well as hands-on experience using tidymodels packages like &lt;a href=&#34;https://tidymodels.github.io/parsnip&#34;&gt;parsnip&lt;/a&gt;, &lt;a href=&#34;https://tidymodels.github.io/rsample&#34;&gt;rsample&lt;/a&gt;, &lt;a href=&#34;https://tidymodels.github.io/recipes/&#34;&gt;recipes&lt;/a&gt;, &lt;a href=&#34;https://tidymodels.github.io/yardstick/&#34;&gt;yardstick&lt;/a&gt;, &lt;a href=&#34;https://tidymodels.github.io/tune/&#34;&gt;tune&lt;/a&gt;, and &lt;a href=&#34;https://tidymodels.github.io/workflows/&#34;&gt;workflows&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>tidymodels.org</title>
-      <link>/project/tidymodels.org/</link>
-      <pubDate>Tue, 21 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>/project/tidymodels.org/</guid>
-      <description>&lt;p&gt;The tidymodels framework is a collection of R packages for modeling and machine learning using tidyverse principles. This website was built with Hugo, using a theme I developed and maintain. I worked with my former intern, 
-&lt;a href=&#34;https://desiree.rbind.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Desirée De Leon&lt;/a&gt;, to design the style of the website.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Introduction to Machine Learning with the Tidyverse</title>
-      <link>/talk/2020-rsc-tidyml/</link>
-      <pubDate>Mon, 27 Jan 2020 09:00:00 +0000</pubDate>
-      <guid>/talk/2020-rsc-tidyml/</guid>
-      <description>&lt;p&gt;This two-day workshop provided a gentle introduction to supervised machine learning: concepts, methods, and R code. Participants learned how to train and assess predictive models with several common machine learning algorithms, as well as how to do feature engineering to improve the predictive accuracy of their models. We focused on teaching intuitive explanations of the models and best practices for predictive modeling. Along the way, we introduced several core 
-&lt;a href=&#34;https://github.com/tidymodels&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tidymodels&lt;/a&gt; packages, which provide a grammar for modeling that makes it easy to the right thing, and harder to accidentally do the wrong thing.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Introduction to Machine Learning with the Tidyverse</title>
-      <link>/project/tidyml/</link>
-      <pubDate>Mon, 27 Jan 2020 00:00:00 +0000</pubDate>
-      <guid>/project/tidyml/</guid>
-      <description>&lt;p&gt;These workshops provide a gentle introduction to supervised machine learning: concepts, methods, and R code. Participants learn how to train and assess predictive models with several common machine learning algorithms, as well as how to do feature engineering to improve the predictive accuracy of their models. We focus on teaching intuitive explanations of the models and best practices for predictive modeling. Along the way, we introduce several core 
-&lt;a href=&#34;https://github.com/tidymodels&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tidymodels&lt;/a&gt; packages, which provide a grammar for modeling that makes it easy to the right thing, and harder to accidentally do the wrong thing.&lt;/p&gt;
-&lt;p&gt;See the workshop websites for more, including links to the GitHub repositories for all workshop materials.&lt;/p&gt;
+&lt;!-- # Iris: a classic --&gt;
+&lt;p&gt;The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set
+iris_df&amp;lt;- iris %&amp;gt;% clean_names()
+
+# iris_df %&amp;gt;%  View()
+# equal number of each species, 150 total
+iris_df %&amp;gt;%  count(species)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      species  n
+## 1     setosa 50
+## 2 versicolor 50
+## 3  virginica 50&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# no NAs
+iris_df %&amp;gt;%  summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sepal_length    sepal_width     petal_length    petal_width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## &lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualize relationships&lt;/h1&gt;
+&lt;p&gt;Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point() + facet_wrap(~species)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point() + facet_wrap(~species)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;
+# Tidy format
+Let’s change the shape of our data by combining all iris features into a single category called &lt;code&gt;metric&lt;/code&gt; and the associated values will go into a column that we name &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
+  pivot_longer(cols = sepal_length:petal_width,
+               names_to = &amp;#39;metric&amp;#39;,
+               values_to =&amp;#39;value&amp;#39;) 
+
+iris_df_long %&amp;gt;% 
+  ggplot(aes(value, metric, color = species)) +
+  geom_boxplot() + coord_flip()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;%
+  ggplot(aes(value, fill = species)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~ metric, scales = &amp;quot;free_x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = .5) +
+  facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;%
+  ggplot(aes(species, value, color = species)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;lets-get-modeling-first-we-split-the-data.-since-we-only-have-150-samples-50-for-each-iris-species-we-will-also-use-bootstrap-resampling.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Let’s get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
+tidy_split &amp;lt;- initial_split(iris_df)
+iris_train &amp;lt;- training(tidy_split)
+iris_test &amp;lt;- testing(tidy_split)
+
+iris_boots &amp;lt;- bootstraps(iris_train) &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;recipes-is-the-way-to-go-for-feature-engineering.-a-great-way-to-see-the-available-functions-in-rstudio-type-recipes-into-the-console-and-scroll.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type &lt;code&gt;recipes::&lt;/code&gt; into the console and scroll.&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~ ., data = iris_train) %&amp;gt;%
+  step_zv(all_predictors()) %&amp;gt;%
+  step_normalize(all_predictors())
+
+prep &amp;lt;-  prep(iris_rec)
+
+kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;sepal_length&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;sepal_width&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;petal_length&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;petal_width&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;species&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-0.9406570&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9308067&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.2040875&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1535351&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.4675181&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2802016&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.388618&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.5992334&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0633332&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.272256&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.0723722&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1476751&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5455111&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.7982802&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.155894&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.018146&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;create-models.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Create models.&lt;/h2&gt;
+&lt;p&gt;Let’s set up two different models: logistic regression and random forest&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glm_spec &amp;lt;- logistic_reg() %&amp;gt;%
+  set_engine(&amp;quot;glm&amp;quot;)
+
+glm_wf &amp;lt;- workflow() %&amp;gt;%
+  add_recipe(iris_rec) %&amp;gt;% 
+  add_model(glm_spec)
+
+rf_spec &amp;lt;- rand_forest(trees = 1000) %&amp;gt;%
+  set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;%
+  set_mode(&amp;quot;classification&amp;quot;)
+
+rf_wf &amp;lt;- workflow() %&amp;gt;%
+  add_recipe(iris_rec) %&amp;gt;% 
+  add_model(rf_spec)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
+glm_rs &amp;lt;- glm_wf %&amp;gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap01: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap02: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap03: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap04: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap05: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap06: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap07: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap08: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap09: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap10: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap11: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap12: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap13: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap14: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap15: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap16: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap17: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap18: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap19: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap20: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap21: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap22: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap23: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap24: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap25: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(glm_rs)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.667    25  0.0126
+## 2 sens     macro      0.667    25  0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_rs &amp;lt;- rf_wf %&amp;gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )
+collect_metrics(rf_rs)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.939    25 0.00778
+## 2 sens     macro      0.943    25 0.00728&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# glm_rs %&amp;gt;%
+#   collect_predictions() %&amp;gt;%
+#   group_by(id) %&amp;gt;%
+#   roc_curve(species, .pred_class) %&amp;gt;%
+#   ggplot(aes(1 - specificity, sensitivity, color = id)) +
+#   geom_abline(lty = 2, color = &amp;quot;gray80&amp;quot;, size = 1.5) +
+#   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
+#   coord_equal()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     

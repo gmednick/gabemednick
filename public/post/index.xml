@@ -5,12 +5,239 @@
     <link>/post/</link>
       <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Blog</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Thu, 03 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 21 Oct 2020 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>Blog</title>
       <link>/post/</link>
     </image>
+    
+    <item>
+      <title>Iris Classification</title>
+      <link>/post/iris-classification/</link>
+      <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>/post/iris-classification/</guid>
+      <description>
+
+
+&lt;!-- # Iris: a classic --&gt;
+&lt;p&gt;The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set
+iris_df&amp;lt;- iris %&amp;gt;% clean_names()
+
+# iris_df %&amp;gt;%  View()
+# equal number of each species, 150 total
+iris_df %&amp;gt;%  count(species)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      species  n
+## 1     setosa 50
+## 2 versicolor 50
+## 3  virginica 50&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# no NAs
+iris_df %&amp;gt;%  summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sepal_length    sepal_width     petal_length    petal_width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## &lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualize relationships&lt;/h1&gt;
+&lt;p&gt;Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point() + facet_wrap(~species)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point() + facet_wrap(~species)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;
+# Tidy format
+Let’s change the shape of our data by combining all iris features into a single category called &lt;code&gt;metric&lt;/code&gt; and the associated values will go into a column that we name &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
+  pivot_longer(cols = sepal_length:petal_width,
+               names_to = &amp;#39;metric&amp;#39;,
+               values_to =&amp;#39;value&amp;#39;) 
+
+iris_df_long %&amp;gt;% 
+  ggplot(aes(value, metric, color = species)) +
+  geom_boxplot() + coord_flip()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;%
+  ggplot(aes(value, fill = species)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~ metric, scales = &amp;quot;free_x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = .5) +
+  facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long %&amp;gt;%
+  ggplot(aes(species, value, color = species)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;lets-get-modeling-first-we-split-the-data.-since-we-only-have-150-samples-50-for-each-iris-species-we-will-also-use-bootstrap-resampling.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Let’s get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
+tidy_split &amp;lt;- initial_split(iris_df)
+iris_train &amp;lt;- training(tidy_split)
+iris_test &amp;lt;- testing(tidy_split)
+
+iris_boots &amp;lt;- bootstraps(iris_train) &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;recipes-is-the-way-to-go-for-feature-engineering.-a-great-way-to-see-the-available-functions-in-rstudio-type-recipes-into-the-console-and-scroll.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type &lt;code&gt;recipes::&lt;/code&gt; into the console and scroll.&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~ ., data = iris_train) %&amp;gt;%
+  step_zv(all_predictors()) %&amp;gt;%
+  step_normalize(all_predictors())
+
+prep &amp;lt;-  prep(iris_rec)
+
+kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;sepal_length&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;sepal_width&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;petal_length&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;petal_width&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;species&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-0.9406570&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9308067&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.2040875&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1535351&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.4675181&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.2802016&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.388618&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.5992334&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0633332&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.272256&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-1.0723722&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1476751&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.330437&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.280818&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;-0.5455111&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.7982802&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.155894&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.018146&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;create-models.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Create models.&lt;/h2&gt;
+&lt;p&gt;Let’s set up two different models: logistic regression and random forest&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glm_spec &amp;lt;- logistic_reg() %&amp;gt;%
+  set_engine(&amp;quot;glm&amp;quot;)
+
+glm_wf &amp;lt;- workflow() %&amp;gt;%
+  add_recipe(iris_rec) %&amp;gt;% 
+  add_model(glm_spec)
+
+rf_spec &amp;lt;- rand_forest(trees = 1000) %&amp;gt;%
+  set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;%
+  set_mode(&amp;quot;classification&amp;quot;)
+
+rf_wf &amp;lt;- workflow() %&amp;gt;%
+  add_recipe(iris_rec) %&amp;gt;% 
+  add_model(rf_spec)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
+glm_rs &amp;lt;- glm_wf %&amp;gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap01: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap02: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap03: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap04: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap05: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap06: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap07: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap08: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap09: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap10: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap11: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap12: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap13: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap14: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap15: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap16: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap17: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap18: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap19: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap20: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap21: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap22: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap23: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap24: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ! Bootstrap25: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(glm_rs)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.667    25  0.0126
+## 2 sens     macro      0.667    25  0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_rs &amp;lt;- rf_wf %&amp;gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )
+collect_metrics(rf_rs)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.939    25 0.00778
+## 2 sens     macro      0.943    25 0.00728&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# glm_rs %&amp;gt;%
+#   collect_predictions() %&amp;gt;%
+#   group_by(id) %&amp;gt;%
+#   roc_curve(species, .pred_class) %&amp;gt;%
+#   ggplot(aes(1 - specificity, sensitivity, color = id)) +
+#   geom_abline(lty = 2, color = &amp;quot;gray80&amp;quot;, size = 1.5) +
+#   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
+#   coord_equal()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Hello Tidyverse and Tidymodels</title>
@@ -27,7 +254,7 @@
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
 crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
 
-land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
+# land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
 # The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
 skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
@@ -412,12 +639,31 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# crop_yield_tidy %&amp;gt;% 
+#   summary()
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   count(year, country, sort = TRUE)
+# 
+# tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;% 
+#   count(country, sort = TRUE) %&amp;gt;% 
+#   filter(n &amp;gt;=500)
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   summarize(max(year)- min(year)) #57 years of recorded data
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   count(year, crop, sort = T)
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+#   count(crop)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visual analysis&lt;/h1&gt;
 &lt;p&gt;Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 4 country codes
-# set.seed(1014)
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
+# set.seed(1014) if you want the same 9 countries to be selected each time
 country_random &amp;lt;- crop_yield_tidy %&amp;gt;% 
   select(country) %&amp;gt;% 
   distinct() %&amp;gt;% 
@@ -429,22 +675,35 @@ country_random &amp;lt;- crop_yield_tidy %&amp;gt;%
 # Plot crop yield per hectare.
 library(tidytext)
 
-column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  filter(year &amp;gt;= 2000,
-         country == country_random) %&amp;gt;% 
-  mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
+usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
   theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;tonnes per hectare&amp;#39;
+  )
+usa_col_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(country == country_random) %&amp;gt;% 
+  mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
   scale_y_reordered() +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
   labs(
     title = &amp;#39;Crop Yield&amp;#39;,
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;yield per hectare&amp;#39;
   )
 column_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;3000&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;
 &lt;strong&gt;Figure 1.&lt;/strong&gt; This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
@@ -459,7 +718,7 @@ line_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
     title = &amp;#39;Crop Yield&amp;#39;
   )
 line_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 box_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(year &amp;gt;= 2000,
@@ -475,7 +734,7 @@ box_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
     y = &amp;#39;&amp;#39;
   )
 box_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>

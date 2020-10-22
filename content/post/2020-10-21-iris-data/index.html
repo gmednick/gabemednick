@@ -1,0 +1,240 @@
+---
+title: Iris Classification
+author: 'Gabe Mednick'
+date: '2020-10-21'
+slug: iris-classification
+categories: []
+tags:
+  - machine learning
+  - tidymodels
+subtitle: ''
+summary: 'Flower classification using Tidymodels'
+authors: []
+lastmod: '2020-10-21T15:11:02-07:00'
+featured: no
+disable_jquery: no
+image:
+  caption: '[Photo by J Lee on Unsplash](https://unsplash.com/photos/uDe1HrcO2Tc)'
+  focal_point: ''
+  preview_only: false
+projects: []
+---
+
+
+
+<!-- # Iris: a classic -->
+<p>The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).</p>
+<pre class="r"><code># load the iris data set
+iris_df&lt;- iris %&gt;% clean_names()
+
+# iris_df %&gt;%  View()
+# equal number of each species, 150 total
+iris_df %&gt;%  count(species)</code></pre>
+<pre><code>##      species  n
+## 1     setosa 50
+## 2 versicolor 50
+## 3  virginica 50</code></pre>
+<pre class="r"><code># no NAs
+iris_df %&gt;%  summary()</code></pre>
+<pre><code>##   sepal_length    sepal_width     petal_length    petal_width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## </code></pre>
+<div id="visualize-relationships" class="section level1">
+<h1>Visualize relationships</h1>
+<p>Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.</p>
+<pre class="r"><code>iris_df %&gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point() + facet_wrap(~species)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>iris_df %&gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point() + facet_wrap(~species)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
+# Tidy format
+Let’s change the shape of our data by combining all iris features into a single category called <code>metric</code> and the associated values will go into a column that we name <code>value</code>.</p>
+<pre class="r"><code>iris_df_long &lt;- iris_df %&gt;%  
+  pivot_longer(cols = sepal_length:petal_width,
+               names_to = &#39;metric&#39;,
+               values_to =&#39;value&#39;) 
+
+iris_df_long %&gt;% 
+  ggplot(aes(value, metric, color = species)) +
+  geom_boxplot() + coord_flip()</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>iris_df_long %&gt;%
+  ggplot(aes(value, fill = species)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~ metric, scales = &quot;free_x&quot;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<pre class="r"><code>iris_df_long %&gt;% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = .5) +
+  facet_wrap(~ metric, scales = &quot;free&quot;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-3.png" width="672" /></p>
+<pre class="r"><code>iris_df_long %&gt;%
+  ggplot(aes(species, value, color = species)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_wrap(~ metric, scales = &quot;free_y&quot;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
+<div id="lets-get-modeling-first-we-split-the-data.-since-we-only-have-150-samples-50-for-each-iris-species-we-will-also-use-bootstrap-resampling." class="section level2">
+<h2>Let’s get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.</h2>
+<pre class="r"><code>set.seed(123)
+tidy_split &lt;- initial_split(iris_df)
+iris_train &lt;- training(tidy_split)
+iris_test &lt;- testing(tidy_split)
+
+iris_boots &lt;- bootstraps(iris_train) </code></pre>
+</div>
+<div id="recipes-is-the-way-to-go-for-feature-engineering.-a-great-way-to-see-the-available-functions-in-rstudio-type-recipes-into-the-console-and-scroll." class="section level2">
+<h2>Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type <code>recipes::</code> into the console and scroll.</h2>
+<pre class="r"><code>iris_rec &lt;- recipe(species ~ ., data = iris_train) %&gt;%
+  step_zv(all_predictors()) %&gt;%
+  step_normalize(all_predictors())
+
+prep &lt;-  prep(iris_rec)
+
+kable(head(iris_juice &lt;- juice(prep)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">sepal_length</th>
+<th align="right">sepal_width</th>
+<th align="right">petal_length</th>
+<th align="right">petal_width</th>
+<th align="left">species</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">-0.9406570</td>
+<td align="right">0.9308067</td>
+<td align="right">-1.330437</td>
+<td align="right">-1.280818</td>
+<td align="left">setosa</td>
+</tr>
+<tr class="even">
+<td align="right">-1.2040875</td>
+<td align="right">-0.1535351</td>
+<td align="right">-1.330437</td>
+<td align="right">-1.280818</td>
+<td align="left">setosa</td>
+</tr>
+<tr class="odd">
+<td align="right">-1.4675181</td>
+<td align="right">0.2802016</td>
+<td align="right">-1.388618</td>
+<td align="right">-1.280818</td>
+<td align="left">setosa</td>
+</tr>
+<tr class="even">
+<td align="right">-1.5992334</td>
+<td align="right">0.0633332</td>
+<td align="right">-1.272256</td>
+<td align="right">-1.280818</td>
+<td align="left">setosa</td>
+</tr>
+<tr class="odd">
+<td align="right">-1.0723722</td>
+<td align="right">1.1476751</td>
+<td align="right">-1.330437</td>
+<td align="right">-1.280818</td>
+<td align="left">setosa</td>
+</tr>
+<tr class="even">
+<td align="right">-0.5455111</td>
+<td align="right">1.7982802</td>
+<td align="right">-1.155894</td>
+<td align="right">-1.018146</td>
+<td align="left">setosa</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="create-models." class="section level2">
+<h2>Create models.</h2>
+<p>Let’s set up two different models: logistic regression and random forest</p>
+<pre class="r"><code>glm_spec &lt;- logistic_reg() %&gt;%
+  set_engine(&quot;glm&quot;)
+
+glm_wf &lt;- workflow() %&gt;%
+  add_recipe(iris_rec) %&gt;% 
+  add_model(glm_spec)
+
+rf_spec &lt;- rand_forest(trees = 1000) %&gt;%
+  set_engine(&quot;ranger&quot;) %&gt;%
+  set_mode(&quot;classification&quot;)
+
+rf_wf &lt;- workflow() %&gt;%
+  add_recipe(iris_rec) %&gt;% 
+  add_model(rf_spec)</code></pre>
+<pre class="r"><code>set.seed(1234)
+glm_rs &lt;- glm_wf %&gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )</code></pre>
+<pre><code>## ! Bootstrap01: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap02: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap03: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap04: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap05: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap06: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap07: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap08: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap09: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap10: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap11: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap12: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap13: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap14: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap15: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap16: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap17: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap18: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap19: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap20: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap21: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap22: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap23: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap24: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre><code>## ! Bootstrap25: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
+<pre class="r"><code>collect_metrics(glm_rs)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1 accuracy multiclass 0.667    25  0.0126
+## 2 sens     macro      0.667    25  0</code></pre>
+<pre class="r"><code>rf_rs &lt;- rf_wf %&gt;%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )
+collect_metrics(rf_rs)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1 accuracy multiclass 0.939    25 0.00778
+## 2 sens     macro      0.943    25 0.00728</code></pre>
+<pre class="r"><code># glm_rs %&gt;%
+#   collect_predictions() %&gt;%
+#   group_by(id) %&gt;%
+#   roc_curve(species, .pred_class) %&gt;%
+#   ggplot(aes(1 - specificity, sensitivity, color = id)) +
+#   geom_abline(lty = 2, color = &quot;gray80&quot;, size = 1.5) +
+#   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
+#   coord_equal()</code></pre>
+</div>
+</div>

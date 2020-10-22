@@ -1,0 +1,160 @@
+---
+title: Iris Classification
+author: 'Gabe Mednick'
+date: '2020-10-21'
+slug: iris-classification
+categories: []
+tags:
+  - machine learning
+  - tidymodels
+subtitle: ''
+summary: 'Flower classification using Tidymodels'
+authors: []
+lastmod: '2020-10-21T15:11:02-07:00'
+featured: no
+disable_jquery: no
+image:
+  caption: '[Photo by J Lee on Unsplash](https://unsplash.com/photos/uDe1HrcO2Tc)'
+  focal_point: ''
+  preview_only: false
+projects: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
+library(janitor)
+library(knitr)
+data("iris")
+```
+
+<!-- # Iris: a classic -->
+The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).
+
+```{r}
+# load the iris data set
+iris_df<- iris %>% clean_names()
+
+# iris_df %>%  View()
+# equal number of each species, 150 total
+iris_df %>%  count(species)
+# no NAs
+iris_df %>%  summary()
+
+
+```
+
+# Visualize relationships
+Before we do any kind of machine learning, let's visualize the features and start thinking about what kind of questions we can ask. And 'see' how our features correlate which will also tell us about how well we will be able to make predictions with our data.
+```{r}
+iris_df %>% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point() + facet_wrap(~species)
+
+iris_df %>% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point() + facet_wrap(~species)
+
+```
+# Tidy format
+Let's change the shape of our data by combining all iris features into a single category called `metric` and the associated values will go into a column that we name `value`. 
+
+```{r}
+
+iris_df_long <- iris_df %>%  
+  pivot_longer(cols = sepal_length:petal_width,
+               names_to = 'metric',
+               values_to ='value') 
+
+iris_df_long %>% 
+  ggplot(aes(value, metric, color = species)) +
+  geom_boxplot() + coord_flip()
+
+iris_df_long %>%
+  ggplot(aes(value, fill = species)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~ metric, scales = "free_x")
+
+iris_df_long %>% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = .5) +
+  facet_wrap(~ metric, scales = "free")
+
+iris_df_long %>%
+  ggplot(aes(species, value, color = species)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_wrap(~ metric, scales = "free_y")
+```
+
+## Let's get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.
+```{r}
+set.seed(123)
+tidy_split <- initial_split(iris_df)
+iris_train <- training(tidy_split)
+iris_test <- testing(tidy_split)
+
+iris_boots <- bootstraps(iris_train) 
+```
+
+
+## Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type `recipes::` into the console and scroll.
+```{r}
+iris_rec <- recipe(species ~ ., data = iris_train) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_predictors())
+
+prep <-  prep(iris_rec)
+
+kable(head(iris_juice <- juice(prep)))
+```
+
+## Create models. 
+
+Let's set up two different models: logistic regression and random forest
+```{r}
+glm_spec <- logistic_reg() %>%
+  set_engine("glm")
+
+glm_wf <- workflow() %>%
+  add_recipe(iris_rec) %>% 
+  add_model(glm_spec)
+
+rf_spec <- rand_forest(trees = 1000) %>%
+  set_engine("ranger") %>%
+  set_mode("classification")
+
+rf_wf <- workflow() %>%
+  add_recipe(iris_rec) %>% 
+  add_model(rf_spec)
+```
+
+```{r}
+set.seed(1234)
+glm_rs <- glm_wf %>%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )
+
+collect_metrics(glm_rs)
+
+rf_rs <- rf_wf %>%
+  fit_resamples(
+    resamples = iris_boots,
+    metrics = metric_set(accuracy, sens),
+    control = control_grid(save_pred = TRUE)
+  )
+collect_metrics(rf_rs)
+```
+```{r}
+# glm_rs %>%
+#   collect_predictions() %>%
+#   group_by(id) %>%
+#   roc_curve(species, .pred_class) %>%
+#   ggplot(aes(1 - specificity, sensitivity, color = id)) +
+#   geom_abline(lty = 2, color = "gray80", size = 1.5) +
+#   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
+#   coord_equal()
+```

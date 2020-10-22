@@ -4,262 +4,37 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2020-10-20T00:00:00+00:00</lastmod>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-10-20T00:00:00+00:00</lastmod>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/iris-classification/</loc>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tag/machine-learning/</loc>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tag/tidymodels/</loc>
+    <lastmod>2020-10-21T15:11:02-07:00</lastmod>
   </url>
   
   <url>
     <loc>/post/hello-tidyverse/</loc>
     <lastmod>2020-10-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2020-rmedicine-tidyml/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/machine-learning/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/tidymodels/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/category/workshop/</loc>
-    <lastmod>2020-01-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/palmerpenguins/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/r/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/software/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/blogdown/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/tidymodels.org/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/website/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/category/website/</loc>
-    <lastmod>2020-04-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/alison/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/authors/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/desiree-de-leon/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/rmarkdown/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2020-sharing-short-notice/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/category/talk/</loc>
-    <lastmod>2020-03-31T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2020-rsc-tidyml/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/tidyml/</loc>
-    <lastmod>2020-01-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/workshop/</loc>
-    <lastmod>2020-01-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/data-visualization/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/ggplot2/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/oz2019/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rladies-sydney/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/tidy-data/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/xaringan/</loc>
-    <lastmod>2019-10-04T18:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/category/keynote/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-ysc-keynote/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-ysc-workshop/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rladies-melbourne/</loc>
-    <lastmod>2019-09-26T18:15:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rmed-rmd4medicine/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/talk/</loc>
-    <lastmod>2019-06-18T22:43:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-jsm-talk-ds/</loc>
-    <lastmod>2019-06-18T22:43:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/category/blogdown/</loc>
-    <lastmod>2019-06-13T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-summer-of-blogdown-04/</loc>
-    <lastmod>2019-06-13T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-summer-of-blogdown-03/</loc>
-    <lastmod>2019-06-12T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-summer-of-blogdown-02/</loc>
-    <lastmod>2019-06-11T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-summer-of-blogdown-01/</loc>
-    <lastmod>2019-06-10T09:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-sdss-blogdown/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rsc-blogdown/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/bookdown/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rsc-bookdown/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/flexdashboard/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rsc-flexdashboard/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2019-rsc-xaringan/</loc>
-    <lastmod>2019-06-16T02:20:01-07:00</lastmod>
   </url>
   
   <url>
@@ -278,212 +53,28 @@
   </url>
   
   <url>
-    <loc>/talk/2018-uo-plotoff/</loc>
-    <lastmod>2018-10-29T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/license/</loc>
     <lastmod>2018-06-28T00:00:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>/talk/2018-cascadia-bigmagic/</loc>
-    <lastmod>2018-06-02T08:00:00+00:00</lastmod>
+    <loc>/author/</loc>
   </url>
   
   <url>
-    <loc>/talk/2018-ohsu-sad-plot-better/</loc>
-    <lastmod>2018-04-06T16:00:00+00:00</lastmod>
+    <loc>/talk/</loc>
   </url>
   
   <url>
-    <loc>/publication-type/2/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
+    <loc>/authors/</loc>
   </url>
   
   <url>
-    <loc>/author/beth-hoover-langhorst/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/damien-fair/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/damion-demeter/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/eric-feczko/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/eric-fombonne/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/jan-van-santen/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/joel-nigg/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/julia-grieser-painter/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/lourdes-irwin/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/michaela-cordova/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/nadir-balba/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/oscar-miranda-dominguez/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
+    <loc>/categories/</loc>
   </url>
   
   <url>
     <loc>/publication_types/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/sarah-karalunas/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/2017-subtyping/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication-type/5/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/amber-thomas/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/2017-blogdown/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/yihui-xie/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2017-ohsu-labhub/</loc>
-    <lastmod>2017-12-08T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/research/</loc>
-    <lastmod>2017-12-08T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/robin-champieux/</loc>
-    <lastmod>2017-12-08T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/science/</loc>
-    <lastmod>2017-12-08T16:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/up-running-blogdown/</loc>
-    <lastmod>2017-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2017-pdxr-blogdown/</loc>
-    <lastmod>2017-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/geza-kiss/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/heather-macfarlane/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/katina-papadakis/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/kyle-gorman/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/publication/2017-mazes-asd-sli/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/rosemary-ingham/</loc>
-    <lastmod>2017-03-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/talk/2016-ohsu-dataviz/</loc>
-    <lastmod>2016-06-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tag/dataviz/</loc>
-    <lastmod>2016-06-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/julianne-myers/</loc>
-    <lastmod>2016-06-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project/advanced-r-markdown/</loc>
-    <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/author/</loc>
   </url>
   
 </urlset>

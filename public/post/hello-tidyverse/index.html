@@ -614,7 +614,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    5 min read
+    6 min read
   </span>
   
 
@@ -667,7 +667,7 @@
 <pre class="r"><code># Load the data with a readr function
 crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;)
 
-land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% janitor::clean_names()
+# land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% janitor::clean_names()
 # The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
 skimr::skim(crop_yields)</code></pre>
 <table>
@@ -1052,12 +1052,31 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code># crop_yield_tidy %&gt;% 
+#   summary()
+# 
+# crop_yield_tidy %&gt;% 
+#   count(year, country, sort = TRUE)
+# 
+# tidy_select &lt;- crop_yield_tidy %&gt;% 
+#   count(country, sort = TRUE) %&gt;% 
+#   filter(n &gt;=500)
+# 
+# crop_yield_tidy %&gt;% 
+#   summarize(max(year)- min(year)) #57 years of recorded data
+# 
+# crop_yield_tidy %&gt;% 
+#   count(year, crop, sort = T)
+# 
+# crop_yield_tidy %&gt;% 
+#   filter(country == &#39;United States&#39;) %&gt;% 
+#   count(crop)</code></pre>
 </div>
 <div id="visual-analysis" class="section level1">
 <h1>Visual analysis</h1>
 <p>Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. <code>slice_sample()</code> can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.</p>
-<pre class="r"><code># Randomly select 4 country codes
-# set.seed(1014)
+<pre class="r"><code># Randomly select 9 country names
+# set.seed(1014) if you want the same 9 countries to be selected each time
 country_random &lt;- crop_yield_tidy %&gt;% 
   select(country) %&gt;% 
   distinct() %&gt;% 
@@ -1069,22 +1088,35 @@ country_random &lt;- crop_yield_tidy %&gt;%
 # Plot crop yield per hectare.
 library(tidytext)
 
-column_plot &lt;- crop_yield_tidy %&gt;% 
-  filter(year &gt;= 2000,
-         country == country_random) %&gt;% 
-  mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
+usa_col_plot &lt;- crop_yield_tidy %&gt;% 
+  filter(country == &#39;United States&#39;) %&gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   facet_wrap(~country, scales = &#39;free_y&#39;) +
   theme(legend.position =  &#39;none&#39;) +
+  labs(
+    title = &#39;Crop Yield USA&#39;,
+    y = &#39;Crop&#39;,
+    x = &#39;tonnes per hectare&#39;
+  )
+usa_col_plot</code></pre>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
+<pre class="r"><code>column_plot &lt;- crop_yield_tidy %&gt;% 
+  filter(country == country_random) %&gt;% 
+  mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
   scale_y_reordered() +
+  facet_wrap(~country, scales = &#39;free_y&#39;) +
+  theme(legend.position =  &#39;none&#39;) +
   labs(
     title = &#39;Crop Yield&#39;,
     y = &#39;Crop&#39;,
     x = &#39;yield per hectare&#39;
   )
 column_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-4-1.png" width="3000" />
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="3000" />
 <strong>Figure 1.</strong> This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.</p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 line_plot &lt;- crop_yield_tidy %&gt;% 
@@ -1099,7 +1131,7 @@ line_plot &lt;- crop_yield_tidy %&gt;%
     title = &#39;Crop Yield&#39;
   )
 line_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 box_plot &lt;- crop_yield_tidy %&gt;% 
   filter(year &gt;= 2000,
@@ -1115,7 +1147,7 @@ box_plot &lt;- crop_yield_tidy %&gt;%
     y = &#39;&#39;
   )
 box_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="3000" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png" width="3000" /></p>
 </div>
 
     </div>
