@@ -22,20 +22,21 @@ projects: []
 
 
 
-<div id="a-classic-dataset" class="section level1">
-<h1>A classic dataset</h1>
-<p>Iris is one of the built-in datasets that are available in R. To see a complete list, type <code>data()</code> into the Rstudio console.</p>
+<div id="the-iris-dataset" class="section level1">
+<h1>The iris dataset</h1>
+<p>The iris dataset is a classic, so much so that it is built into datasets R. You can use <code>data()</code> in the R console to see a complete list of available datasets.</p>
 <pre class="r"><code># load the iris data set
-iris_df&lt;- iris %&gt;% clean_names()
+iris_df&lt;- iris %&gt;% 
+  clean_names() 
 
 # iris_df %&gt;%  View()
-# equal number of each species, 150 total
+
 iris_df %&gt;%  count(species)</code></pre>
 <pre><code>##      species  n
 ## 1     setosa 50
 ## 2 versicolor 50
 ## 3  virginica 50</code></pre>
-<pre class="r"><code># no NAs
+<pre class="r"><code># equal number of each species, 150 total
 iris_df %&gt;%  summary()</code></pre>
 <pre><code>##   sepal_length    sepal_width     petal_length    petal_width   
 ##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
@@ -51,6 +52,7 @@ iris_df %&gt;%  summary()</code></pre>
 ##                 
 ##                 
 ## </code></pre>
+<pre class="r"><code># No NAs, the data is clean!</code></pre>
 </div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
@@ -104,8 +106,8 @@ iris_boots &lt;- bootstraps(iris_train) </code></pre>
 </div>
 <div id="recipes" class="section level1">
 <h1>Recipes</h1>
-<p>Is the way to go for feature engineering. A great way to see the available functions in Rstudio: type <code>recipes::</code> into the console and scroll.</p>
-<pre class="r"><code>iris_rec &lt;- recipe(species ~ ., data = iris_train) %&gt;%
+<p>Is the way to go for feature engineering. A great way to see the available functions in a package is to type the package name and two colons, eg <code>recipes::</code> into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available. Or you can simply use <code>?function</code> if you know the function and just need more details.</p>
+<pre class="r"><code>iris_rec &lt;- recipe(species ~., data = iris_train) %&gt;%
   step_zv(all_predictors()) %&gt;%
   step_normalize(all_predictors())
 
@@ -170,77 +172,159 @@ kable(head(iris_juice &lt;- juice(prep)))</code></pre>
 </div>
 <div id="create-models." class="section level1">
 <h1>Create models.</h1>
-<p>Let’s set up two different models: logistic regression and random forest.</p>
-<pre class="r"><code>glm_spec &lt;- logistic_reg() %&gt;%
-  set_engine(&quot;glm&quot;)
+<p>Let’s set up two different models: <strong>logistic regression</strong> and <strong>random forest</strong>.</p>
+<pre class="r"><code>glm_mod &lt;- logistic_reg() %&gt;%
+  set_engine(&quot;glm&quot;) %&gt;% 
+  set_mode(&#39;classification&#39;)
+
+glm_mod &lt;- multinom_reg(penalty = 0) %&gt;% set_engine(&quot;glmnet&quot;) %&gt;% 
+  set_mode(&quot;classification&quot;)
 
 glm_wf &lt;- workflow() %&gt;%
-  add_recipe(iris_rec) %&gt;% 
-  add_model(glm_spec)
+  add_formula(species ~ .) 
 
-rf_spec &lt;- rand_forest(trees = 1000) %&gt;%
+rf_mod &lt;- rand_forest() %&gt;%
   set_engine(&quot;ranger&quot;) %&gt;%
   set_mode(&quot;classification&quot;)
 
 rf_wf &lt;- workflow() %&gt;%
-  add_recipe(iris_rec) %&gt;% 
-  add_model(rf_spec)</code></pre>
+  add_formula(species ~ .)</code></pre>
 <pre class="r"><code>set.seed(1234)
-glm_rs &lt;- glm_wf %&gt;%
+glm_results &lt;- glm_wf %&gt;%
+  add_model(glm_mod) %&gt;% 
   fit_resamples(
     resamples = iris_boots,
-    metrics = metric_set(accuracy, sens),
-    control = control_grid(save_pred = TRUE)
-  )</code></pre>
-<pre><code>## ! Bootstrap01: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap02: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap03: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap04: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap05: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap06: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap07: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap08: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap09: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap10: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap11: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap12: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap13: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap14: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap15: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap16: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap17: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap18: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap19: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap20: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap21: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap22: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap23: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap24: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre><code>## ! Bootstrap25: model: glm.fit: algorithm did not converge, glm.fit: fitted probabilitie...</code></pre>
-<pre class="r"><code>collect_metrics(glm_rs)</code></pre>
+    control = control_resamples(extract = extract_model,
+                             save_pred = TRUE)
+    )
+
+collect_metrics(glm_results)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1 accuracy multiclass 0.667    25  0.0126
-## 2 sens     macro      0.667    25  0</code></pre>
-<pre class="r"><code>rf_rs &lt;- rf_wf %&gt;%
+## 1 accuracy multiclass 0.944    25 0.00642
+## 2 roc_auc  hand_till  0.987    25 0.00234</code></pre>
+<pre class="r"><code>rf_results &lt;- rf_wf %&gt;%
+  add_model(rf_mod) %&gt;% 
   fit_resamples(
     resamples = iris_boots,
-    metrics = metric_set(accuracy, sens),
-    control = control_grid(save_pred = TRUE)
-  )
-collect_metrics(rf_rs)</code></pre>
+    control = control_resamples(save_pred = TRUE)
+    )
+collect_metrics(rf_results)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1 accuracy multiclass 0.939    25 0.00778
-## 2 sens     macro      0.943    25 0.00728</code></pre>
-<pre class="r"><code># glm_rs %&gt;%
-#   collect_predictions() %&gt;%
-#   group_by(id) %&gt;%
-#   roc_curve(species, .pred_class) %&gt;%
-#   ggplot(aes(1 - specificity, sensitivity, color = id)) +
-#   geom_abline(lty = 2, color = &quot;gray80&quot;, size = 1.5) +
-#   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
-#   coord_equal()</code></pre>
+## 1 accuracy multiclass 0.945    25 0.00764
+## 2 roc_auc  hand_till  0.993    25 0.00126</code></pre>
+<pre class="r"><code>glm_results %&gt;%
+  conf_mat_resampled() </code></pre>
+<pre><code>## # A tibble: 9 x 3
+##   Prediction Truth       Freq
+##   &lt;fct&gt;      &lt;fct&gt;      &lt;dbl&gt;
+## 1 setosa     setosa     13.3 
+## 2 setosa     versicolor  0   
+## 3 setosa     virginica   0   
+## 4 versicolor setosa      0   
+## 5 versicolor versicolor 12.2 
+## 6 versicolor virginica   1   
+## 7 virginica  setosa      0   
+## 8 virginica  versicolor  1.24
+## 9 virginica  virginica  12.4</code></pre>
+<pre class="r"><code>glm_results %&gt;%
+  conf_mat_resampled() </code></pre>
+<pre><code>## # A tibble: 9 x 3
+##   Prediction Truth       Freq
+##   &lt;fct&gt;      &lt;fct&gt;      &lt;dbl&gt;
+## 1 setosa     setosa     13.3 
+## 2 setosa     versicolor  0   
+## 3 setosa     virginica   0   
+## 4 versicolor setosa      0   
+## 5 versicolor versicolor 12.2 
+## 6 versicolor virginica   1   
+## 7 virginica  setosa      0   
+## 8 virginica  versicolor  1.24
+## 9 virginica  virginica  12.4</code></pre>
+<pre class="r"><code>glm_results %&gt;%
+  collect_predictions() %&gt;%
+  group_by(id) %&gt;%
+  roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
+  autoplot()</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>rf_results %&gt;%
+  collect_predictions() %&gt;%
+  group_by(id) %&gt;%
+  roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
+  autoplot() +
+  theme(legend.position = &#39;none&#39;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>final_glm &lt;- glm_wf %&gt;%
+    add_model(glm_mod) %&gt;%
+    last_fit(tidy_split)
+
+final_glm</code></pre>
+<pre><code>## # Resampling results
+## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # A tibble: 1 x 6
+##   splits       id           .metrics      .notes       .predictions    .workflow
+##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
+## 1 &lt;split [113… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [37 × … &lt;workflo…</code></pre>
+<pre class="r"><code>final_rf &lt;- rf_wf %&gt;%
+    add_model(rf_mod) %&gt;%
+    last_fit(tidy_split)
+
+final_rf</code></pre>
+<pre><code>## # Resampling results
+## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # A tibble: 1 x 6
+##   splits       id           .metrics      .notes       .predictions    .workflow
+##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
+## 1 &lt;split [113… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [37 × … &lt;workflo…</code></pre>
+<pre class="r"><code>collect_metrics(final_glm)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy multiclass         1
+## 2 roc_auc  hand_till          1</code></pre>
+<pre class="r"><code>collect_predictions(final_glm) %&gt;%
+  conf_mat(species, .pred_class) %&gt;% 
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>collect_metrics(final_rf)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy multiclass     0.973
+## 2 roc_auc  hand_till      1</code></pre>
+<pre class="r"><code>collect_predictions(final_rf) %&gt;%
+  conf_mat(species, .pred_class) %&gt;% 
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>final_glm$.workflow[[1]] %&gt;%
+  tidy(exponentiate = TRUE) %&gt;% 
+  arrange(estimate)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 4.0-2</code></pre>
+<pre><code>## # A tibble: 15 x 4
+##    class      term         estimate penalty
+##    &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt;
+##  1 virginica  (Intercept)    -32.0        0
+##  2 setosa     petal_length    -6.48       0
+##  3 virginica  sepal_width     -5.89       0
+##  4 setosa     sepal_length     0          0
+##  5 setosa     petal_width      0          0
+##  6 versicolor sepal_width      0          0
+##  7 versicolor petal_length     0          0
+##  8 versicolor petal_width      0          0
+##  9 virginica  sepal_length     0          0
+## 10 versicolor sepal_length     1.39       0
+## 11 setosa     sepal_width      4.70       0
+## 12 virginica  petal_length     8.12       0
+## 13 versicolor (Intercept)     10.7        0
+## 14 virginica  petal_width     17.0        0
+## 15 setosa     (Intercept)     21.3        0</code></pre>
 </div>
