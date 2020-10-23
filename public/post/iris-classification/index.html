@@ -658,8 +658,9 @@
       
 
 
-<!-- # Iris: a classic -->
-<p>The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).</p>
+<div id="a-classic-dataset" class="section level1">
+<h1>A classic dataset</h1>
+<p>Iris is one of the built-in datasets that are available in R. To see a complete list, type <code>data()</code> into the Rstudio console.</p>
 <pre class="r"><code># load the iris data set
 iris_df&lt;- iris %&gt;% clean_names()
 
@@ -686,6 +687,7 @@ iris_df %&gt;%  summary()</code></pre>
 ##                 
 ##                 
 ## </code></pre>
+</div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
 <p>Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.</p>
@@ -696,9 +698,11 @@ iris_df %&gt;%  summary()</code></pre>
 <pre class="r"><code>iris_df %&gt;% 
   ggplot(aes(petal_length, petal_width, color = species)) +
   geom_point() + facet_wrap(~species)</code></pre>
-<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
-# Tidy format
-Let’s change the shape of our data by combining all iris features into a single category called <code>metric</code> and the associated values will go into a column that we name <code>value</code>.</p>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+</div>
+<div id="tidy-format" class="section level1">
+<h1>Tidy format</h1>
+<p>Let’s change the shape of our data by combining all iris features into a single category called <code>metric</code> and the associated values will go into a column that we name <code>value</code>.</p>
 <pre class="r"><code>iris_df_long &lt;- iris_df %&gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &#39;metric&#39;,
@@ -723,8 +727,10 @@ iris_df_long %&gt;%
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = &quot;free_y&quot;)</code></pre>
 <p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
-<div id="lets-get-modeling-first-we-split-the-data.-since-we-only-have-150-samples-50-for-each-iris-species-we-will-also-use-bootstrap-resampling." class="section level2">
-<h2>Let’s get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.</h2>
+</div>
+<div id="lets-get-modeling" class="section level1">
+<h1>Let’s get modeling!</h1>
+<p>First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.</p>
 <pre class="r"><code>set.seed(123)
 tidy_split &lt;- initial_split(iris_df)
 iris_train &lt;- training(tidy_split)
@@ -732,8 +738,9 @@ iris_test &lt;- testing(tidy_split)
 
 iris_boots &lt;- bootstraps(iris_train) </code></pre>
 </div>
-<div id="recipes-is-the-way-to-go-for-feature-engineering.-a-great-way-to-see-the-available-functions-in-rstudio-type-recipes-into-the-console-and-scroll." class="section level2">
-<h2>Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type <code>recipes::</code> into the console and scroll.</h2>
+<div id="recipes" class="section level1">
+<h1>Recipes</h1>
+<p>Is the way to go for feature engineering. A great way to see the available functions in Rstudio: type <code>recipes::</code> into the console and scroll.</p>
 <pre class="r"><code>iris_rec &lt;- recipe(species ~ ., data = iris_train) %&gt;%
   step_zv(all_predictors()) %&gt;%
   step_normalize(all_predictors())
@@ -797,9 +804,9 @@ kable(head(iris_juice &lt;- juice(prep)))</code></pre>
 </tbody>
 </table>
 </div>
-<div id="create-models." class="section level2">
-<h2>Create models.</h2>
-<p>Let’s set up two different models: logistic regression and random forest</p>
+<div id="create-models." class="section level1">
+<h1>Create models.</h1>
+<p>Let’s set up two different models: logistic regression and random forest.</p>
 <pre class="r"><code>glm_spec &lt;- logistic_reg() %&gt;%
   set_engine(&quot;glm&quot;)
 
@@ -872,7 +879,6 @@ collect_metrics(rf_rs)</code></pre>
 #   geom_abline(lty = 2, color = &quot;gray80&quot;, size = 1.5) +
 #   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
 #   coord_equal()</code></pre>
-</div>
 </div>
 
     </div>

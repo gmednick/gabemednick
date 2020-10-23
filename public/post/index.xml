@@ -20,8 +20,9 @@
       <description>
 
 
-&lt;!-- # Iris: a classic --&gt;
-&lt;p&gt;The iris dataset is a built in dataset in R. Use data() to see available datasets (many packages also come with their own datasets).&lt;/p&gt;
+&lt;div id=&#34;a-classic-dataset&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A classic dataset&lt;/h1&gt;
+&lt;p&gt;Iris is one of the built-in datasets that are available in R. To see a complete list, type &lt;code&gt;data()&lt;/code&gt; into the Rstudio console.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set
 iris_df&amp;lt;- iris %&amp;gt;% clean_names()
 
@@ -48,6 +49,7 @@ iris_df %&amp;gt;%  summary()&lt;/code&gt;&lt;/pre&gt;
 ##                 
 ##                 
 ## &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visualize relationships&lt;/h1&gt;
 &lt;p&gt;Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.&lt;/p&gt;
@@ -58,9 +60,11 @@ iris_df %&amp;gt;%  summary()&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;% 
   ggplot(aes(petal_length, petal_width, color = species)) +
   geom_point() + facet_wrap(~species)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;
-# Tidy format
-Let’s change the shape of our data by combining all iris features into a single category called &lt;code&gt;metric&lt;/code&gt; and the associated values will go into a column that we name &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidy-format&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tidy format&lt;/h1&gt;
+&lt;p&gt;Let’s change the shape of our data by combining all iris features into a single category called &lt;code&gt;metric&lt;/code&gt; and the associated values will go into a column that we name &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &amp;#39;metric&amp;#39;,
@@ -85,8 +89,10 @@ iris_df_long %&amp;gt;%
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;div id=&#34;lets-get-modeling-first-we-split-the-data.-since-we-only-have-150-samples-50-for-each-iris-species-we-will-also-use-bootstrap-resampling.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Let’s get modeling! First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.&lt;/h2&gt;
+&lt;/div&gt;
+&lt;div id=&#34;lets-get-modeling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Let’s get modeling!&lt;/h1&gt;
+&lt;p&gt;First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
 tidy_split &amp;lt;- initial_split(iris_df)
 iris_train &amp;lt;- training(tidy_split)
@@ -94,8 +100,9 @@ iris_test &amp;lt;- testing(tidy_split)
 
 iris_boots &amp;lt;- bootstraps(iris_train) &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;recipes-is-the-way-to-go-for-feature-engineering.-a-great-way-to-see-the-available-functions-in-rstudio-type-recipes-into-the-console-and-scroll.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Recipes is the way to go for feature engineering. A great way to see the available functions in Rstudio: type &lt;code&gt;recipes::&lt;/code&gt; into the console and scroll.&lt;/h2&gt;
+&lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Recipes&lt;/h1&gt;
+&lt;p&gt;Is the way to go for feature engineering. A great way to see the available functions in Rstudio: type &lt;code&gt;recipes::&lt;/code&gt; into the console and scroll.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~ ., data = iris_train) %&amp;gt;%
   step_zv(all_predictors()) %&amp;gt;%
   step_normalize(all_predictors())
@@ -159,9 +166,9 @@ kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-&lt;div id=&#34;create-models.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Create models.&lt;/h2&gt;
-&lt;p&gt;Let’s set up two different models: logistic regression and random forest&lt;/p&gt;
+&lt;div id=&#34;create-models.&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Create models.&lt;/h1&gt;
+&lt;p&gt;Let’s set up two different models: logistic regression and random forest.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glm_spec &amp;lt;- logistic_reg() %&amp;gt;%
   set_engine(&amp;quot;glm&amp;quot;)
 
@@ -234,7 +241,6 @@ collect_metrics(rf_rs)&lt;/code&gt;&lt;/pre&gt;
 #   geom_abline(lty = 2, color = &amp;quot;gray80&amp;quot;, size = 1.5) +
 #   geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
 #   coord_equal()&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
