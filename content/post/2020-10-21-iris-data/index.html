@@ -24,39 +24,40 @@ projects: []
 
 <div id="the-iris-dataset" class="section level1">
 <h1>The iris dataset</h1>
-<p>The iris dataset is a classic, so much so that it is built into datasets R. You can use <code>data()</code> in the R console to see a complete list of available datasets.</p>
+<p>The iris dataset is a classic, so much so that it is one of the example datasets that is included with base R. You can use the <code>data()</code> function to access a complete list of datasets that come with R. There are often datasets associated with packages as well. For example, the Ames housing dataset is included with Tidymodels.</p>
+<p>Let’s take a look at the data.</p>
 <pre class="r"><code># load the iris data set
 iris_df&lt;- iris %&gt;% 
   clean_names() 
 
-# iris_df %&gt;%  View()
-
-iris_df %&gt;%  count(species)</code></pre>
+iris_df %&gt;%  head()</code></pre>
+<pre><code>##   sepal_length sepal_width petal_length petal_width species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<pre class="r"><code>iris_df %&gt;%  count(species)</code></pre>
 <pre><code>##      species  n
 ## 1     setosa 50
 ## 2 versicolor 50
 ## 3  virginica 50</code></pre>
 <pre class="r"><code># equal number of each species, 150 total
-iris_df %&gt;%  summary()</code></pre>
-<pre><code>##   sepal_length    sepal_width     petal_length    petal_width   
-##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
-##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
-##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
-##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
-##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
-##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
-##        species  
-##  setosa    :50  
-##  versicolor:50  
-##  virginica :50  
-##                 
-##                 
-## </code></pre>
-<pre class="r"><code># No NAs, the data is clean!</code></pre>
+iris_df %&gt;%  str()</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  5 variables:
+##  $ sepal_length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ sepal_width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code># No NAs! this data is lickedy clean!</code></pre>
+<p>We see that we have four features (sepal length and with, and petal length and width) and there are three unique species..</p>
+<p><strong>It makes sense to create a model that predicts the species of iris based on the flower’s measurements.</strong></p>
 </div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
-<p>Before we do any kind of machine learning, let’s visualize the features and start thinking about what kind of questions we can ask. And ‘see’ how our features correlate which will also tell us about how well we will be able to make predictions with our data.</p>
+<p>Before we do any kind of machine learning, let’s visualize the relationships in our data and get a feel for the predictive power of our features. We can do this by plotting the explanatory features and then use color or faceting to create the distinction of species.</p>
 <pre class="r"><code>iris_df %&gt;% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
   geom_point() + facet_wrap(~species)</code></pre>
@@ -68,7 +69,7 @@ iris_df %&gt;%  summary()</code></pre>
 </div>
 <div id="tidy-format" class="section level1">
 <h1>Tidy format</h1>
-<p>Let’s change the shape of our data by combining all iris features into a single category called <code>metric</code> and the associated values will go into a column that we name <code>value</code>.</p>
+<p>Let’s change the shape of our data by combining all iris features into a single category called <code>metric</code> and the associated values will be assigned to a column that we name <code>value</code>. This tidy format lends itself to data visualization and many other tools in the tidyverse.</p>
 <pre class="r"><code>iris_df_long &lt;- iris_df %&gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &#39;metric&#39;,
@@ -94,19 +95,40 @@ iris_df_long %&gt;%
   facet_wrap(~ metric, scales = &quot;free_y&quot;)</code></pre>
 <p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
 </div>
-<div id="lets-get-modeling" class="section level1">
-<h1>Let’s get modeling!</h1>
-<p>First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.</p>
+<div id="got-models" class="section level1">
+<h1>Got models</h1>
+<p>Before we get to modeling, we will want to split the data and typically some feature engineering may be necessary as well. Since our dataset is small, we are going to take the training set and make 25 bootstrap resamples. By default, <code>initial split</code> provides a 75:25 split for our train and test sets respectively. The function <code>bootstraps</code> will take the training data, further split it into a training and test set, then resample and repeat 25 times. This ‘resampling’ provides a more robust method to test our model validity.</p>
 <pre class="r"><code>set.seed(123)
 tidy_split &lt;- initial_split(iris_df)
-iris_train &lt;- training(tidy_split)
+tidy_split</code></pre>
+<pre><code>## &lt;Analysis/Assess/Total&gt;
+## &lt;113/37/150&gt;</code></pre>
+<pre class="r"><code>iris_train &lt;- training(tidy_split)
 iris_test &lt;- testing(tidy_split)
 
-iris_boots &lt;- bootstraps(iris_train) </code></pre>
+iris_boots &lt;- bootstraps(iris_train) 
+iris_boots</code></pre>
+<pre><code>## # Bootstrap sampling 
+## # A tibble: 25 x 2
+##    splits           id         
+##    &lt;list&gt;           &lt;chr&gt;      
+##  1 &lt;split [113/39]&gt; Bootstrap01
+##  2 &lt;split [113/40]&gt; Bootstrap02
+##  3 &lt;split [113/44]&gt; Bootstrap03
+##  4 &lt;split [113/41]&gt; Bootstrap04
+##  5 &lt;split [113/39]&gt; Bootstrap05
+##  6 &lt;split [113/40]&gt; Bootstrap06
+##  7 &lt;split [113/42]&gt; Bootstrap07
+##  8 &lt;split [113/35]&gt; Bootstrap08
+##  9 &lt;split [113/42]&gt; Bootstrap09
+## 10 &lt;split [113/41]&gt; Bootstrap10
+## # … with 15 more rows</code></pre>
 </div>
 <div id="recipes" class="section level1">
 <h1>Recipes</h1>
-<p>Is the way to go for feature engineering. A great way to see the available functions in a package is to type the package name and two colons, eg <code>recipes::</code> into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available. Or you can simply use <code>?function</code> if you know the function and just need more details.</p>
+<p>Is the way to go for feature engineering. A great way to see the available functions in a package is to type the package name and two colons, eg <code>recipes::</code> into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available.</p>
+<p><img src="recipes_functions.jpg" /></p>
+<p>Let’s create a recipe to demonstrate how easy it is to apply feature engineering. Since the features of the iris dataset don’t actually need any feature engineering, we won’t include this recipe in our final workflow.</p>
 <pre class="r"><code>iris_rec &lt;- recipe(species ~., data = iris_train) %&gt;%
   step_zv(all_predictors()) %&gt;%
   step_normalize(all_predictors())
@@ -170,41 +192,70 @@ kable(head(iris_juice &lt;- juice(prep)))</code></pre>
 </tbody>
 </table>
 </div>
-<div id="create-models." class="section level1">
-<h1>Create models.</h1>
-<p>Let’s set up two different models: <strong>logistic regression</strong> and <strong>random forest</strong>.</p>
-<pre class="r"><code>glm_mod &lt;- logistic_reg() %&gt;%
-  set_engine(&quot;glm&quot;) %&gt;% 
-  set_mode(&#39;classification&#39;)
-
-glm_mod &lt;- multinom_reg(penalty = 0) %&gt;% set_engine(&quot;glmnet&quot;) %&gt;% 
-  set_mode(&quot;classification&quot;)
-
-glm_wf &lt;- workflow() %&gt;%
-  add_formula(species ~ .) 
-
-rf_mod &lt;- rand_forest() %&gt;%
-  set_engine(&quot;ranger&quot;) %&gt;%
-  set_mode(&quot;classification&quot;)
-
-rf_wf &lt;- workflow() %&gt;%
-  add_formula(species ~ .)</code></pre>
+<div id="creating-models-with-the-recipes-package" class="section level1">
+<h1>Creating models with the Recipes package</h1>
+<p>Let’s set up two different models: first up <strong>generalized linear model</strong> or <strong>glmnet</strong></p>
 <pre class="r"><code>set.seed(1234)
-glm_results &lt;- glm_wf %&gt;%
-  add_model(glm_mod) %&gt;% 
+glmnet_mod &lt;- multinom_reg(penalty = 0) %&gt;% set_engine(&quot;glmnet&quot;) %&gt;% 
+  set_mode(&quot;classification&quot;)
+glmnet_mod</code></pre>
+<pre><code>## Multinomial Regression Model Specification (classification)
+## 
+## Main Arguments:
+##   penalty = 0
+## 
+## Computational engine: glmnet</code></pre>
+<pre class="r"><code>glmnet_wf &lt;- workflow() %&gt;%
+  add_formula(species ~ .) 
+glmnet_wf</code></pre>
+<pre><code>## ══ Workflow ═════════════════════════════════════════════════
+## Preprocessor: Formula
+## Model: None
+## 
+## ── Preprocessor ─────────────────────────────────────────────
+## species ~ .</code></pre>
+<pre class="r"><code>glmnet_results &lt;- glmnet_wf %&gt;%
+  add_model(glmnet_mod) %&gt;% 
   fit_resamples(
     resamples = iris_boots,
     control = control_resamples(extract = extract_model,
                              save_pred = TRUE)
     )
-
-collect_metrics(glm_results)</code></pre>
+glmnet_results</code></pre>
+<pre><code>## # Resampling results
+## # Bootstrap sampling 
+## # A tibble: 25 x 6
+##    splits       id        .metrics      .notes       .extracts    .predictions  
+##    &lt;list&gt;       &lt;chr&gt;     &lt;list&gt;        &lt;list&gt;       &lt;list&gt;       &lt;list&gt;        
+##  1 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
+##  2 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [40 ×…
+##  3 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [44 ×…
+##  4 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [41 ×…
+##  5 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
+##  6 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [40 ×…
+##  7 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [42 ×…
+##  8 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [35 ×…
+##  9 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [42 ×…
+## 10 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [41 ×…
+## # … with 15 more rows</code></pre>
+<pre class="r"><code>collect_metrics(glmnet_results)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
 ## 1 accuracy multiclass 0.944    25 0.00642
 ## 2 roc_auc  hand_till  0.987    25 0.00234</code></pre>
-<pre class="r"><code>rf_results &lt;- rf_wf %&gt;%
+<p>Now let’s set up a <strong>random forest</strong> model. We can use the exact same procedure and simply switch out the model.</p>
+<pre class="r"><code>set.seed(1234)
+rf_mod &lt;- rand_forest() %&gt;%
+  set_engine(&quot;ranger&quot;) %&gt;%
+  set_mode(&quot;classification&quot;)
+
+# We set up a workflow and add the parts of our model together like legos
+rf_wf &lt;- workflow() %&gt;%
+  add_formula(species ~ .)
+
+# Here we fit our 25 resampled datasets 
+rf_results &lt;- rf_wf %&gt;%
   add_model(rf_mod) %&gt;% 
   fit_resamples(
     resamples = iris_boots,
@@ -216,7 +267,8 @@ collect_metrics(rf_results)</code></pre>
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
 ## 1 accuracy multiclass 0.945    25 0.00764
 ## 2 roc_auc  hand_till  0.993    25 0.00126</code></pre>
-<pre class="r"><code>glm_results %&gt;%
+<p>Here is a look at the confusion matrix summaries for our model. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.</p>
+<pre class="r"><code>glmnet_results %&gt;%
   conf_mat_resampled() </code></pre>
 <pre><code>## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
@@ -230,7 +282,7 @@ collect_metrics(rf_results)</code></pre>
 ## 7 virginica  setosa      0   
 ## 8 virginica  versicolor  1.24
 ## 9 virginica  virginica  12.4</code></pre>
-<pre class="r"><code>glm_results %&gt;%
+<pre class="r"><code>rf_results %&gt;%
   conf_mat_resampled() </code></pre>
 <pre><code>## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
@@ -239,12 +291,13 @@ collect_metrics(rf_results)</code></pre>
 ## 2 setosa     versicolor  0   
 ## 3 setosa     virginica   0   
 ## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.2 
-## 6 versicolor virginica   1   
+## 5 versicolor versicolor 12.3 
+## 6 versicolor virginica   1.04
 ## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.24
+## 8 virginica  versicolor  1.16
 ## 9 virginica  virginica  12.4</code></pre>
-<pre class="r"><code>glm_results %&gt;%
+<p>The ROC curve helps us visually interpret our model performance at every threshold.</p>
+<pre class="r"><code>glmnet_results %&gt;%
   collect_predictions() %&gt;%
   group_by(id) %&gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
@@ -256,12 +309,13 @@ collect_metrics(rf_results)</code></pre>
   roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
   autoplot() +
   theme(legend.position = &#39;none&#39;)</code></pre>
-<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<pre class="r"><code>final_glm &lt;- glm_wf %&gt;%
-    add_model(glm_mod) %&gt;%
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+This is the final fit. By using the <code>last_fit(tidy_split)</code>, we are able to train our model on the training set and test the model on the testing set in one fell swoop!</p>
+<pre class="r"><code>final_glmnet &lt;- glmnet_wf %&gt;%
+    add_model(glmnet_mod) %&gt;%
     last_fit(tidy_split)
 
-final_glm</code></pre>
+final_glmnet</code></pre>
 <pre><code>## # Resampling results
 ## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
 ## # A tibble: 1 x 6
@@ -279,13 +333,14 @@ final_rf</code></pre>
 ##   splits       id           .metrics      .notes       .predictions    .workflow
 ##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
 ## 1 &lt;split [113… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [37 × … &lt;workflo…</code></pre>
-<pre class="r"><code>collect_metrics(final_glm)</code></pre>
+<p>The confusion matrix was generated with the samples in the test data. Although the iris dataset is great for diving into the tidymodels-sphere, it does not present a real challenge for our model and results in near-perfect prediction.</p>
+<pre class="r"><code>collect_metrics(final_glmnet)</code></pre>
 <pre><code>## # A tibble: 2 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
 ## 1 accuracy multiclass         1
 ## 2 roc_auc  hand_till          1</code></pre>
-<pre class="r"><code>collect_predictions(final_glm) %&gt;%
+<pre class="r"><code>collect_predictions(final_glmnet) %&gt;%
   conf_mat(species, .pred_class) %&gt;% 
   autoplot(type = &#39;heatmap&#39;)</code></pre>
 <p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
@@ -299,9 +354,9 @@ final_rf</code></pre>
   conf_mat(species, .pred_class) %&gt;% 
   autoplot(type = &#39;heatmap&#39;)</code></pre>
 <p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<pre class="r"><code>final_glm$.workflow[[1]] %&gt;%
+<pre class="r"><code>final_glmnet$.workflow[[1]] %&gt;%
   tidy(exponentiate = TRUE) %&gt;% 
-  arrange(estimate)</code></pre>
+  arrange(desc(estimate))</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;Matrix&#39;</code></pre>
@@ -312,19 +367,23 @@ final_rf</code></pre>
 <pre><code>## # A tibble: 15 x 4
 ##    class      term         estimate penalty
 ##    &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt;
-##  1 virginica  (Intercept)    -32.0        0
-##  2 setosa     petal_length    -6.48       0
-##  3 virginica  sepal_width     -5.89       0
-##  4 setosa     sepal_length     0          0
-##  5 setosa     petal_width      0          0
-##  6 versicolor sepal_width      0          0
-##  7 versicolor petal_length     0          0
-##  8 versicolor petal_width      0          0
-##  9 virginica  sepal_length     0          0
-## 10 versicolor sepal_length     1.39       0
-## 11 setosa     sepal_width      4.70       0
-## 12 virginica  petal_length     8.12       0
-## 13 versicolor (Intercept)     10.7        0
-## 14 virginica  petal_width     17.0        0
-## 15 setosa     (Intercept)     21.3        0</code></pre>
+##  1 setosa     (Intercept)     21.3        0
+##  2 virginica  petal_width     17.0        0
+##  3 versicolor (Intercept)     10.7        0
+##  4 virginica  petal_length     8.12       0
+##  5 setosa     sepal_width      4.70       0
+##  6 versicolor sepal_length     1.39       0
+##  7 setosa     sepal_length     0          0
+##  8 setosa     petal_width      0          0
+##  9 versicolor sepal_width      0          0
+## 10 versicolor petal_length     0          0
+## 11 versicolor petal_width      0          0
+## 12 virginica  sepal_length     0          0
+## 13 virginica  sepal_width     -5.89       0
+## 14 setosa     petal_length    -6.48       0
+## 15 virginica  (Intercept)    -32.0        0</code></pre>
+</div>
+<div id="credits" class="section level1">
+<h1>Credits</h1>
+<p>I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.</p>
 </div>

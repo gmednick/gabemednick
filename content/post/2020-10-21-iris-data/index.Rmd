@@ -30,24 +30,29 @@ data("iris")
 ```
 
 # The iris dataset
-The iris dataset is a classic, so much so that it is built into datasets R. You can use `data()` in the R console to see a complete list of available datasets.  
+The iris dataset is a classic, so much so that it is one of the example datasets that is included with base R. You can use the `data()` function to access a complete list of datasets that come with R. There are often datasets associated with packages as well. For example, the Ames housing dataset is included with Tidymodels.
 
+Let's take a look at the data.
 ```{r}
 # load the iris data set
 iris_df<- iris %>% 
   clean_names() 
 
-# iris_df %>%  View()
+iris_df %>%  head()
 
 iris_df %>%  count(species)
 # equal number of each species, 150 total
-iris_df %>%  summary()
-# No NAs, the data is clean!
+iris_df %>%  str()
+# No NAs! this data is lickedy clean!
 
 ```
+We see that we have four features (sepal length and with, and petal length and width) and there are three unique species.. 
+
+**It makes sense to create a model that predicts the species of iris based on the flower's measurements.** 
 
 # Visualize relationships
-Before we do any kind of machine learning, let's visualize the features and start thinking about what kind of questions we can ask. And 'see' how our features correlate which will also tell us about how well we will be able to make predictions with our data.
+Before we do any kind of machine learning, let's visualize the relationships in our data and get a feel for the predictive power of our features. We can do this by plotting the explanatory features and then use color or faceting to create the distinction of species.
+
 ```{r}
 iris_df %>% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
@@ -60,7 +65,7 @@ iris_df %>%
 ```
 
 # Tidy format
-Let's change the shape of our data by combining all iris features into a single category called `metric` and the associated values will go into a column that we name `value`. 
+Let's change the shape of our data by combining all iris features into a single category called `metric` and the associated values will be assigned to a column that we name `value`. This tidy format lends itself to data visualization and many other tools in the tidyverse.
 
 ```{r}
 
@@ -89,19 +94,26 @@ iris_df_long %>%
   facet_wrap(~ metric, scales = "free_y")
 ```
 
-# Let's get modeling! 
-First, we split the data. Since we only have 150 samples (50 for each iris species), we will also use bootstrap resampling.
+# Got models 
+Before we get to modeling, we will want to split the data and typically some feature engineering may be necessary as well. Since our dataset is small, we are going to take the training set and make 25 bootstrap resamples. By default, `initial split` provides a 75:25 split for our train and test sets respectively. The function `bootstraps` will take the training data, further split it into a training and test set, then resample and repeat 25 times. This 'resampling' provides a more robust method to test our model validity.
 ```{r}
 set.seed(123)
 tidy_split <- initial_split(iris_df)
+tidy_split
 iris_train <- training(tidy_split)
 iris_test <- testing(tidy_split)
 
 iris_boots <- bootstraps(iris_train) 
+iris_boots
 ```
 
 # Recipes 
-Is the way to go for feature engineering. A great way to see the available functions in a package is to type the package name and two colons, eg `recipes::` into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available. Or you can simply use `?function` if you know the function and just need more details.
+Is the way to go for feature engineering. A great way to see the available functions in a package is to type the package name and two colons, eg `recipes::` into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available. 
+
+![](recipes_functions.jpg)
+
+Let's create a recipe to demonstrate how easy it is to apply feature engineering. Since the features of the iris dataset don't actually need any feature engineering, we won't include this recipe in our final workflow. 
+
 ```{r}
 iris_rec <- recipe(species ~., data = iris_train) %>%
   step_zv(all_predictors()) %>%
@@ -112,40 +124,41 @@ prep <-  prep(iris_rec)
 kable(head(iris_juice <- juice(prep)))
 ```
 
-# Create models. 
-Let's set up two different models: **logistic regression** and **random forest**.
-```{r}
-glm_mod <- logistic_reg() %>%
-  set_engine("glm") %>% 
-  set_mode('classification')
-
-glm_mod <- multinom_reg(penalty = 0) %>% set_engine("glmnet") %>% 
-  set_mode("classification")
-
-glm_wf <- workflow() %>%
-  add_formula(species ~ .) 
-
-rf_mod <- rand_forest() %>%
-  set_engine("ranger") %>%
-  set_mode("classification")
-
-rf_wf <- workflow() %>%
-  add_formula(species ~ .)
- 
-```
-
+# Creating models with the Recipes package
+Let's set up two different models: first up **generalized linear model** or **glmnet**  
 ```{r}
 set.seed(1234)
-glm_results <- glm_wf %>%
-  add_model(glm_mod) %>% 
+glmnet_mod <- multinom_reg(penalty = 0) %>% set_engine("glmnet") %>% 
+  set_mode("classification")
+glmnet_mod
+
+glmnet_wf <- workflow() %>%
+  add_formula(species ~ .) 
+glmnet_wf
+
+glmnet_results <- glmnet_wf %>%
+  add_model(glmnet_mod) %>% 
   fit_resamples(
     resamples = iris_boots,
     control = control_resamples(extract = extract_model,
                              save_pred = TRUE)
     )
+glmnet_results
 
-collect_metrics(glm_results)
+collect_metrics(glmnet_results)
+```
+Now let's set up a **random forest** model. We can use the exact same procedure and simply switch out the model.
+```{r}
+set.seed(1234)
+rf_mod <- rand_forest() %>%
+  set_engine("ranger") %>%
+  set_mode("classification")
 
+# We set up a workflow and add the parts of our model together like legos
+rf_wf <- workflow() %>%
+  add_formula(species ~ .)
+
+# Here we fit our 25 resampled datasets 
 rf_results <- rf_wf %>%
   add_model(rf_mod) %>% 
   fit_resamples(
@@ -154,16 +167,19 @@ rf_results <- rf_wf %>%
     )
 collect_metrics(rf_results)
 ```
+
+Here is a look at the confusion matrix summaries for our model. The confusion matrix let's us see the correct and incorrect predictions of our models in a single table.
 ```{r}
-glm_results %>%
+glmnet_results %>%
   conf_mat_resampled() 
 
-glm_results %>%
+rf_results %>%
   conf_mat_resampled() 
 ```
 
+The ROC curve helps us visually interpret our model performance at every threshold.
 ```{r}
-glm_results %>%
+glmnet_results %>%
   collect_predictions() %>%
   group_by(id) %>%
   roc_curve(species, .pred_setosa:.pred_virginica) %>%
@@ -179,13 +195,13 @@ rf_results %>%
   theme(legend.position = 'none')
 
 ```
-
+This is the final fit. By using the `last_fit(tidy_split)`, we are able to train our model on the training set and test the model on the testing set in one fell swoop!
 ```{r}
-final_glm <- glm_wf %>%
-    add_model(glm_mod) %>%
+final_glmnet <- glmnet_wf %>%
+    add_model(glmnet_mod) %>%
     last_fit(tidy_split)
 
-final_glm
+final_glmnet
 
 final_rf <- rf_wf %>%
     add_model(rf_mod) %>%
@@ -193,12 +209,12 @@ final_rf <- rf_wf %>%
 
 final_rf
 ```
-
+The confusion matrix was generated with the samples in the test data. Although the iris dataset is great for diving into the tidymodels-sphere, it does not present a real challenge for our model and results in near-perfect prediction.
 
 ```{r}
-collect_metrics(final_glm)
+collect_metrics(final_glmnet)
 
-collect_predictions(final_glm) %>%
+collect_predictions(final_glmnet) %>%
   conf_mat(species, .pred_class) %>% 
   autoplot(type = 'heatmap')
 ```
@@ -213,8 +229,10 @@ collect_predictions(final_rf) %>%
 
 
 ```{r}
-final_glm$.workflow[[1]] %>%
+final_glmnet$.workflow[[1]] %>%
   tidy(exponentiate = TRUE) %>% 
-  arrange(estimate)
+  arrange(desc(estimate))
 
 ```
+# Credits
+I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch. 
