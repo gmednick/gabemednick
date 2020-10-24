@@ -52,7 +52,9 @@ superuser: true
 
 ---
 
-My journey into the physical and biological sciences started with a desire to study osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, my interest in the structure and function of the human body grew into a fascination with the invisible structure and function of the cell. I developed a deep interest in both physical chemistry and biochemistry, and my curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria. After finishing my PhD, I developed and implemented innovative teaching practices in chemistry and biology at the university level. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. I love hands-on research but my current professional passions are **data science** and **bioinformatics**. Data informed choices can provide insight, drive innovation and optimize decision making. My mission is to facilitate this process. 
+My journey into the physical and biological sciences started with a desire to study osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, my interest in the structure and function of the human body grew into a fascination with the invisible structure and inner workings of the cell. I developed a deep interest in both physical chemistry and biochemistry, and my curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria.
+
+After finishing my PhD, I developed and implemented innovative teaching practices in chemistry and biology at the university level. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. I love hands-on research but my current professional interests are centered on **data science** and **bioinformatics**. My mission is to facilitate data informed choices to provide insight, drive innovation and optimize decision making.
 
 
 
