@@ -18,20 +18,19 @@ date_format = "Jan 2006"
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 [[experience]]
-  title = "Boson Biotechnology Informatics and Consulting"
-  company = ""
+  title = "VP of informatics"
+  company = "Boson Discovery"
   company_url = ""
   location = "California"
   date_start = "2020-08-01"
   date_end = ""
-  description = """
-  Responsibilities include:
+  description = """Biotechnology, Informatics and Consulting
   
   * Data analysis
-  * Bioinformatics
+  * Bioinformatics analysis
   * Applied machine learning
-  * Workflow management
   * Interactive web applications
+  * Workflow management
   * IP development
   """
 [[experience]]
