@@ -990,7 +990,7 @@ final_rf</code></pre>
 </div>
 <div id="confusion-matrices" class="section level1">
 <h1>Confusion Matrices</h1>
-<p>Finally, let’s generate a multiclass confusion matrix with the results from the test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. Notice that the correct predictions are on the diagonal and there were no incorrect predictions.</p>
+<p>Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.</p>
 <pre class="r"><code>collect_metrics(final_glmnet)</code></pre>
 <pre><code>## # A tibble: 2 x 3
 ##   .metric  .estimator .estimate
@@ -999,7 +999,7 @@ final_rf</code></pre>
 ## 2 roc_auc  hand_till          1</code></pre>
 <pre class="r"><code>collect_predictions(final_glmnet) %&gt;%
   conf_mat(species, .pred_class) %&gt;% 
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
+  autoplot(type = &#39;heatmap&#39;) </code></pre>
 <p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <pre class="r"><code>collect_metrics(final_rf)</code></pre>
 <pre><code>## # A tibble: 2 x 3
@@ -1014,7 +1014,7 @@ final_rf</code></pre>
 </div>
 <div id="final-thoughts" class="section level1">
 <h1>Final thoughts</h1>
-<p>It is always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data.</p>
+<p>It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.</p>
 <p>I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.</p>
 </div>
 
