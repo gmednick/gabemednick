@@ -17,8 +17,8 @@ image:
   preview_only: no
 projects: []
 ---
-# Intro
-This data comes from the R4DS TidyTuesday project. There are five related datasets but we will only look at `key_crop_yields` dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let's get started by loading the packages that we will need for this analysis.
+# Intro to the Tidyverse
+ There are five related datasets but we will only look at `key_crop_yields` dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let's get started by loading the packages that we will need for this analysis.
 
 ```{r, out.width="100%", include=FALSE}
 library(knitr)
@@ -33,7 +33,7 @@ library(scales)
 theme_set(theme_light())
 ```
 
-Next up, let's download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using `read_csv` to import our data as a modern data frame or tibble.
+This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let's download the data from the [R4DS Github](https://github.com/rfordatascience/tidytuesday) account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using `read_csv` to import our data as a modern data frame or tibble.
 ```{r}
 
 # Load the data with a readr function
@@ -95,6 +95,8 @@ Now that we have the data in tidy format, let's see what we can learn from it. W
 # Randomly select 9 country names
 # set.seed(1014) if you want the same 9 countries to be selected each time
 country_random <- crop_yield_tidy %>% 
+  add_count(year, crop) %>% 
+  filter(crop >= 58) %>% 
   select(country) %>% 
   distinct() %>% 
   slice_sample(n = 9) %>% 

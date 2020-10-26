@@ -396,10 +396,10 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
       <description>
 
 
-&lt;div id=&#34;intro&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Intro&lt;/h1&gt;
-&lt;p&gt;This data comes from the R4DS TidyTuesday project. There are five related datasets but we will only look at &lt;code&gt;key_crop_yields&lt;/code&gt; dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.&lt;/p&gt;
-&lt;p&gt;Next up, let’s download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using &lt;code&gt;read_csv&lt;/code&gt; to import our data as a modern data frame or tibble.&lt;/p&gt;
+&lt;div id=&#34;intro-to-the-tidyverse&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Intro to the Tidyverse&lt;/h1&gt;
+&lt;p&gt;There are five related datasets but we will only look at &lt;code&gt;key_crop_yields&lt;/code&gt; dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.&lt;/p&gt;
+&lt;p&gt;This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let’s download the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using &lt;code&gt;read_csv&lt;/code&gt; to import our data as a modern data frame or tibble.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
 crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
 
@@ -814,6 +814,8 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
 # set.seed(1014) if you want the same 9 countries to be selected each time
 country_random &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  add_count(year, crop) %&amp;gt;% 
+  filter(crop &amp;gt;= 58) %&amp;gt;% 
   select(country) %&amp;gt;% 
   distinct() %&amp;gt;% 
   slice_sample(n = 9) %&amp;gt;% 

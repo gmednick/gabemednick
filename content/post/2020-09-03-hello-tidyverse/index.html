@@ -20,10 +20,10 @@ projects: []
 
 
 
-<div id="intro" class="section level1">
-<h1>Intro</h1>
-<p>This data comes from the R4DS TidyTuesday project. There are five related datasets but we will only look at <code>key_crop_yields</code> dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.</p>
-<p>Next up, let’s download the data from the R4DS Github account and take a look at it. There is the wonderful package, tidytuesdayR by Ellis Hughes, that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using <code>read_csv</code> to import our data as a modern data frame or tibble.</p>
+<div id="intro-to-the-tidyverse" class="section level1">
+<h1>Intro to the Tidyverse</h1>
+<p>There are five related datasets but we will only look at <code>key_crop_yields</code> dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.</p>
+<p>This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let’s download the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using <code>read_csv</code> to import our data as a modern data frame or tibble.</p>
 <pre class="r"><code># Load the data with a readr function
 crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;)
 
@@ -438,6 +438,8 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 <pre class="r"><code># Randomly select 9 country names
 # set.seed(1014) if you want the same 9 countries to be selected each time
 country_random &lt;- crop_yield_tidy %&gt;% 
+  add_count(year, crop) %&gt;% 
+  filter(crop &gt;= 58) %&gt;% 
   select(country) %&gt;% 
   distinct() %&gt;% 
   slice_sample(n = 9) %&gt;% 
