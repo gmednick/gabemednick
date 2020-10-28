@@ -20,9 +20,9 @@
       <description>
 
 
-&lt;div id=&#34;the-iris-dataset&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;The iris dataset&lt;/h1&gt;
-&lt;p&gt;The iris dataset is a classic, so much so that it comes packaged with base R. You can use the &lt;code&gt;data()&lt;/code&gt; function to see a list of datasets that come with R. There are often datasets associated with packages as well. Try &lt;code&gt;data(package = &#39;dplyr&#39;)&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;iris-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Iris data&lt;/h1&gt;
+&lt;p&gt;The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every base installation of R. You can use &lt;code&gt;data()&lt;/code&gt; to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., &lt;code&gt;data(package = &#39;dplyr&#39;)&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Let’s take a look at the data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set and clean the column names with janitor::clean_names()
 iris_df&amp;lt;- iris %&amp;gt;% 
@@ -51,30 +51,32 @@ iris_df %&amp;gt;%  str()&lt;/code&gt;&lt;/pre&gt;
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &amp;quot;setosa&amp;quot;,&amp;quot;versicolor&amp;quot;,..: 1 1 1 1 1 1 1 1 1 1 ...&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This dataset is clean, but with only 150 observations, we must question whether it’s too small to train a reliable model. We will generate bootstrap resamples to make the most of what we have.&lt;/p&gt;
-&lt;p&gt;We see that we have four features (sepal length and with, and petal length and width) and there are three unique species..&lt;/p&gt;
+&lt;p&gt;We see that we have four features (sepal length and width, and petal length and width) and there are three unique species..&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;It makes sense to create a model that predicts the species of iris based on the flower’s measurements.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visualize relationships&lt;/h1&gt;
-&lt;p&gt;Before we do any kind of machine learning, let’s visualize the relationships in our data and get a feel for the predictive power of our features. We can do this by plotting the explanatory features and then use color or faceting to create the distinction of species.&lt;/p&gt;
+&lt;p&gt;Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the relationships in our data. This will also help us to have an intuitive sense about the potential predictive power of the data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sepal &amp;lt;- iris_df %&amp;gt;% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
   geom_point(size = 1) + facet_wrap(~species) +
   labs(x = &amp;#39;sepal length&amp;#39;,
-       y = &amp;#39;sepal width&amp;#39;)
+       y = &amp;#39;sepal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;) 
 
 petal &amp;lt;- iris_df %&amp;gt;% 
   ggplot(aes(petal_length, petal_width, color = species)) +
   geom_point(size =1) + facet_wrap(~species) +
   labs(x = &amp;#39;petal length&amp;#39;,
-       y = &amp;#39;petal width&amp;#39;)
+       y = &amp;#39;petal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;) 
 
 (petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there&amp;#39;s a better way..&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tidy-the-dataset&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tidy the dataset&lt;/h1&gt;
-&lt;p&gt;Let’s change the shape of our data by combining the four iris features into a single column (we’ll name, e.g., &lt;code&gt;metric&lt;/code&gt;) and the associated values populate a new column (named &lt;code&gt;value&lt;/code&gt;). This transformation into a longer dataset can be done with the function &lt;code&gt;pivot_longer()&lt;/code&gt;. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.&lt;/p&gt;
+&lt;p&gt;Let’s change the shape of our data by combining the four iris features into a single column (named &lt;code&gt;metric&lt;/code&gt;) and the associated values will populate a new column (named &lt;code&gt;value&lt;/code&gt;). This transformation into a longer dataset can be achieved with the function &lt;code&gt;pivot_longer()&lt;/code&gt;. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &amp;#39;metric&amp;#39;,
@@ -103,9 +105,9 @@ iris_df_long %&amp;gt;%
   facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;got-models&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Got models&lt;/h1&gt;
-&lt;p&gt;Before we get to modeling, we will want to split the data and typically some feature engineering may be necessary as well. Since our dataset is small, we are going to take the training set and make 25 bootstrap resamples. By default, &lt;code&gt;initial split&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. The function &lt;code&gt;bootstraps&lt;/code&gt; will take the training data, further split it into a training and test set, then resample and repeat 25 times. This ‘resampling’ provides a more robust method to test our model validity.&lt;/p&gt;
+&lt;div id=&#34;get-modelling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Get modelling&lt;/h1&gt;
+&lt;p&gt;Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, &lt;code&gt;initial split&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. The function &lt;code&gt;bootstraps&lt;/code&gt; will take the training data, further split it into a training and test set, then resample and repeat 25 times. This ‘resampling’ provides a more robust dataset to train our model with.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
 tidy_split &amp;lt;- initial_split(iris_df)
 tidy_split&lt;/code&gt;&lt;/pre&gt;
@@ -134,9 +136,9 @@ iris_boots&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Recipes&lt;/h1&gt;
-&lt;p&gt;Recipes is a powerful tool for a wide range of feature engineering tasks that can be prepare your data for modeling. A great way to see the available functions in a package is to type the package name and two colons, eg &lt;code&gt;recipes::&lt;/code&gt; into the Rstudio console. All package functions will pop up and a brief description for the highlighted function will be available.&lt;/p&gt;
+&lt;p&gt;Recipes is a powerful tool with functions for a wide range of feature engineering tasks designed to prepare data for modeling. Typing &lt;code&gt;recipes::&lt;/code&gt; into the Rstudio console is a great way to browse the available functions in the package.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;recipes_functions.jpg&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Let’s create a recipe to demonstrate how easy it is to apply feature engineering. Since the features of the iris dataset do not actually require any feature engineering, we won’t include this recipe in our final workflow.&lt;/p&gt;
+&lt;p&gt;Let’s create a recipe to demonstrate how easy it is to apply feature engineering. There is really no need for feature engineering with this dataset, so we won’t actually use this recipe in the final workflow.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~., data = iris_train) %&amp;gt;%
   step_pca(all_predictors()) %&amp;gt;%
   step_normalize(all_predictors())
@@ -202,7 +204,7 @@ kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;creating-models-with-the-recipes-package&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Creating models with the Recipes package&lt;/h1&gt;
-&lt;p&gt;Let’s set up two different models: first up, the &lt;strong&gt;generalized linear model&lt;/strong&gt; or &lt;strong&gt;glmnet&lt;/strong&gt;. I will run each part of the code to preview the internals of the model as we go .&lt;/p&gt;
+&lt;p&gt;Let’s set up two different models: first, a &lt;strong&gt;generalized linear model&lt;/strong&gt; or &lt;strong&gt;glmnet&lt;/strong&gt;. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# set seed
 set.seed(1234)
 
@@ -221,11 +223,11 @@ glmnet_mod&lt;/code&gt;&lt;/pre&gt;
 glmnet_wf &amp;lt;- workflow() %&amp;gt;%
   add_formula(species ~ .) 
 glmnet_wf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ══ Workflow ═══════════════════════════════════
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ══════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ───────────────────────────────
+## ── Preprocessor ──────────────
 ## species ~ .&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
@@ -259,7 +261,7 @@ collect_metrics(glmnet_results)&lt;/code&gt;&lt;/pre&gt;
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
 ## 1 accuracy multiclass 0.944    25 0.00642
 ## 2 roc_auc  hand_till  0.987    25 0.00234&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let’s repeat the same process but switch out the model. I will choose a &lt;strong&gt;random forest&lt;/strong&gt; model.&lt;/p&gt;
+&lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to tweak a few things and walah!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
 rf_mod &amp;lt;- rand_forest() %&amp;gt;%
   set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;%
@@ -282,7 +284,7 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
 ## 1 accuracy multiclass 0.945    25 0.00764
 ## 2 roc_auc  hand_till  0.993    25 0.00126&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Here is a look at the confusion matrix summaries for our model. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
+&lt;p&gt;Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
