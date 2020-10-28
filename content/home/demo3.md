@@ -6,9 +6,9 @@
 widget = "blank"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
 active = true # Activate this widget? true/false
-weight = 60  # Order that this section will appear.
+weight = 20  # Order that this section will appear.
 
-title = "The Data Science Cycle"
+title = "Discovery is a path and a cycle"
 subtitle = ""
 
 [design]
@@ -49,4 +49,4 @@ subtitle = ""
  # CSS class.
  css_class = ""
 +++
-![](/home/demo3_files/r4ds_trans.png)
+![](/home/demo3_files/h4ds_cyclePath.png)
