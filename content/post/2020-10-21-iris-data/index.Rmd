@@ -139,7 +139,7 @@ prep <-  prep(iris_rec)
 kable(head(iris_juice <- juice(prep)))
 ```
 
-# Creating models with the Recipes package
+# Creating models with **Parsnip** 
 Let's set up two different models: first, a **generalized linear model** or **glmnet**. In this step we will create the model, workflow and fit the bootstraps. Let's take a look at the output from each step.
 ```{r}
 # set seed
@@ -217,7 +217,9 @@ rf_results %>%
   theme(legend.position = 'none')
 
 ```
+
 # Final fit
+
 This is it! By using the `last_fit(tidy_split)`, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.
 ```{r}
 final_glmnet <- glmnet_wf %>%

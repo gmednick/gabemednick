@@ -205,8 +205,8 @@ kable(head(iris_juice &lt;- juice(prep)))</code></pre>
 </tbody>
 </table>
 </div>
-<div id="creating-models-with-the-recipes-package" class="section level1">
-<h1>Creating models with the Recipes package</h1>
+<div id="creating-models-with-parsnip" class="section level1">
+<h1>Creating models with <strong>Parsnip</strong></h1>
 <p>Let’s set up two different models: first, a <strong>generalized linear model</strong> or <strong>glmnet</strong>. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.</p>
 <pre class="r"><code># set seed
 set.seed(1234)
@@ -226,11 +226,11 @@ glmnet_mod</code></pre>
 glmnet_wf &lt;- workflow() %&gt;%
   add_formula(species ~ .) 
 glmnet_wf</code></pre>
-<pre><code>## ══ Workflow ══════════════════
+<pre><code>## ══ Workflow ═════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ──────────────
+## ── Preprocessor ─────────────────
 ## species ~ .</code></pre>
 <pre class="r"><code># add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &lt;- glmnet_wf %&gt;%
@@ -329,9 +329,11 @@ collect_metrics(rf_results)</code></pre>
   roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
   autoplot() +
   theme(legend.position = &#39;none&#39;)</code></pre>
-<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
-# Final fit
-This is it! By using the <code>last_fit(tidy_split)</code>, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.</p>
+<p><img src="/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="final-fit" class="section level1">
+<h1>Final fit</h1>
+<p>This is it! By using the <code>last_fit(tidy_split)</code>, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.</p>
 <pre class="r"><code>final_glmnet &lt;- glmnet_wf %&gt;%
     add_model(glmnet_mod) %&gt;%
     last_fit(tidy_split)

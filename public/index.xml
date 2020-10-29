@@ -202,8 +202,8 @@ kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-&lt;div id=&#34;creating-models-with-the-recipes-package&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Creating models with the Recipes package&lt;/h1&gt;
+&lt;div id=&#34;creating-models-with-parsnip&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Creating models with &lt;strong&gt;Parsnip&lt;/strong&gt;&lt;/h1&gt;
 &lt;p&gt;Let’s set up two different models: first, a &lt;strong&gt;generalized linear model&lt;/strong&gt; or &lt;strong&gt;glmnet&lt;/strong&gt;. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# set seed
 set.seed(1234)
@@ -223,11 +223,11 @@ glmnet_mod&lt;/code&gt;&lt;/pre&gt;
 glmnet_wf &amp;lt;- workflow() %&amp;gt;%
   add_formula(species ~ .) 
 glmnet_wf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ══ Workflow ══════════════════
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ═════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ──────────────
+## ── Preprocessor ─────────────────
 ## species ~ .&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
@@ -326,9 +326,11 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
   roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
   autoplot() +
   theme(legend.position = &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;
-# Final fit
-This is it! By using the &lt;code&gt;last_fit(tidy_split)&lt;/code&gt;, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final-fit&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final fit&lt;/h1&gt;
+&lt;p&gt;This is it! By using the &lt;code&gt;last_fit(tidy_split)&lt;/code&gt;, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_glmnet &amp;lt;- glmnet_wf %&amp;gt;%
     add_model(glmnet_mod) %&amp;gt;%
     last_fit(tidy_split)
