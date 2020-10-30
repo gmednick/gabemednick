@@ -7,7 +7,7 @@
     <description>Blog</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 21 Oct 2020 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
       <title>Blog</title>
       <link>/post/</link>
     </image>
@@ -382,6 +382,508 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;h1&gt;Final thoughts&lt;/h1&gt;
 &lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
 &lt;p&gt;I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello Tidyverse and Tidymodels</title>
+      <link>/post/hello-tidyverse/</link>
+      <pubDate>Thu, 03 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>/post/hello-tidyverse/</guid>
+      <description>
+
+
+&lt;div id=&#34;intro-to-the-tidyverse&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Intro to the Tidyverse&lt;/h1&gt;
+&lt;p&gt;There are five related datasets but we will only look at &lt;code&gt;key_crop_yields&lt;/code&gt; dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.&lt;/p&gt;
+&lt;p&gt;This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let’s download the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using &lt;code&gt;read_csv&lt;/code&gt; to import our data as a modern data frame or tibble.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
+crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
+
+# land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
+# The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
+skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:unnamed-chunk-2&#34;&gt;Table 1: &lt;/span&gt;Data summary&lt;/caption&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Name&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;crop_yields&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of rows&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;13075&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of columns&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;_______________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Column type frequency:&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;character&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;numeric&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;________________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Group variables&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: character&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;min&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;max&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;empty&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_unique&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;whitespace&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Entity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;249&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Code&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1919&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;214&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;28%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;11%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;mean&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;sd&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p0&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p25&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p50&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p75&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p100&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;hist&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Year&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1990.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;16.73&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1976.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1991.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2005.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2018.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▆▇▇▇&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Wheat (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4974&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.62&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.69&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.67&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▅▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Rice (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4604&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.65&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.74&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.68&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▃▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Maize (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2301&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.02&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.13&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;36.76&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Soybeans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7114&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.46&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.90&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.95&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Potatoes (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3059&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.40&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.84&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.64&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.41&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;75.30&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▅▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Beans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5066&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.61&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.59&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.18&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Peas (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6840&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.01&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.72&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.16&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▃▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Cassava (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5887&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.55&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.34&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.55&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.67&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;38.58&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Barley (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6342&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.51&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.88&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.02&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.15&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▆▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Cocoa beans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8466&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.43&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Bananas (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4166&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.68&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12.08&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.66&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.94&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20.79&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;77.59&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▃▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Here are a few other options for getting to know our data
+# glimpse(crop_yields) 
+# summary(crop_yields)
+# View(crop_yields)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Data cleaning and reshaping&lt;/h1&gt;
+&lt;p&gt;Let’s start with a little data cleaning! Using &lt;code&gt;skim&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. We can see that there are plenty of NAs that we will most likely need to remove. We can also standardize our feature names with the janitor package. Lastly, we should consider the shape of our data and make sure that it’s in a tidy format where each column is a feature and each row a sample.This long or tidy format is a prerequisite for fluent analysis with the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature &lt;code&gt;crops&lt;/code&gt;. The function &lt;code&gt;pivot_longer&lt;/code&gt; is fantastic function from the tidyr package that allows us to reshape our data and preparing it for This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yields %&amp;gt;% count(Year)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 58 x 2
+##     Year     n
+##    &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+##  1  1961   209
+##  2  1962   209
+##  3  1963   209
+##  4  1964   209
+##  5  1965   209
+##  6  1966   211
+##  7  1967   211
+##  8  1968   213
+##  9  1969   213
+## 10  1970   213
+## # … with 48 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
+crop_yield_tidy &amp;lt;- crop_yields %&amp;gt;% 
+  janitor::clean_names() %&amp;gt;% 
+  rename_all(str_remove, &amp;quot;_tonnes.*&amp;quot;) %&amp;gt;% 
+  rename(country = entity) %&amp;gt;% 
+  pivot_longer(wheat:bananas, names_to = &amp;#39;crop&amp;#39;, values_to = &amp;#39;yield_hectare&amp;#39;) %&amp;gt;% 
+  drop_na(yield_hectare)
+
+kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;country&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;code&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;year&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;crop&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;yield_hectare&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0220&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.6667&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9735&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.6667&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# crop_yield_tidy %&amp;gt;% 
+#   summary()
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   count(year, country, sort = TRUE)
+# 
+# tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;% 
+#   count(country, sort = TRUE) %&amp;gt;% 
+#   filter(n &amp;gt;=500)
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   summarize(max(year)- min(year)) #57 years of recorded data
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   count(year, crop, sort = T)
+# 
+# crop_yield_tidy %&amp;gt;% 
+#   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+#   count(crop)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visual analysis&lt;/h1&gt;
+&lt;p&gt;Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
+# set.seed(1014) if you want the same 9 countries to be selected each time
+country_random &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  add_count(year, crop) %&amp;gt;% 
+  filter(crop &amp;gt;= 58) %&amp;gt;% 
+  select(country) %&amp;gt;% 
+  distinct() %&amp;gt;% 
+  slice_sample(n = 9) %&amp;gt;% 
+  pull()
+
+# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
+
+# Plot crop yield per hectare.
+library(tidytext)
+
+usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;tonnes per hectare&amp;#39;
+  )
+usa_col_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(country == country_random) %&amp;gt;% 
+  mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  scale_y_reordered() +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;yield per hectare&amp;#39;
+  )
+column_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;
+&lt;strong&gt;Figure 1.&lt;/strong&gt; This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
+line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(year &amp;gt;= 2000,
+         country == country_random) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line() +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  labs(
+     y = &amp;#39;yield per hectare&amp;#39;,
+    title = &amp;#39;Crop Yield&amp;#39;
+  )
+line_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
+box_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(year &amp;gt;= 2000,
+         country == country_random) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
+  ggplot(aes(yield_hectare, crop, color = crop)) +
+  geom_boxplot() +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
+  labs(
+    x = &amp;#39;Yield&amp;#39;,
+    title = &amp;#39;Crop Yield&amp;#39;,
+    y = &amp;#39;&amp;#39;
+  )
+box_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
