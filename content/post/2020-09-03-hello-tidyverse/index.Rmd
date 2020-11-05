@@ -18,7 +18,7 @@ image:
 projects: []
 ---
 # Intro 
-This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and the tidyverse community of data science share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week's dataset (September 1st, 2020) is from [Our World in Data] (https://ourworldindata.org/crop-yields). There are actually five dataset but we are going to focus on global crop yields. 
+This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week's dataset (September 1st, 2020) is from [Our World in Data] (https://ourworldindata.org/crop-yields). There are actually five datasets but we are going to focus on global crop yields. 
 
 ```{r, out.width="100%", include=FALSE}
 library(knitr)
@@ -33,23 +33,24 @@ library(scales)
 theme_set(theme_light())
 ```
 # Download and view the data
-Let's start by downloading the data from the [R4DS Github](https://github.com/rfordatascience/tidytuesday) account and take a look at it. I recommend the tidytuesdayR package (by Ellis Hughes, co-host of the screencast 'TidyX') for importing the data. The package is handy for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data. Although simple to use, I'm going to stick with the `readr::read_csv()` from the tidyverse and import the data as a tibble (data frame).
+Let's start by downloading the data from the [R4DS Github](https://github.com/rfordatascience/tidytuesday) account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast 'TidyX') is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I'm going to stick with the `readr::read_csv()` from the tidyverse to import the data as a tibble (data frame).
 
 ```{r}
 # Load the data with a readr function
 crop_yields <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv")
 
-# land_use <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv") %>% janitor::clean_names()
-# The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
+land_use <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv") %>% janitor::clean_names()
+
+
 skimr::skim(crop_yields)
 
-# Here are a few other options for getting to know our data
+# Here are a few other options for getting to know the data
 # glimpse(crop_yields) 
 # summary(crop_yields)
 # View(crop_yields)
 ```
 # Tidy data: cleaning and reshaping
-Let's start with a little data cleaning! `skim` from `skimr` provides a convenient summary. By looking at the data we can see that there are missing values that need to be addressed. The variable names could be improved and we should always consider the shape of our data. We probably want the data in a tidy format where each column is a feature and each row is a sample.This long format facilitates fluent analysis with the tidyverse. The function `pivot_longer()` from the tidyr package allows us to reshape our data and prepare it for exploratory data analysis (EDA).   
+Let's start with a little data cleaning! `skim()` from `skimr` provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function `pivot_longer()` from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).   
 ```{r}
 crop_yields %>% count(Year)
 # Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
@@ -63,9 +64,9 @@ crop_yield_tidy <- crop_yields %>%
 kable(head(crop_yield_tidy, n = 10))
 
 ```
-# EDA
+# What can we learn from this dataset?
 
-A great place to start an analysis is by grouping and counting features using the `count()` function.
+A great place to start an analysis is by grouping and counting features using the `count()` function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. For instance, with this data
 ```{r}
 crop_yield_tidy %>%
   count(year, country, sort = TRUE)
@@ -128,12 +129,13 @@ usa_col_plot
 #   facet_wrap(~country, scales = 'free_y')
 
 column_plot <- crop_yield_tidy %>% 
-  filter(country == country_random) %>% 
+  filter(country == country_random,
+         crop == c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %>%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   scale_y_reordered() +
-  facet_wrap(~country, scales = 'free_y') +
+  facet_wrap(~country, scales = 'free') +
   theme(legend.position =  'none') +
   labs(
     title = 'Crop Yield',

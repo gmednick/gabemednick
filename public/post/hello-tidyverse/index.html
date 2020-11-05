@@ -662,16 +662,17 @@
 
 <div id="intro" class="section level1">
 <h1>Intro</h1>
-<p>This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and the tidyverse community of data science share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (<a href="https://ourworldindata.org/crop-yields" class="uri">https://ourworldindata.org/crop-yields</a>). There are actually five dataset but we are going to focus on global crop yields.</p>
+<p>This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (<a href="https://ourworldindata.org/crop-yields" class="uri">https://ourworldindata.org/crop-yields</a>). There are actually five datasets but we are going to focus on global crop yields.</p>
 </div>
 <div id="download-and-view-the-data" class="section level1">
 <h1>Download and view the data</h1>
-<p>Let’s start by downloading the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. I recommend the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) for importing the data. The package is handy for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data. Although simple to use, I’m going to stick with the <code>readr::read_csv()</code> from the tidyverse and import the data as a tibble (data frame).</p>
+<p>Let’s start by downloading the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I’m going to stick with the <code>readr::read_csv()</code> from the tidyverse to import the data as a tibble (data frame).</p>
 <pre class="r"><code># Load the data with a readr function
 crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;)
 
-# land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% janitor::clean_names()
-# The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
+land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% janitor::clean_names()
+
+
 skimr::skim(crop_yields)</code></pre>
 <table>
 <caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
@@ -940,14 +941,14 @@ skimr::skim(crop_yields)</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># Here are a few other options for getting to know our data
+<pre class="r"><code># Here are a few other options for getting to know the data
 # glimpse(crop_yields) 
 # summary(crop_yields)
 # View(crop_yields)</code></pre>
 </div>
 <div id="tidy-data-cleaning-and-reshaping" class="section level1">
 <h1>Tidy data: cleaning and reshaping</h1>
-<p>Let’s start with a little data cleaning! <code>skim</code> from <code>skimr</code> provides a convenient summary. By looking at the data we can see that there are missing values that need to be addressed. The variable names could be improved and we should always consider the shape of our data. We probably want the data in a tidy format where each column is a feature and each row is a sample.This long format facilitates fluent analysis with the tidyverse. The function <code>pivot_longer()</code> from the tidyr package allows us to reshape our data and prepare it for exploratory data analysis (EDA).</p>
+<p>Let’s start with a little data cleaning! <code>skim()</code> from <code>skimr</code> provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function <code>pivot_longer()</code> from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).</p>
 <pre class="r"><code>crop_yields %&gt;% count(Year)</code></pre>
 <pre><code>## # A tibble: 58 x 2
 ##     Year     n
@@ -1056,9 +1057,9 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 </tbody>
 </table>
 </div>
-<div id="eda" class="section level1">
-<h1>EDA</h1>
-<p>A great place to start an analysis is by grouping and counting features using the <code>count()</code> function.</p>
+<div id="what-can-we-learn-from-this-dataset" class="section level1">
+<h1>What can we learn from this dataset?</h1>
+<p>A great place to start an analysis is by grouping and counting features using the <code>count()</code> function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. For instance, with this data</p>
 <pre class="r"><code>crop_yield_tidy %&gt;%
   count(year, country, sort = TRUE)</code></pre>
 <pre><code>## # A tibble: 13,075 x 3
@@ -1159,12 +1160,13 @@ usa_col_plot</code></pre>
 #   facet_wrap(~country, scales = &#39;free_y&#39;)
 
 column_plot &lt;- crop_yield_tidy %&gt;% 
-  filter(country == country_random) %&gt;% 
+  filter(country == country_random,
+         crop == c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   scale_y_reordered() +
-  facet_wrap(~country, scales = &#39;free_y&#39;) +
+  facet_wrap(~country, scales = &#39;free&#39;) +
   theme(legend.position =  &#39;none&#39;) +
   labs(
     title = &#39;Crop Yield&#39;,
@@ -1206,7 +1208,16 @@ box_plot</code></pre>
 </div>
 
     </div>
-
+<div id="disqus_thread"></div>
+<script>
+(function() {
+var d = document, s = d.createElement('script');
+s.src = 'https://larnsce.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     
 
 
@@ -1499,7 +1510,7 @@ box_plot</code></pre>
 
   <p class="powered-by">
     
-    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use the <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #367588"></i> </a><a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
+    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use the <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i> </a><a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
     <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #367588"></i></a>.  
     

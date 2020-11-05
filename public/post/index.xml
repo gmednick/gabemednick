@@ -396,16 +396,17 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 
 &lt;div id=&#34;intro&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Intro&lt;/h1&gt;
-&lt;p&gt;This post uses data from the &lt;i class=&#39;fab fa-r-project&#39;  style=&#39;color: #367588&#39;&gt;&lt;/i&gt; for Data Science online learning community. Each Tuesday, a dataset is posted and the tidyverse community of data science share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (&lt;a href=&#34;https://ourworldindata.org/crop-yields&#34; class=&#34;uri&#34;&gt;https://ourworldindata.org/crop-yields&lt;/a&gt;). There are actually five dataset but we are going to focus on global crop yields.&lt;/p&gt;
+&lt;p&gt;This post uses data from the &lt;i class=&#39;fab fa-r-project&#39;  style=&#39;color: #367588&#39;&gt;&lt;/i&gt; for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (&lt;a href=&#34;https://ourworldindata.org/crop-yields&#34; class=&#34;uri&#34;&gt;https://ourworldindata.org/crop-yields&lt;/a&gt;). There are actually five datasets but we are going to focus on global crop yields.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;download-and-view-the-data&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Download and view the data&lt;/h1&gt;
-&lt;p&gt;Let’s start by downloading the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. I recommend the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) for importing the data. The package is handy for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data. Although simple to use, I’m going to stick with the &lt;code&gt;readr::read_csv()&lt;/code&gt; from the tidyverse and import the data as a tibble (data frame).&lt;/p&gt;
+&lt;p&gt;Let’s start by downloading the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I’m going to stick with the &lt;code&gt;readr::read_csv()&lt;/code&gt; from the tidyverse to import the data as a tibble (data frame).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
 crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
 
-# land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
-# The skim function provides a great way to get an initial summary. I typically use View() as well to view the dataset in Rstudio
+land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
+
+
 skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
 &lt;caption&gt;&lt;span id=&#34;tab:unnamed-chunk-2&#34;&gt;Table 1: &lt;/span&gt;Data summary&lt;/caption&gt;
@@ -674,14 +675,14 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Here are a few other options for getting to know our data
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Here are a few other options for getting to know the data
 # glimpse(crop_yields) 
 # summary(crop_yields)
 # View(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tidy-data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tidy data: cleaning and reshaping&lt;/h1&gt;
-&lt;p&gt;Let’s start with a little data cleaning! &lt;code&gt;skim&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. By looking at the data we can see that there are missing values that need to be addressed. The variable names could be improved and we should always consider the shape of our data. We probably want the data in a tidy format where each column is a feature and each row is a sample.This long format facilitates fluent analysis with the tidyverse. The function &lt;code&gt;pivot_longer()&lt;/code&gt; from the tidyr package allows us to reshape our data and prepare it for exploratory data analysis (EDA).&lt;/p&gt;
+&lt;p&gt;Let’s start with a little data cleaning! &lt;code&gt;skim()&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function &lt;code&gt;pivot_longer()&lt;/code&gt; from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yields %&amp;gt;% count(Year)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 58 x 2
 ##     Year     n
@@ -790,9 +791,9 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-&lt;div id=&#34;eda&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;EDA&lt;/h1&gt;
-&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function.&lt;/p&gt;
+&lt;div id=&#34;what-can-we-learn-from-this-dataset&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;What can we learn from this dataset?&lt;/h1&gt;
+&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. For instance, with this data&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
@@ -893,12 +894,13 @@ usa_col_plot&lt;/code&gt;&lt;/pre&gt;
 #   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;)
 
 column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  filter(country == country_random) %&amp;gt;% 
+  filter(country == country_random,
+         crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   scale_y_reordered() +
-  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
   theme(legend.position =  &amp;#39;none&amp;#39;) +
   labs(
     title = &amp;#39;Crop Yield&amp;#39;,

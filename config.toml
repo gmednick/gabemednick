@@ -26,6 +26,9 @@ theme = "hugo-academic"
 # Get last modified date for content from Git?
 enableGitInfo = false
 
+# Enable comments on posts
+disqusShortname = "gabemednick"
+
 # Default language to use (if you setup multilingual support)
 defaultContentLanguage = "en"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
