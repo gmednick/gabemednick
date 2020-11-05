@@ -614,7 +614,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    6 min read
+    7 min read
   </span>
   
 
@@ -660,10 +660,13 @@
       
 
 
-<div id="intro-to-the-tidyverse" class="section level1">
-<h1>Intro to the Tidyverse</h1>
-<p>There are five related datasets but we will only look at <code>key_crop_yields</code> dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.</p>
-<p>This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let’s download the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using <code>read_csv</code> to import our data as a modern data frame or tibble.</p>
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<p>This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and the tidyverse community of data science share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (<a href="https://ourworldindata.org/crop-yields" class="uri">https://ourworldindata.org/crop-yields</a>). There are actually five dataset but we are going to focus on global crop yields.</p>
+</div>
+<div id="download-and-view-the-data" class="section level1">
+<h1>Download and view the data</h1>
+<p>Let’s start by downloading the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. I recommend the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) for importing the data. The package is handy for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data. Although simple to use, I’m going to stick with the <code>readr::read_csv()</code> from the tidyverse and import the data as a tibble (data frame).</p>
 <pre class="r"><code># Load the data with a readr function
 crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;)
 
@@ -942,9 +945,9 @@ skimr::skim(crop_yields)</code></pre>
 # summary(crop_yields)
 # View(crop_yields)</code></pre>
 </div>
-<div id="data-cleaning-and-reshaping" class="section level1">
-<h1>Data cleaning and reshaping</h1>
-<p>Let’s start with a little data cleaning! Using <code>skim</code> from <code>skimr</code> provides a convenient summary. We can see that there are plenty of NAs that we will most likely need to remove. We can also standardize our feature names with the janitor package. Lastly, we should consider the shape of our data and make sure that it’s in a tidy format where each column is a feature and each row a sample.This long or tidy format is a prerequisite for fluent analysis with the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature <code>crops</code>. The function <code>pivot_longer</code> is fantastic function from the tidyr package that allows us to reshape our data and preparing it for This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning).</p>
+<div id="tidy-data-cleaning-and-reshaping" class="section level1">
+<h1>Tidy data: cleaning and reshaping</h1>
+<p>Let’s start with a little data cleaning! <code>skim</code> from <code>skimr</code> provides a convenient summary. By looking at the data we can see that there are missing values that need to be addressed. The variable names could be improved and we should always consider the shape of our data. We probably want the data in a tidy format where each column is a feature and each row is a sample.This long format facilitates fluent analysis with the tidyverse. The function <code>pivot_longer()</code> from the tidyr package allows us to reshape our data and prepare it for exploratory data analysis (EDA).</p>
 <pre class="r"><code>crop_yields %&gt;% count(Year)</code></pre>
 <pre><code>## # A tibble: 58 x 2
 ##     Year     n
@@ -1052,34 +1055,77 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># crop_yield_tidy %&gt;% 
-#   summary()
-# 
-# crop_yield_tidy %&gt;% 
-#   count(year, country, sort = TRUE)
-# 
-# tidy_select &lt;- crop_yield_tidy %&gt;% 
-#   count(country, sort = TRUE) %&gt;% 
-#   filter(n &gt;=500)
-# 
-# crop_yield_tidy %&gt;% 
-#   summarize(max(year)- min(year)) #57 years of recorded data
-# 
-# crop_yield_tidy %&gt;% 
-#   count(year, crop, sort = T)
-# 
-# crop_yield_tidy %&gt;% 
-#   filter(country == &#39;United States&#39;) %&gt;% 
-#   count(crop)</code></pre>
+</div>
+<div id="eda" class="section level1">
+<h1>EDA</h1>
+<p>A great place to start an analysis is by grouping and counting features using the <code>count()</code> function.</p>
+<pre class="r"><code>crop_yield_tidy %&gt;%
+  count(year, country, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 13,075 x 3
+##     year country                              n
+##    &lt;dbl&gt; &lt;chr&gt;                            &lt;int&gt;
+##  1  1961 Africa                              11
+##  2  1961 Americas                            11
+##  3  1961 Asia                                11
+##  4  1961 Central America                     11
+##  5  1961 Colombia                            11
+##  6  1961 Democratic Republic of Congo        11
+##  7  1961 Eastern Africa                      11
+##  8  1961 Ecuador                             11
+##  9  1961 Land Locked Developing Countries    11
+## 10  1961 Least Developed Countries           11
+## # … with 13,065 more rows</code></pre>
+<pre class="r"><code>tidy_select &lt;- crop_yield_tidy %&gt;%
+  count(country, sort = TRUE) %&gt;%
+  filter(n &gt;=500)
+
+crop_yield_tidy %&gt;%
+  summarize(max(year)- min(year)) #57 years of recorded data</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `max(year) - min(year)`
+##                     &lt;dbl&gt;
+## 1                      57</code></pre>
+<pre class="r"><code>crop_yield_tidy %&gt;%
+  count(year, crop, sort = T)</code></pre>
+<pre><code>## # A tibble: 638 x 3
+##     year crop      n
+##    &lt;dbl&gt; &lt;chr&gt; &lt;int&gt;
+##  1  2012 maize   201
+##  2  2013 maize   201
+##  3  2014 maize   201
+##  4  2015 maize   201
+##  5  2016 maize   201
+##  6  2017 maize   201
+##  7  2018 maize   201
+##  8  2010 maize   200
+##  9  2011 maize   200
+## 10  2006 maize   199
+## # … with 628 more rows</code></pre>
+<pre class="r"><code>crop_yield_tidy %&gt;%
+  filter(country == &#39;United States&#39;) %&gt;%
+  count(crop)</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   crop         n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 bananas     58
+## 2 barley      58
+## 3 beans       58
+## 4 maize       58
+## 5 peas        58
+## 6 potatoes    58
+## 7 rice        58
+## 8 soybeans    58
+## 9 wheat       58</code></pre>
 </div>
 <div id="visual-analysis" class="section level1">
 <h1>Visual analysis</h1>
-<p>Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. <code>slice_sample()</code> can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.</p>
+<p>Now that we have the data in tidy format, let’s see what we can learn from visual analysis. We want to look at crop production by country but we can’t plot every country. For more refined control of country selection, we could incorporate the code into a Shiny dashboard.</p>
+<p>We will use <code>slice_sample()</code> can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It’s worth noting that the randomly selected countries will not always have all crops.</p>
 <pre class="r"><code># Randomly select 9 country names
-# set.seed(1014) if you want the same 9 countries to be selected each time
+# set.seed(1014) if you want to select the same 9 countries each time
+crops &lt;- crop_yield_tidy %&gt;% distinct(crop) %&gt;%  pull()
 country_random &lt;- crop_yield_tidy %&gt;% 
-  add_count(year, crop) %&gt;% 
-  filter(crop &gt;= 58) %&gt;% 
+  # filter(crop %in% crops) %&gt;% 
   select(country) %&gt;% 
   distinct() %&gt;% 
   slice_sample(n = 9) %&gt;% 
@@ -1089,7 +1135,7 @@ country_random &lt;- crop_yield_tidy %&gt;%
 
 # Plot crop yield per hectare.
 library(tidytext)
-
+# plot of USA data only
 usa_col_plot &lt;- crop_yield_tidy %&gt;% 
   filter(country == &#39;United States&#39;) %&gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
@@ -1104,7 +1150,15 @@ usa_col_plot &lt;- crop_yield_tidy %&gt;%
   )
 usa_col_plot</code></pre>
 <p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
-<pre class="r"><code>column_plot &lt;- crop_yield_tidy %&gt;% 
+<pre class="r"><code># this is what I started with.
+# crop_yield_tidy %&gt;% 
+#   filter(country == country_random) %&gt;% 
+#   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
+#   ggplot(aes(yield_hectare, crop, fill = crop)) +
+#   geom_col()  +
+#   facet_wrap(~country, scales = &#39;free_y&#39;)
+
+column_plot &lt;- crop_yield_tidy %&gt;% 
   filter(country == country_random) %&gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -1118,8 +1172,7 @@ usa_col_plot</code></pre>
     x = &#39;yield per hectare&#39;
   )
 column_plot</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="3000" />
-<strong>Figure 1.</strong> This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.</p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 line_plot &lt;- crop_yield_tidy %&gt;% 
   filter(year &gt;= 2000,
@@ -1446,9 +1499,9 @@ box_plot</code></pre>
 
   <p class="powered-by">
     
-    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #367588"></i> </a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
+    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use the <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #367588"></i> </a><a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
-    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #367588"></i></a>. 
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #367588"></i></a>.  
     
 
     

@@ -223,11 +223,11 @@ glmnet_mod&lt;/code&gt;&lt;/pre&gt;
 glmnet_wf &amp;lt;- workflow() %&amp;gt;%
   add_formula(species ~ .) 
 glmnet_wf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ══ Workflow ═════════════════════
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ═══════════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ─────────────────
+## ── Preprocessor ───────────────────────────
 ## species ~ .&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
@@ -381,7 +381,7 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;final-thoughts&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Final thoughts&lt;/h1&gt;
 &lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
-&lt;p&gt;I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.&lt;/p&gt;
+&lt;p&gt;I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -394,10 +394,13 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
       <description>
 
 
-&lt;div id=&#34;intro-to-the-tidyverse&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Intro to the Tidyverse&lt;/h1&gt;
-&lt;p&gt;There are five related datasets but we will only look at &lt;code&gt;key_crop_yields&lt;/code&gt; dataset in this exploration. The data contains crop yield (tonnes per hectare) by country and year. Let’s get started by loading the packages that we will need for this analysis.&lt;/p&gt;
-&lt;p&gt;This data comes from the wonderful TidyTuesday project community learning project (2020-09-01).Let’s download the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. There is the wonderful package, tidytuesdayR (Ellis Hughes), that allows one to load and explore the TidyTuesday data in the Rstudio viewer. We will use the readr package from the tidyverse using &lt;code&gt;read_csv&lt;/code&gt; to import our data as a modern data frame or tibble.&lt;/p&gt;
+&lt;div id=&#34;intro&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Intro&lt;/h1&gt;
+&lt;p&gt;This post uses data from the &lt;i class=&#39;fab fa-r-project&#39;  style=&#39;color: #367588&#39;&gt;&lt;/i&gt; for Data Science online learning community. Each Tuesday, a dataset is posted and the tidyverse community of data science share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (&lt;a href=&#34;https://ourworldindata.org/crop-yields&#34; class=&#34;uri&#34;&gt;https://ourworldindata.org/crop-yields&lt;/a&gt;). There are actually five dataset but we are going to focus on global crop yields.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;download-and-view-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Download and view the data&lt;/h1&gt;
+&lt;p&gt;Let’s start by downloading the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. I recommend the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) for importing the data. The package is handy for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data. Although simple to use, I’m going to stick with the &lt;code&gt;readr::read_csv()&lt;/code&gt; from the tidyverse and import the data as a tibble (data frame).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
 crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
 
@@ -676,9 +679,9 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 # summary(crop_yields)
 # View(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Data cleaning and reshaping&lt;/h1&gt;
-&lt;p&gt;Let’s start with a little data cleaning! Using &lt;code&gt;skim&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. We can see that there are plenty of NAs that we will most likely need to remove. We can also standardize our feature names with the janitor package. Lastly, we should consider the shape of our data and make sure that it’s in a tidy format where each column is a feature and each row a sample.This long or tidy format is a prerequisite for fluent analysis with the tidyverse and tidymodels frameworks. In our data example, the various crops on samples, that can be categorized as the feature &lt;code&gt;crops&lt;/code&gt;. The function &lt;code&gt;pivot_longer&lt;/code&gt; is fantastic function from the tidyr package that allows us to reshape our data and preparing it for This will benefit our downstream analysis, including EDA (exploratory data analysis) and modeling (machine learning).&lt;/p&gt;
+&lt;div id=&#34;tidy-data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tidy data: cleaning and reshaping&lt;/h1&gt;
+&lt;p&gt;Let’s start with a little data cleaning! &lt;code&gt;skim&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. By looking at the data we can see that there are missing values that need to be addressed. The variable names could be improved and we should always consider the shape of our data. We probably want the data in a tidy format where each column is a feature and each row is a sample.This long format facilitates fluent analysis with the tidyverse. The function &lt;code&gt;pivot_longer()&lt;/code&gt; from the tidyr package allows us to reshape our data and prepare it for exploratory data analysis (EDA).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yields %&amp;gt;% count(Year)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 58 x 2
 ##     Year     n
@@ -786,34 +789,77 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# crop_yield_tidy %&amp;gt;% 
-#   summary()
-# 
-# crop_yield_tidy %&amp;gt;% 
-#   count(year, country, sort = TRUE)
-# 
-# tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;% 
-#   count(country, sort = TRUE) %&amp;gt;% 
-#   filter(n &amp;gt;=500)
-# 
-# crop_yield_tidy %&amp;gt;% 
-#   summarize(max(year)- min(year)) #57 years of recorded data
-# 
-# crop_yield_tidy %&amp;gt;% 
-#   count(year, crop, sort = T)
-# 
-# crop_yield_tidy %&amp;gt;% 
-#   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
-#   count(crop)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;eda&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;EDA&lt;/h1&gt;
+&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
+##     year country                              n
+##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;                            &amp;lt;int&amp;gt;
+##  1  1961 Africa                              11
+##  2  1961 Americas                            11
+##  3  1961 Asia                                11
+##  4  1961 Central America                     11
+##  5  1961 Colombia                            11
+##  6  1961 Democratic Republic of Congo        11
+##  7  1961 Eastern Africa                      11
+##  8  1961 Ecuador                             11
+##  9  1961 Land Locked Developing Countries    11
+## 10  1961 Least Developed Countries           11
+## # … with 13,065 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;%
+  count(country, sort = TRUE) %&amp;gt;%
+  filter(n &amp;gt;=500)
+
+crop_yield_tidy %&amp;gt;%
+  summarize(max(year)- min(year)) #57 years of recorded data&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 1
+##   `max(year) - min(year)`
+##                     &amp;lt;dbl&amp;gt;
+## 1                      57&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  count(year, crop, sort = T)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 638 x 3
+##     year crop      n
+##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;
+##  1  2012 maize   201
+##  2  2013 maize   201
+##  3  2014 maize   201
+##  4  2015 maize   201
+##  5  2016 maize   201
+##  6  2017 maize   201
+##  7  2018 maize   201
+##  8  2010 maize   200
+##  9  2011 maize   200
+## 10  2006 maize   199
+## # … with 628 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;%
+  count(crop)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 2
+##   crop         n
+##   &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
+## 1 bananas     58
+## 2 barley      58
+## 3 beans       58
+## 4 maize       58
+## 5 peas        58
+## 6 potatoes    58
+## 7 rice        58
+## 8 soybeans    58
+## 9 wheat       58&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visual analysis&lt;/h1&gt;
-&lt;p&gt;Now that we have the data in tidy format, let’s see what we can learn from it. We want to look at crop production by country but there are too many countries to look at in a single plot. &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. We will use the results to visualize a subset of the countries with the idea that this will help us get a feel for relationships in the data. For more refined control of the country selection, we could incorporate the code into a Shiny dashboard with user conntrolled selection inputs.&lt;/p&gt;
+&lt;p&gt;Now that we have the data in tidy format, let’s see what we can learn from visual analysis. We want to look at crop production by country but we can’t plot every country. For more refined control of country selection, we could incorporate the code into a Shiny dashboard.&lt;/p&gt;
+&lt;p&gt;We will use &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It’s worth noting that the randomly selected countries will not always have all crops.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
-# set.seed(1014) if you want the same 9 countries to be selected each time
+# set.seed(1014) if you want to select the same 9 countries each time
+crops &amp;lt;- crop_yield_tidy %&amp;gt;% distinct(crop) %&amp;gt;%  pull()
 country_random &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  add_count(year, crop) %&amp;gt;% 
-  filter(crop &amp;gt;= 58) %&amp;gt;% 
+  # filter(crop %in% crops) %&amp;gt;% 
   select(country) %&amp;gt;% 
   distinct() %&amp;gt;% 
   slice_sample(n = 9) %&amp;gt;% 
@@ -823,7 +869,7 @@ country_random &amp;lt;- crop_yield_tidy %&amp;gt;%
 
 # Plot crop yield per hectare.
 library(tidytext)
-
+# plot of USA data only
 usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
@@ -838,7 +884,15 @@ usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   )
 usa_col_plot&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# this is what I started with.
+# crop_yield_tidy %&amp;gt;% 
+#   filter(country == country_random) %&amp;gt;% 
+#   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
+#   ggplot(aes(yield_hectare, crop, fill = crop)) +
+#   geom_col()  +
+#   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;)
+
+column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(country == country_random) %&amp;gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -852,8 +906,7 @@ usa_col_plot&lt;/code&gt;&lt;/pre&gt;
     x = &amp;#39;yield per hectare&amp;#39;
   )
 column_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;
-&lt;strong&gt;Figure 1.&lt;/strong&gt; This column plot shows the crop on the y-axis, yield on the x-axis and is faceted by country.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(year &amp;gt;= 2000,

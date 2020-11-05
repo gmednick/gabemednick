@@ -226,11 +226,11 @@ glmnet_mod</code></pre>
 glmnet_wf &lt;- workflow() %&gt;%
   add_formula(species ~ .) 
 glmnet_wf</code></pre>
-<pre><code>## ══ Workflow ═════════════════════
+<pre><code>## ══ Workflow ═══════════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ─────────────────
+## ── Preprocessor ───────────────────────────
 ## species ~ .</code></pre>
 <pre class="r"><code># add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &lt;- glmnet_wf %&gt;%
@@ -384,5 +384,5 @@ final_rf</code></pre>
 <div id="final-thoughts" class="section level1">
 <h1>Final thoughts</h1>
 <p>It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data :smile:.</p>
-<p>I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.</p>
+<p>I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources.</p>
 </div>

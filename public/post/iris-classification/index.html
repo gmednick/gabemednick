@@ -861,11 +861,11 @@ glmnet_mod</code></pre>
 glmnet_wf &lt;- workflow() %&gt;%
   add_formula(species ~ .) 
 glmnet_wf</code></pre>
-<pre><code>## ══ Workflow ═════════════════════
+<pre><code>## ══ Workflow ═══════════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ─────────────────
+## ── Preprocessor ───────────────────────────
 ## species ~ .</code></pre>
 <pre class="r"><code># add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &lt;- glmnet_wf %&gt;%
@@ -1019,7 +1019,7 @@ final_rf</code></pre>
 <div id="final-thoughts" class="section level1">
 <h1>Final thoughts</h1>
 <p>It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.</p>
-<p>I would like to thank my mentors, the three noble Jedi Knights of the tidyverse and tidymodels: Julia Silge, David Robinson and Andrew Couch.</p>
+<p>I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources.</p>
 </div>
 
     </div>
@@ -1324,9 +1324,9 @@ final_rf</code></pre>
 
   <p class="powered-by">
     
-    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #367588"></i> </a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
+    A huge thanks to Allison Hill and others for sharing tutorials and videos on how to use the <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #367588"></i> </a><a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package, and the 
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
-    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #367588"></i></a>. 
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #367588"></i></a>.  
     
 
     
