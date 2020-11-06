@@ -402,10 +402,16 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;h1&gt;Download and view the data&lt;/h1&gt;
 &lt;p&gt;Let’s start by downloading the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I’m going to stick with the &lt;code&gt;readr::read_csv()&lt;/code&gt; from the tidyverse to import the data as a tibble (data frame).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
-crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;)
+crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;) %&amp;gt;% 
+  janitor::clean_names() 
 
-land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% janitor::clean_names()
+land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% 
+  janitor::clean_names() %&amp;gt;% 
+  select(entity, code, year, population = total_population_gapminder) %&amp;gt;% 
+  mutate(year = as.numeric(year))
 
+crop_yield &amp;lt;- crop_yields %&amp;gt;% 
+  left_join(land_use, by = c(&amp;#39;code&amp;#39;,  &amp;#39;year&amp;#39;, &amp;#39;entity&amp;#39;))
 
 skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
@@ -465,7 +471,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Entity&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;entity&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;4&lt;/td&gt;
@@ -475,7 +481,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Code&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;code&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1919&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.85&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
@@ -488,19 +494,6 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
-&lt;colgroup&gt;
-&lt;col width=&#34;28%&#34; /&gt;
-&lt;col width=&#34;8%&#34; /&gt;
-&lt;col width=&#34;11%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;5%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;6%&#34; /&gt;
-&lt;col width=&#34;5%&#34; /&gt;
-&lt;/colgroup&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
 &lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
@@ -518,7 +511,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Year&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;year&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1990.37&lt;/td&gt;
@@ -531,7 +524,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▆▇▇▇&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Wheat (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;wheat_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;4974&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.62&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
@@ -544,7 +537,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▅▂▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Rice (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;rice_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;4604&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.65&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;3.16&lt;/td&gt;
@@ -557,7 +550,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▇▃▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Maize (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;maize_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;2301&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.82&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;3.02&lt;/td&gt;
@@ -570,7 +563,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Soybeans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;soybeans_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;7114&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.46&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.45&lt;/td&gt;
@@ -583,7 +576,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▇▂▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Potatoes (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;3059&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.77&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;15.40&lt;/td&gt;
@@ -596,7 +589,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▅▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Beans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;beans_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;5066&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.61&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.09&lt;/td&gt;
@@ -609,7 +602,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Peas (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;peas_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;6840&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.48&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.48&lt;/td&gt;
@@ -622,7 +615,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▃▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Cassava (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;cassava_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;5887&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.55&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;9.34&lt;/td&gt;
@@ -635,7 +628,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▇▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Barley (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;barley_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;6342&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.51&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;2.23&lt;/td&gt;
@@ -648,7 +641,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▆▂▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Cocoa beans (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;cocoa_beans_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;8466&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
@@ -661,7 +654,7 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;Bananas (tonnes per hectare)&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;bananas_tonnes_per_hectare&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;4166&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.68&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;15.20&lt;/td&gt;
@@ -683,28 +676,20 @@ skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;tidy-data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tidy data: cleaning and reshaping&lt;/h1&gt;
 &lt;p&gt;Let’s start with a little data cleaning! &lt;code&gt;skim()&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function &lt;code&gt;pivot_longer()&lt;/code&gt; from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yields %&amp;gt;% count(Year)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 58 x 2
-##     Year     n
-##    &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
-##  1  1961   209
-##  2  1962   209
-##  3  1963   209
-##  4  1964   209
-##  5  1965   209
-##  6  1966   211
-##  7  1967   211
-##  8  1968   213
-##  9  1969   213
-## 10  1970   213
-## # … with 48 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
-crop_yield_tidy &amp;lt;- crop_yields %&amp;gt;% 
-  janitor::clean_names() %&amp;gt;% 
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Use pivot_longer from tidyr to tidy the data.
+crop_yield_tidy &amp;lt;- crop_yield %&amp;gt;% 
   rename_all(str_remove, &amp;quot;_tonnes.*&amp;quot;) %&amp;gt;% 
   rename(country = entity) %&amp;gt;% 
   pivot_longer(wheat:bananas, names_to = &amp;#39;crop&amp;#39;, values_to = &amp;#39;yield_hectare&amp;#39;) %&amp;gt;% 
-  drop_na(yield_hectare)
+  drop_na(yield_hectare) 
+
+top_pops &amp;lt;- land_use  %&amp;gt;%
+  filter(!is.na(code), entity != &amp;quot;World&amp;quot;) %&amp;gt;% 
+  group_by(entity) %&amp;gt;% 
+  filter(year == max(year)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  slice_max(population, n = 20) %&amp;gt;% 
+  pull(entity)
 
 kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
@@ -713,6 +698,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;th align=&#34;left&#34;&gt;country&lt;/th&gt;
 &lt;th align=&#34;left&#34;&gt;code&lt;/th&gt;
 &lt;th align=&#34;right&#34;&gt;year&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;population&lt;/th&gt;
 &lt;th align=&#34;left&#34;&gt;crop&lt;/th&gt;
 &lt;th align=&#34;right&#34;&gt;yield_hectare&lt;/th&gt;
 &lt;/tr&gt;
@@ -722,6 +708,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.0220&lt;/td&gt;
 &lt;/tr&gt;
@@ -729,6 +716,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
 &lt;/tr&gt;
@@ -736,6 +724,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
 &lt;/tr&gt;
@@ -743,6 +732,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;8.6667&lt;/td&gt;
 &lt;/tr&gt;
@@ -750,6 +740,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
 &lt;/tr&gt;
@@ -757,6 +748,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;0.9735&lt;/td&gt;
 &lt;/tr&gt;
@@ -764,6 +756,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
 &lt;/tr&gt;
@@ -771,6 +764,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
 &lt;/tr&gt;
@@ -778,6 +772,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;7.6667&lt;/td&gt;
 &lt;/tr&gt;
@@ -785,6 +780,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
 &lt;/tr&gt;
@@ -793,7 +789,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;what-can-we-learn-from-this-dataset&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;What can we learn from this dataset?&lt;/h1&gt;
-&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. For instance, with this data&lt;/p&gt;
+&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
@@ -854,7 +850,7 @@ crop_yield_tidy %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visual analysis&lt;/h1&gt;
-&lt;p&gt;Now that we have the data in tidy format, let’s see what we can learn from visual analysis. We want to look at crop production by country but we can’t plot every country. For more refined control of country selection, we could incorporate the code into a Shiny dashboard.&lt;/p&gt;
+&lt;p&gt;Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let’s start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.&lt;/p&gt;
 &lt;p&gt;We will use &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It’s worth noting that the randomly selected countries will not always have all crops.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
@@ -871,7 +867,7 @@ country_random &amp;lt;- crop_yield_tidy %&amp;gt;%
 # Plot crop yield per hectare.
 library(tidytext)
 # plot of USA data only
-usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+crop_yield_tidy %&amp;gt;% 
   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -882,9 +878,20 @@ usa_col_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
     title = &amp;#39;Crop Yield USA&amp;#39;,
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;tonnes per hectare&amp;#39;
-  )
-usa_col_plot&lt;/code&gt;&lt;/pre&gt;
+  )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_col()  +
+  facet_wrap(~country) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;tonnes per hectare per year&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# this is what I started with.
 # crop_yield_tidy %&amp;gt;% 
 #   filter(country == country_random) %&amp;gt;% 
@@ -894,7 +901,7 @@ usa_col_plot&lt;/code&gt;&lt;/pre&gt;
 #   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;)
 
 column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  filter(country == country_random,
+  filter(country %in% top_pops,
          crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -908,14 +915,15 @@ column_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
     x = &amp;#39;yield per hectare&amp;#39;
   )
 column_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(year &amp;gt;= 2000,
-         country == country_random) %&amp;gt;% 
+         country %in% country_random,
+         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line() +
+  geom_line(size = 1, alpha = 0.5) +
   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
   labs(
      y = &amp;#39;yield per hectare&amp;#39;,
@@ -923,22 +931,8 @@ line_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   )
 line_plot&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
-box_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  filter(year &amp;gt;= 2000,
-         country == country_random) %&amp;gt;% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
-  ggplot(aes(yield_hectare, crop, color = crop)) +
-  geom_boxplot() +
-  theme(legend.position =  &amp;#39;none&amp;#39;) +
-  facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
-  labs(
-    x = &amp;#39;Yield&amp;#39;,
-    title = &amp;#39;Crop Yield&amp;#39;,
-    y = &amp;#39;&amp;#39;
-  )
-box_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to creat 800 models/predictions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# using tidymodels ..&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>
     </item>

@@ -30,6 +30,7 @@ options(cli.width = 70, width = 70)
 library(tidyverse)
 library(tidymodels)
 library(scales)
+library(lubridate)
 theme_set(theme_light())
 ```
 # Download and view the data
@@ -37,10 +38,16 @@ Let's start by downloading the data from the [R4DS Github](https://github.com/rf
 
 ```{r}
 # Load the data with a readr function
-crop_yields <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv")
+crop_yields <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv") %>% 
+  janitor::clean_names() 
 
-land_use <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv") %>% janitor::clean_names()
+land_use <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv") %>% 
+  janitor::clean_names() %>% 
+  select(entity, code, year, population = total_population_gapminder) %>% 
+  mutate(year = as.numeric(year))
 
+crop_yield <- crop_yields %>% 
+  left_join(land_use, by = c('code',  'year', 'entity'))
 
 skimr::skim(crop_yields)
 
@@ -52,21 +59,28 @@ skimr::skim(crop_yields)
 # Tidy data: cleaning and reshaping
 Let's start with a little data cleaning! `skim()` from `skimr` provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function `pivot_longer()` from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).   
 ```{r}
-crop_yields %>% count(Year)
-# Use janitor package to clean column names and pivot_longer from tidyr to tidy the data.
-crop_yield_tidy <- crop_yields %>% 
-  janitor::clean_names() %>% 
+# Use pivot_longer from tidyr to tidy the data.
+crop_yield_tidy <- crop_yield %>% 
   rename_all(str_remove, "_tonnes.*") %>% 
   rename(country = entity) %>% 
   pivot_longer(wheat:bananas, names_to = 'crop', values_to = 'yield_hectare') %>% 
-  drop_na(yield_hectare)
+  drop_na(yield_hectare) 
+
+top_pops <- land_use  %>%
+  filter(!is.na(code), entity != "World") %>% 
+  group_by(entity) %>% 
+  filter(year == max(year)) %>% 
+  ungroup() %>% 
+  slice_max(population, n = 20) %>% 
+  pull(entity)
 
 kable(head(crop_yield_tidy, n = 10))
 
 ```
 # What can we learn from this dataset?
 
-A great place to start an analysis is by grouping and counting features using the `count()` function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. For instance, with this data
+A great place to start an analysis is by grouping and counting features using the `count()` function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. 
+
 ```{r}
 crop_yield_tidy %>%
   count(year, country, sort = TRUE)
@@ -87,7 +101,7 @@ crop_yield_tidy %>%
 ```
 # Visual analysis
 
-Now that we have the data in tidy format, let's see what we can learn from visual analysis. We want to look at crop production by country but we can't plot every country. For more refined control of country selection, we could incorporate the code into a Shiny dashboard.
+Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let's start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.
 
 We will use `slice_sample()` can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It's worth noting that the randomly selected countries will not always have all crops.
 ```{r}
@@ -106,7 +120,7 @@ country_random <- crop_yield_tidy %>%
 # Plot crop yield per hectare.
 library(tidytext)
 # plot of USA data only
-usa_col_plot <- crop_yield_tidy %>% 
+crop_yield_tidy %>% 
   filter(country == 'United States') %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -118,7 +132,20 @@ usa_col_plot <- crop_yield_tidy %>%
     y = 'Crop',
     x = 'tonnes per hectare'
   )
-usa_col_plot
+
+
+crop_yield_tidy %>% 
+  filter(country == 'United States') %>% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_col()  +
+  facet_wrap(~country) +
+  theme(legend.position =  'none') +
+  labs(
+    title = 'Crop Yield USA',
+    y = 'Crop',
+    x = 'tonnes per hectare per year'
+  )
+
 
 # this is what I started with.
 # crop_yield_tidy %>% 
@@ -129,7 +156,7 @@ usa_col_plot
 #   facet_wrap(~country, scales = 'free_y')
 
 column_plot <- crop_yield_tidy %>% 
-  filter(country == country_random,
+  filter(country %in% top_pops,
          crop == c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %>%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
@@ -149,10 +176,11 @@ column_plot
 # Plot crop yield per hectare per year.
 line_plot <- crop_yield_tidy %>% 
   filter(year >= 2000,
-         country == country_random) %>% 
+         country %in% country_random,
+         crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line() +
+  geom_line(size = 1, alpha = 0.5) +
   facet_wrap(~country, scales = 'free_y') +
   labs(
      y = 'yield per hectare',
@@ -161,23 +189,9 @@ line_plot <- crop_yield_tidy %>%
 line_plot
 ```
 
-
+Next, let's make a regression model for each country and crop--we'll use the top 20 countries and the four crops to creat 800 models/predictions.
 ```{r}
-# Plot crop yield per hectare per year.
-box_plot <- crop_yield_tidy %>% 
-  filter(year >= 2000,
-         country == country_random) %>% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
-  ggplot(aes(yield_hectare, crop, color = crop)) +
-  geom_boxplot() +
-  theme(legend.position =  'none') +
-  facet_wrap(~country, scales = 'free') +
-  labs(
-    x = 'Yield',
-    title = 'Crop Yield',
-    y = ''
-  )
-box_plot
+# using tidymodels ..
 
 ```
 

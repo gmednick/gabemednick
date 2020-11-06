@@ -24,3 +24,4 @@ shiny
 gt
 knitr
 tidytext
+lubridate
