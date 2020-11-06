@@ -26,8 +26,6 @@ theme = "hugo-academic"
 # Get last modified date for content from Git?
 enableGitInfo = false
 
-# Enable comments on posts
-disqusShortname = "gabemednick"
 
 # Default language to use (if you setup multilingual support)
 defaultContentLanguage = "en"
@@ -43,6 +41,9 @@ ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "
 
 # Workaround Hugo publishing taxonomy URLs as plurals - consistently use singular across Academic.
 [permalinks]
+# Enable comments on posts
+disqusShortname = "gabemednick"
+
   authors = "/author/:slug/"
   tags = "/tag/:slug/"
   categories = "/category/:slug/"
