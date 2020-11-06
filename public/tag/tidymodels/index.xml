@@ -223,11 +223,11 @@ glmnet_mod&lt;/code&gt;&lt;/pre&gt;
 glmnet_wf &amp;lt;- workflow() %&amp;gt;%
   add_formula(species ~ .) 
 glmnet_wf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ══ Workflow ═══════════════════════════════
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ───────────────────────────
+## ── Preprocessor ────────────────────
 ## species ~ .&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%

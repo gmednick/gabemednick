@@ -1,0 +1,21 @@
+---
+title: COVID Shiny App
+author: Gabe Mednick
+date: '2020-11-06'
+slug: covid-shiny-app
+categories: []
+tags: []
+subtitle: ''
+summary: 'Covid cases and deaths in the United States'
+authors: []
+lastmod: '2020-11-06T13:38:49-08:00'
+featured: no
+image:
+  caption: '[COVID-19](covid-image.jpg)'
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+##### This is a work in progress (like all of my posts). The app currently allows one to select states to visualize the number of new cases and new deaths by state. there are also two summary maps that show total cases and total deaths per million people by state. The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19).
+
+<iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/covid-app/"> </iframe>

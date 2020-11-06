@@ -41,8 +41,8 @@ ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "
 
 # Workaround Hugo publishing taxonomy URLs as plurals - consistently use singular across Academic.
 [permalinks]
-# Enable comments on posts
-disqusShortname = "gabemednick"
+  # Enable comments on posts
+  # disqusShortname = "gabemednick"
 
   authors = "/author/:slug/"
   tags = "/tag/:slug/"

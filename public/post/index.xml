@@ -5,12 +5,28 @@
     <link>/post/</link>
       <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Blog</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Wed, 21 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Fri, 06 Nov 2020 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
       <title>Blog</title>
       <link>/post/</link>
     </image>
+    
+    <item>
+      <title>COVID Shiny App</title>
+      <link>/post/covid-shiny-app/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>/post/covid-shiny-app/</guid>
+      <description>
+
+
+&lt;div id=&#34;this-is-a-work-in-progress-like-all-of-my-posts.-the-app-currently-allows-one-to-select-states-to-visualize-the-number-of-new-cases-and-new-deaths-by-state.-there-are-also-two-summary-maps-that-show-total-cases-and-total-deaths-per-million-people-by-state.-the-data-is-from-johns-hopkins-university.&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;This is a work in progress (like all of my posts). The app currently allows one to select states to visualize the number of new cases and new deaths by state. there are also two summary maps that show total cases and total deaths per million people by state. The data is from &lt;a href=&#34;https://github.com/CSSEGISandData/COVID-19&#34;&gt;Johns Hopkins University&lt;/a&gt;.&lt;/h5&gt;
+&lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;
+&lt;/iframe&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Iris Classification</title>
@@ -223,11 +239,11 @@ glmnet_mod&lt;/code&gt;&lt;/pre&gt;
 glmnet_wf &amp;lt;- workflow() %&amp;gt;%
   add_formula(species ~ .) 
 glmnet_wf&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## ══ Workflow ═══════════════════════════════
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ───────────────────────────
+## ── Preprocessor ────────────────────
 ## species ~ .&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%

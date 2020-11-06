@@ -1,0 +1,954 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog | Gabe Mednick</title>
+    <link>/covid-app/</link>
+      <atom:link href="/covid-app/index.xml" rel="self" type="application/rss+xml" />
+    <description>Blog</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Fri, 06 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
+      <title>Blog</title>
+      <link>/covid-app/</link>
+    </image>
+    
+    <item>
+      <title>COVID-shiny-app</title>
+      <link>/covid-app/covid-shiny-app/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>/covid-app/covid-shiny-app/</guid>
+      <description>
+
+
+&lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;
+&lt;/iframe&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Iris Classification</title>
+      <link>/covid-app/iris-classification/</link>
+      <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>/covid-app/iris-classification/</guid>
+      <description>
+
+
+&lt;div id=&#34;iris-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Iris data&lt;/h1&gt;
+&lt;p&gt;The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every base installation of R. You can use &lt;code&gt;data()&lt;/code&gt; to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., &lt;code&gt;data(package = &#39;dplyr&#39;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s take a look at the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set and clean the column names with janitor::clean_names()
+iris_df&amp;lt;- iris %&amp;gt;% 
+  clean_names() 
+
+iris_df %&amp;gt;%  head()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   sepal_length sepal_width petal_length petal_width species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df %&amp;gt;%  count(species)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      species  n
+## 1     setosa 50
+## 2 versicolor 50
+## 3  virginica 50&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# equal number of each species, 150 total
+
+iris_df %&amp;gt;%  str()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;#39;data.frame&amp;#39;:    150 obs. of  5 variables:
+##  $ sepal_length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ sepal_width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ species     : Factor w/ 3 levels &amp;quot;setosa&amp;quot;,&amp;quot;versicolor&amp;quot;,..: 1 1 1 1 1 1 1 1 1 1 ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This dataset is clean, but with only 150 observations, we must question whether it’s too small to train a reliable model. We will generate bootstrap resamples to make the most of what we have.&lt;/p&gt;
+&lt;p&gt;We see that we have four features (sepal length and width, and petal length and width) and there are three unique species..&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;It makes sense to create a model that predicts the species of iris based on the flower’s measurements.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualize relationships&lt;/h1&gt;
+&lt;p&gt;Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the relationships in our data. This will also help us to have an intuitive sense about the potential predictive power of the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sepal &amp;lt;- iris_df %&amp;gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point(size = 1) + facet_wrap(~species) +
+  labs(x = &amp;#39;sepal length&amp;#39;,
+       y = &amp;#39;sepal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;) 
+
+petal &amp;lt;- iris_df %&amp;gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point(size =1) + facet_wrap(~species) +
+  labs(x = &amp;#39;petal length&amp;#39;,
+       y = &amp;#39;petal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;) 
+
+(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there&amp;#39;s a better way..&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidy-the-dataset&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tidy the dataset&lt;/h1&gt;
+&lt;p&gt;Let’s change the shape of our data by combining the four iris features into a single column (named &lt;code&gt;metric&lt;/code&gt;) and the associated values will populate a new column (named &lt;code&gt;value&lt;/code&gt;). This transformation into a longer dataset can be achieved with the function &lt;code&gt;pivot_longer()&lt;/code&gt;. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
+  pivot_longer(cols = sepal_length:petal_width,
+               names_to = &amp;#39;metric&amp;#39;,
+               values_to =&amp;#39;value&amp;#39;) 
+# A boxplot is a great way to see the median values of our features by species.
+iris_df_long %&amp;gt;% 
+  ggplot(aes(metric, value, color = species)) +
+  geom_boxplot() &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# A nice alternative is to facet by the metric to convey the same information but with added clarity. 
+iris_df_long %&amp;gt;%
+  ggplot(aes(species, value, color = species)) +
+  geom_boxplot(alpha = 0.3) +
+  facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# The same information can be displayed by comparing the distributions in histogram.
+iris_df_long %&amp;gt;%
+  ggplot(aes(value, fill = species)) +
+  geom_histogram(bins = 20, alpha = 0.7) +
+  facet_wrap(~ metric, scales = &amp;quot;free_x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# geom_denisty is a nice alternative to geom_histogram.
+iris_df_long %&amp;gt;% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = .5) +
+  facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-modelling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Get modelling&lt;/h1&gt;
+&lt;p&gt;Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, &lt;code&gt;initial split&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. The function &lt;code&gt;bootstraps&lt;/code&gt; will take the training data, further split it into a training and test set, then resample and repeat 25 times. This ‘resampling’ provides a more robust dataset to train our model with.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
+tidy_split &amp;lt;- initial_split(iris_df)
+tidy_split&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Analysis/Assess/Total&amp;gt;
+## &amp;lt;113/37/150&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_train &amp;lt;- training(tidy_split)
+iris_test &amp;lt;- testing(tidy_split)
+
+iris_boots &amp;lt;- bootstraps(iris_train) 
+iris_boots&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # Bootstrap sampling 
+## # A tibble: 25 x 2
+##    splits           id         
+##    &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;      
+##  1 &amp;lt;split [113/39]&amp;gt; Bootstrap01
+##  2 &amp;lt;split [113/40]&amp;gt; Bootstrap02
+##  3 &amp;lt;split [113/44]&amp;gt; Bootstrap03
+##  4 &amp;lt;split [113/41]&amp;gt; Bootstrap04
+##  5 &amp;lt;split [113/39]&amp;gt; Bootstrap05
+##  6 &amp;lt;split [113/40]&amp;gt; Bootstrap06
+##  7 &amp;lt;split [113/42]&amp;gt; Bootstrap07
+##  8 &amp;lt;split [113/35]&amp;gt; Bootstrap08
+##  9 &amp;lt;split [113/42]&amp;gt; Bootstrap09
+## 10 &amp;lt;split [113/41]&amp;gt; Bootstrap10
+## # … with 15 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Recipes&lt;/h1&gt;
+&lt;p&gt;Recipes is a powerful tool with functions for a wide range of feature engineering tasks designed to prepare data for modeling. Typing &lt;code&gt;recipes::&lt;/code&gt; into the Rstudio console is a great way to browse the available functions in the package.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;recipes_functions.jpg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s create a recipe to demonstrate how easy it is to apply feature engineering. There is really no need for feature engineering with this dataset, so we won’t actually use this recipe in the final workflow.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~., data = iris_train) %&amp;gt;%
+  step_pca(all_predictors()) %&amp;gt;%
+  step_normalize(all_predictors())
+
+prep &amp;lt;-  prep(iris_rec)
+
+kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;species&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;PC1&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;PC2&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;PC3&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;PC4&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1621621&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.384382&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0270717&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0422303&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3983644&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.159657&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7767696&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.6840123&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4836145&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.244589&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0010748&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.1379599&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4923559&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.089539&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.0331285&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4892659&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1873971&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.402225&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4220083&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3874109&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.7736181&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.394953&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8518454&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1532614&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-models-with-parsnip&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Creating models with &lt;strong&gt;Parsnip&lt;/strong&gt;&lt;/h1&gt;
+&lt;p&gt;Let’s set up two different models: first, a &lt;strong&gt;generalized linear model&lt;/strong&gt; or &lt;strong&gt;glmnet&lt;/strong&gt;. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# set seed
+set.seed(1234)
+
+# generate the glmnet model with parsnip
+glmnet_mod &amp;lt;- multinom_reg(penalty = 0) %&amp;gt;% 
+  set_engine(&amp;quot;glmnet&amp;quot;) %&amp;gt;% 
+  set_mode(&amp;quot;classification&amp;quot;)
+glmnet_mod&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Multinomial Regression Model Specification (classification)
+## 
+## Main Arguments:
+##   penalty = 0
+## 
+## Computational engine: glmnet&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# create a workflow
+glmnet_wf &amp;lt;- workflow() %&amp;gt;%
+  add_formula(species ~ .) 
+glmnet_wf&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ══ Workflow ═══════════════════════════════
+## Preprocessor: Formula
+## Model: None
+## 
+## ── Preprocessor ───────────────────────────
+## species ~ .&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add the model to the workflow and use iris_boots to fit our model 25 times
+glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
+  add_model(glmnet_mod) %&amp;gt;% 
+  fit_resamples(
+    resamples = iris_boots,
+    control = control_resamples(extract = extract_model,
+                             save_pred = TRUE)
+    )
+glmnet_results&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # Resampling results
+## # Bootstrap sampling 
+## # A tibble: 25 x 6
+##    splits       id        .metrics      .notes       .extracts    .predictions  
+##    &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;     &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;        
+##  1 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
+##  2 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
+##  3 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [44 ×…
+##  4 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
+##  5 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
+##  6 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
+##  7 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
+##  8 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [35 ×…
+##  9 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
+## 10 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
+## # … with 15 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# look at the model metrics
+collect_metrics(glmnet_results)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.944    25 0.00642
+## 2 roc_auc  hand_till  0.987    25 0.00234&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to tweak a few things and walah!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
+rf_mod &amp;lt;- rand_forest() %&amp;gt;%
+  set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;%
+  set_mode(&amp;quot;classification&amp;quot;)
+
+# We set up a workflow and add the parts of our model together like legos
+rf_wf &amp;lt;- workflow() %&amp;gt;%
+  add_formula(species ~ .)
+
+# Here we fit our 25 resampled datasets 
+rf_results &amp;lt;- rf_wf %&amp;gt;%
+  add_model(rf_mod) %&amp;gt;% 
+  fit_resamples(
+    resamples = iris_boots,
+    control = control_resamples(save_pred = TRUE)
+    )
+collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
+##   .metric  .estimator  mean     n std_err
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass 0.945    25 0.00764
+## 2 roc_auc  hand_till  0.993    25 0.00126&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
+  conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
+##   Prediction Truth       Freq
+##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
+## 1 setosa     setosa     13.3 
+## 2 setosa     versicolor  0   
+## 3 setosa     virginica   0   
+## 4 versicolor setosa      0   
+## 5 versicolor versicolor 12.2 
+## 6 versicolor virginica   1   
+## 7 virginica  setosa      0   
+## 8 virginica  versicolor  1.24
+## 9 virginica  virginica  12.4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
+  conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
+##   Prediction Truth       Freq
+##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
+## 1 setosa     setosa     13.3 
+## 2 setosa     versicolor  0   
+## 3 setosa     virginica   0   
+## 4 versicolor setosa      0   
+## 5 versicolor versicolor 12.3 
+## 6 versicolor virginica   1.04
+## 7 virginica  setosa      0   
+## 8 virginica  versicolor  1.16
+## 9 virginica  virginica  12.4&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The ROC curve helps us visually interpret our model performance at every threshold.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
+  collect_predictions() %&amp;gt;%
+  group_by(id) %&amp;gt;%
+  roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
+  autoplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
+  collect_predictions() %&amp;gt;%
+  group_by(id) %&amp;gt;%
+  roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
+  autoplot() +
+  theme(legend.position = &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final-fit&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final fit&lt;/h1&gt;
+&lt;p&gt;This is it! By using the &lt;code&gt;last_fit(tidy_split)&lt;/code&gt;, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_glmnet &amp;lt;- glmnet_wf %&amp;gt;%
+    add_model(glmnet_mod) %&amp;gt;%
+    last_fit(tidy_split)
+
+final_glmnet&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # Resampling results
+## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # A tibble: 1 x 6
+##   splits       id           .metrics      .notes       .predictions    .workflow
+##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
+## 1 &amp;lt;split [113… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [37 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_rf &amp;lt;- rf_wf %&amp;gt;%
+    add_model(rf_mod) %&amp;gt;%
+    last_fit(tidy_split)
+
+final_rf&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # Resampling results
+## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # A tibble: 1 x 6
+##   splits       id           .metrics      .notes       .predictions    .workflow
+##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
+## 1 &amp;lt;split [113… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [37 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;confusion-matrices&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Confusion Matrices&lt;/h1&gt;
+&lt;p&gt;Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_glmnet)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 3
+##   .metric  .estimator .estimate
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass         1
+## 2 roc_auc  hand_till          1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_glmnet) %&amp;gt;%
+  conf_mat(species, .pred_class) %&amp;gt;% 
+  autoplot(type = &amp;#39;heatmap&amp;#39;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_rf)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 3
+##   .metric  .estimator .estimate
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;
+## 1 accuracy multiclass     0.973
+## 2 roc_auc  hand_till      1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_rf) %&amp;gt;%
+  conf_mat(species, .pred_class) %&amp;gt;% 
+  autoplot(type = &amp;#39;heatmap&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final-thoughts&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final thoughts&lt;/h1&gt;
+&lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
+&lt;p&gt;I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello Tidyverse and Tidymodels</title>
+      <link>/covid-app/hello-tidyverse/</link>
+      <pubDate>Thu, 03 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>/covid-app/hello-tidyverse/</guid>
+      <description>
+
+
+&lt;div id=&#34;intro&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Intro&lt;/h1&gt;
+&lt;p&gt;This post uses data from the &lt;i class=&#39;fab fa-r-project&#39;  style=&#39;color: #367588&#39;&gt;&lt;/i&gt; for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week’s dataset (September 1st, 2020) is from [Our World in Data] (&lt;a href=&#34;https://ourworldindata.org/crop-yields&#34; class=&#34;uri&#34;&gt;https://ourworldindata.org/crop-yields&lt;/a&gt;). There are actually five datasets but we are going to focus on global crop yields.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;download-and-view-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Download and view the data&lt;/h1&gt;
+&lt;p&gt;Let’s start by downloading the data from the &lt;a href=&#34;https://github.com/rfordatascience/tidytuesday&#34;&gt;R4DS Github&lt;/a&gt; account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I’m going to stick with the &lt;code&gt;readr::read_csv()&lt;/code&gt; from the tidyverse to import the data as a tibble (data frame).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data with a readr function
+crop_yields &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&amp;quot;) %&amp;gt;% 
+  janitor::clean_names() 
+
+land_use &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&amp;quot;) %&amp;gt;% 
+  janitor::clean_names() %&amp;gt;% 
+  select(entity, code, year, population = total_population_gapminder) %&amp;gt;% 
+  mutate(year = as.numeric(year))
+
+crop_yield &amp;lt;- crop_yields %&amp;gt;% 
+  left_join(land_use, by = c(&amp;#39;code&amp;#39;,  &amp;#39;year&amp;#39;, &amp;#39;entity&amp;#39;))
+
+skimr::skim(crop_yields)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:unnamed-chunk-2&#34;&gt;Table 1: &lt;/span&gt;Data summary&lt;/caption&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Name&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;crop_yields&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of rows&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;13075&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of columns&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;_______________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Column type frequency:&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;character&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;numeric&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;________________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Group variables&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: character&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;min&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;max&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;empty&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_unique&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;whitespace&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;entity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;249&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;code&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1919&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;214&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;mean&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;sd&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p0&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p25&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p50&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p75&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p100&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;hist&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;year&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1990.37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;16.73&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1976.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1991.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2005.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2018.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▆▇▇▇&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;wheat_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4974&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.62&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.69&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.12&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.67&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▅▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;rice_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4604&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.65&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.85&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.74&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.16&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.68&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▃▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;maize_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2301&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.02&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.13&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.92&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;36.76&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;soybeans_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7114&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.46&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.45&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.86&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.90&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.95&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3059&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.77&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.40&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.84&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.64&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.41&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;75.30&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▅▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;beans_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5066&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.61&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.82&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.59&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.18&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;peas_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6840&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.01&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.04&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.72&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.16&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▃▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;cassava_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5887&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.55&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.34&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.55&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.67&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.99&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;38.58&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▇▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;barley_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6342&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.51&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.23&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.09&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.88&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.02&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9.15&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▆▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;cocoa_beans_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8466&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.36&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.49&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3.43&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;bananas_tonnes_per_hectare&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4166&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.68&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.20&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12.08&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.66&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.94&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20.79&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;77.59&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▃▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Here are a few other options for getting to know the data
+# glimpse(crop_yields) 
+# summary(crop_yields)
+# View(crop_yields)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidy-data-cleaning-and-reshaping&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tidy data: cleaning and reshaping&lt;/h1&gt;
+&lt;p&gt;Let’s start with a little data cleaning! &lt;code&gt;skim()&lt;/code&gt; from &lt;code&gt;skimr&lt;/code&gt; provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function &lt;code&gt;pivot_longer()&lt;/code&gt; from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Use pivot_longer from tidyr to tidy the data.
+crop_yield_tidy &amp;lt;- crop_yield %&amp;gt;% 
+  rename_all(str_remove, &amp;quot;_tonnes.*&amp;quot;) %&amp;gt;% 
+  rename(country = entity) %&amp;gt;% 
+  pivot_longer(wheat:bananas, names_to = &amp;#39;crop&amp;#39;, values_to = &amp;#39;yield_hectare&amp;#39;) %&amp;gt;% 
+  drop_na(yield_hectare) 
+
+top_pops &amp;lt;- land_use  %&amp;gt;%
+  filter(!is.na(code), entity != &amp;quot;World&amp;quot;) %&amp;gt;% 
+  group_by(entity) %&amp;gt;% 
+  filter(year == max(year)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  slice_max(population, n = 20) %&amp;gt;% 
+  pull(entity)
+
+kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;country&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;code&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;year&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;population&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;crop&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;yield_hectare&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0220&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.6667&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1961&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9169000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;wheat&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9735&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;rice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5190&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;maize&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.4000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;potatoes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7.6667&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Afghanistan&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;AFG&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1962&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9351000&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;barley&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.0800&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-can-we-learn-from-this-dataset&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;What can we learn from this dataset?&lt;/h1&gt;
+&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
+##     year country                              n
+##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;                            &amp;lt;int&amp;gt;
+##  1  1961 Africa                              11
+##  2  1961 Americas                            11
+##  3  1961 Asia                                11
+##  4  1961 Central America                     11
+##  5  1961 Colombia                            11
+##  6  1961 Democratic Republic of Congo        11
+##  7  1961 Eastern Africa                      11
+##  8  1961 Ecuador                             11
+##  9  1961 Land Locked Developing Countries    11
+## 10  1961 Least Developed Countries           11
+## # … with 13,065 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;%
+  count(country, sort = TRUE) %&amp;gt;%
+  filter(n &amp;gt;=500)
+
+crop_yield_tidy %&amp;gt;%
+  summarize(max(year)- min(year)) #57 years of recorded data&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 1
+##   `max(year) - min(year)`
+##                     &amp;lt;dbl&amp;gt;
+## 1                      57&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  count(year, crop, sort = T)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 638 x 3
+##     year crop      n
+##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;
+##  1  2012 maize   201
+##  2  2013 maize   201
+##  3  2014 maize   201
+##  4  2015 maize   201
+##  5  2016 maize   201
+##  6  2017 maize   201
+##  7  2018 maize   201
+##  8  2010 maize   200
+##  9  2011 maize   200
+## 10  2006 maize   199
+## # … with 628 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;%
+  count(crop)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 2
+##   crop         n
+##   &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
+## 1 bananas     58
+## 2 barley      58
+## 3 beans       58
+## 4 maize       58
+## 5 peas        58
+## 6 potatoes    58
+## 7 rice        58
+## 8 soybeans    58
+## 9 wheat       58&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visual analysis&lt;/h1&gt;
+&lt;p&gt;Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let’s start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.&lt;/p&gt;
+&lt;p&gt;We will use &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It’s worth noting that the randomly selected countries will not always have all crops.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
+# set.seed(1014) if you want to select the same 9 countries each time
+crops &amp;lt;- crop_yield_tidy %&amp;gt;% distinct(crop) %&amp;gt;%  pull()
+country_random &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  # filter(crop %in% crops) %&amp;gt;% 
+  select(country) %&amp;gt;% 
+  distinct() %&amp;gt;% 
+  slice_sample(n = 9) %&amp;gt;% 
+  pull()
+
+# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
+
+# Plot crop yield per hectare.
+library(tidytext)
+# plot of USA data only
+crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;tonnes per hectare&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_col()  +
+  facet_wrap(~country) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;tonnes per hectare per year&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# this is what I started with.
+# crop_yield_tidy %&amp;gt;% 
+#   filter(country == country_random) %&amp;gt;% 
+#   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
+#   ggplot(aes(yield_hectare, crop, fill = crop)) +
+#   geom_col()  +
+#   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;)
+
+column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(country %in% top_pops,
+         crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
+  mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  scale_y_reordered() +
+  facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield&amp;#39;,
+    y = &amp;#39;Crop&amp;#39;,
+    x = &amp;#39;yield per hectare&amp;#39;
+  )
+column_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
+line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(year &amp;gt;= 2000,
+         country %in% country_random,
+         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  labs(
+     y = &amp;#39;yield per hectare&amp;#39;,
+    title = &amp;#39;Crop Yield&amp;#39;
+  )
+line_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to creat 800 models/predictions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# using tidymodels ..&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
