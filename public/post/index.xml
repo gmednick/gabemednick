@@ -20,8 +20,8 @@
       <description>
 
 
-&lt;div id=&#34;this-is-a-work-in-progress-like-all-of-my-posts.-the-app-currently-allows-one-to-select-states-to-visualize-the-number-of-new-cases-and-new-deaths-by-state.-there-are-also-two-summary-maps-that-show-total-cases-and-total-deaths-per-million-people-by-state.-the-data-is-from-johns-hopkins-university.&#34; class=&#34;section level5&#34;&gt;
-&lt;h5&gt;This is a work in progress (like all of my posts). The app currently allows one to select states to visualize the number of new cases and new deaths by state. there are also two summary maps that show total cases and total deaths per million people by state. The data is from &lt;a href=&#34;https://github.com/CSSEGISandData/COVID-19&#34;&gt;Johns Hopkins University&lt;/a&gt;.&lt;/h5&gt;
+&lt;div id=&#34;this-is-a-work-in-progress-like-all-of-my-posts.-this-app-currently-allows-one-to-visualize-the-number-of-new-cases-and-new-deaths-over-time.-the-default-states-are-california-hawaii-and-florida-but-you-can-add-or-remove-states-using-the-selector-box-in-the-sidebar.-the-accompanying-maps-use-color-to-show-the-total-cases-and-total-deaths-per-million-people-by-state.-the-data-is-from-johns-hopkins-university-and-is-updated-daily.&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;This is a work in progress (like all of my posts). This &lt;a href=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;app&lt;/a&gt; currently allows one to visualize the number of new cases and new deaths over time. The default States are California, Hawaii and Florida but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. The data is from &lt;a href=&#34;https://github.com/CSSEGISandData/COVID-19&#34;&gt;Johns Hopkins University&lt;/a&gt; and is updated daily.&lt;/h5&gt;
 &lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;
 &lt;/iframe&gt;
 &lt;/div&gt;
