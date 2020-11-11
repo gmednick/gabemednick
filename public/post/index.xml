@@ -877,19 +877,8 @@ crop_yield_tidy %&amp;gt;%
     y = &amp;#39;Year&amp;#39;,
     x = &amp;#39;tonnes per hectare per year&amp;#39;
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
-  ggplot(aes(yield_hectare, crop, fill = crop)) +
-  geom_col()  +
-  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
-  theme(legend.position =  &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
-
-# Plot crop yield per hectare.
-
-# plot of USA data only
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;4200&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# plot of USA data only
 crop_yield_tidy %&amp;gt;% 
   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
@@ -902,10 +891,11 @@ crop_yield_tidy %&amp;gt;%
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;tonnes per hectare&amp;#39;
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;4200&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 crop_yield_tidy %&amp;gt;% 
-  filter(country %in% top_pops,
+  filter(
+         country %in% country_random,
          crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
@@ -915,7 +905,7 @@ crop_yield_tidy %&amp;gt;%
      y = &amp;#39;yield per hectare&amp;#39;,
     title = &amp;#39;Crop Yield&amp;#39;
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-4.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;4200&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
   filter(country %in% top_pops,
          crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
@@ -930,24 +920,9 @@ crop_yield_tidy %&amp;gt;%
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;yield per hectare&amp;#39;
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-5.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
-line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
-  filter(year &amp;gt;= 2000,
-         country %in% country_random,
-         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
-  ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line(size = 1, alpha = 0.5) +
-  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
-  labs(
-     y = &amp;#39;yield per hectare&amp;#39;,
-    title = &amp;#39;Crop Yield&amp;#39;
-  )
-line_plot&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
-  filter(year &amp;gt;= 2000,
+  filter(
          country %in% top_pops,
          crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
@@ -960,21 +935,26 @@ line_plot&lt;/code&gt;&lt;/pre&gt;
   )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Next, let’s make a regression model for each of the top 20 countries.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# library(tidymodels)
-# lm_mod &amp;lt;- crop_yield_tidy %&amp;gt;%
-#   drop_na() %&amp;gt;% 
-#   nest(mod_data = c(year, yield_hectare, population)) %&amp;gt;% 
-#   mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .x))) %&amp;gt;% 
-#   mutate(coefs = map(model, tidy)) %&amp;gt;%
-#   unnest(coefs) %&amp;gt;%
-#   filter(term == &amp;quot;year&amp;quot;) %&amp;gt;% 
-#   mutate(term = fct_reorder(term, estimate)) %&amp;gt;%
-#   ggplot(aes(estimate, term)) +
-#   geom_point() +
-#   geom_errorbarh(aes(xmin = -std.error, xmax = std.error), height = .1) +
-#   geom_vline(xintercept = 0, color = &amp;quot;red&amp;quot;, lty = 2)
-# 
-# lm_mod&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidymodels)
+library(ggrepel)
+crop_yield_tidy %&amp;gt;%
+  drop_na() %&amp;gt;%
+  filter(country %in% top_pops,
+         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;%
+  nest(mod_data = c(year, yield_hectare, population)) %&amp;gt;%
+  mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .))) %&amp;gt;%
+  mutate(coefs = map(model, tidy)) %&amp;gt;%
+  unnest(coefs) %&amp;gt;%
+  filter(term == &amp;quot;year&amp;quot;) %&amp;gt;%
+  mutate(p.value = p.adjust(p.value)) %&amp;gt;% 
+  ggplot(aes(estimate, p.value, label = country)) +
+  geom_vline(xintercept = 0, lty = 2, 
+               size = 1.5, alpha = 0.7, color = &amp;quot;gray50&amp;quot;) +
+  geom_point(aes(color = crop), alpha = 0.8, size = 2.5, show.legend = FALSE) +
+  scale_y_log10() +
+  facet_wrap(~crop) +
+  geom_text_repel(size = 2.5, family = &amp;quot;Times New Roman&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>

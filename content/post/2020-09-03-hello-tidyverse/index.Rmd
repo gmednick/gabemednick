@@ -106,7 +106,7 @@ crop_yield_tidy %>% # 249 unique countries
 Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let's start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.
 
 We will use `slice_sample()` to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let's choose 9 countries to get a feel for crop yields over time without overwhelming our senses. 
-```{r}
+```{r, fig.width=14, fig.height=10}
 # Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
 crops <- crop_yield_tidy %>% distinct(crop) %>%  pull()
@@ -128,15 +128,6 @@ crop_yield_tidy %>%
     x = 'tonnes per hectare per year'
   )
 
-crop_yield_tidy %>% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %>%
-  ggplot(aes(yield_hectare, crop, fill = crop)) +
-  geom_col()  +
-  facet_wrap(~country, scales = 'free_y') +
-  theme(legend.position =  'none')
-# another option would be to set the code equal to a set selection of countries: E.g., countries <- c('GUM',	'IND',	'YEM',	'NAM',	'URY', 'USA')
-
-# Plot crop yield per hectare.
 
 # plot of USA data only
 crop_yield_tidy %>% 
@@ -152,10 +143,10 @@ crop_yield_tidy %>%
     x = 'tonnes per hectare'
   )
 
-
 # Plot crop yield per hectare per year.
 crop_yield_tidy %>% 
-  filter(country %in% top_pops,
+  filter(
+         country %in% country_random,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
@@ -166,8 +157,9 @@ crop_yield_tidy %>%
     title = 'Crop Yield'
   )
 
+```
 
-
+```{r}
 crop_yield_tidy %>% 
   filter(country %in% top_pops,
          crop == c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
@@ -182,28 +174,10 @@ crop_yield_tidy %>%
     y = 'Crop',
     x = 'yield per hectare'
   )
-
-```
-
-```{r}
-# Plot crop yield per hectare per year.
-line_plot <- crop_yield_tidy %>% 
-  filter(year >= 2000,
-         country %in% country_random,
-         crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
-  ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line(size = 1, alpha = 0.5) +
-  facet_wrap(~country, scales = 'free_y') +
-  labs(
-     y = 'yield per hectare',
-    title = 'Crop Yield'
-  )
-line_plot
 ```
 ```{r}
 crop_yield_tidy %>% 
-  filter(year >= 2000,
+  filter(
          country %in% top_pops,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
@@ -219,21 +193,26 @@ crop_yield_tidy %>%
 
 Next, let's make a regression model for each of the top 20 countries.
 ```{r}
-# library(tidymodels)
-# lm_mod <- crop_yield_tidy %>%
-#   drop_na() %>% 
-#   nest(mod_data = c(year, yield_hectare, population)) %>% 
-#   mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .x))) %>% 
-#   mutate(coefs = map(model, tidy)) %>%
-#   unnest(coefs) %>%
-#   filter(term == "year") %>% 
-#   mutate(term = fct_reorder(term, estimate)) %>%
-#   ggplot(aes(estimate, term)) +
-#   geom_point() +
-#   geom_errorbarh(aes(xmin = -std.error, xmax = std.error), height = .1) +
-#   geom_vline(xintercept = 0, color = "red", lty = 2)
-# 
-# lm_mod
-
+library(tidymodels)
+library(ggrepel)
+crop_yield_tidy %>%
+  drop_na() %>%
+  filter(country %in% top_pops,
+         crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>%
+  nest(mod_data = c(year, yield_hectare, population)) %>%
+  mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .))) %>%
+  mutate(coefs = map(model, tidy)) %>%
+  unnest(coefs) %>%
+  filter(term == "year") %>%
+  mutate(p.value = p.adjust(p.value)) %>% 
+  ggplot(aes(estimate, p.value, label = country)) +
+  geom_vline(xintercept = 0, lty = 2, 
+               size = 1.5, alpha = 0.7, color = "gray50") +
+  geom_point(aes(color = crop), alpha = 0.8, size = 2.5, show.legend = FALSE) +
+  scale_y_log10() +
+  facet_wrap(~crop) +
+  geom_text_repel(size = 2.5, family = "Times New Roman") 
+  
 ```
+
 
