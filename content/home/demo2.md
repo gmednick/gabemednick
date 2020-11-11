@@ -61,8 +61,9 @@ subtitle = ""
 **Wetlab** skills
 
 - Microbiology
-- Molecular Biology
+- Molecular biology
 - Nanopore sequencing
-- Protein Biochemistry
+- Protein biochemistry
 - Chromatography
 - Spectroscopy
+

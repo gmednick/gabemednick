@@ -699,13 +699,15 @@ crop_yield_tidy &amp;lt;- crop_yield %&amp;gt;%
   pivot_longer(wheat:bananas, names_to = &amp;#39;crop&amp;#39;, values_to = &amp;#39;yield_hectare&amp;#39;) %&amp;gt;% 
   drop_na(yield_hectare) 
 
+# Create a vector of the 25 countries with the largest population
 top_pops &amp;lt;- land_use  %&amp;gt;%
   filter(!is.na(code), entity != &amp;quot;World&amp;quot;) %&amp;gt;% 
   group_by(entity) %&amp;gt;% 
   filter(year == max(year)) %&amp;gt;% 
   ungroup() %&amp;gt;% 
-  slice_max(population, n = 20) %&amp;gt;% 
+  slice_max(population, n = 25) %&amp;gt;% 
   pull(entity)
+
 
 kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
@@ -805,7 +807,7 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;what-can-we-learn-from-this-dataset&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;What can we learn from this dataset?&lt;/h1&gt;
-&lt;p&gt;A great place to start an analysis is by grouping and counting features using the &lt;code&gt;count()&lt;/code&gt; function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer.&lt;/p&gt;
+&lt;p&gt;A great place to start any analysis is by grouping and counting predictive features using the &lt;code&gt;count()&lt;/code&gt; function. It often makes sense to combine &lt;code&gt;count()&lt;/code&gt; with a bar plot to visualize meaningful distributions. Spending time with new data is a worthwhile investment since it lead us to ask better questions and generate ideas that can then be explored using the predictive power of machine learning.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
@@ -822,11 +824,24 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 ##  9  1961 Land Locked Developing Countries    11
 ## 10  1961 Least Developed Countries           11
 ## # … with 13,065 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tidy_select &amp;lt;- crop_yield_tidy %&amp;gt;%
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   count(country, sort = TRUE) %&amp;gt;%
-  filter(n &amp;gt;=500)
-
-crop_yield_tidy %&amp;gt;%
+  filter(n &amp;gt;=500)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 53 x 2
+##    country                               n
+##    &amp;lt;chr&amp;gt;                             &amp;lt;int&amp;gt;
+##  1 Africa                              638
+##  2 Americas                            638
+##  3 Asia                                638
+##  4 Central America                     638
+##  5 Democratic Republic of Congo        638
+##  6 Eastern Africa                      638
+##  7 Ecuador                             638
+##  8 Land Locked Developing Countries    638
+##  9 Least Developed Countries           638
+## 10 Low Income Food Deficit Countries   638
+## # … with 43 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   summarize(max(year)- min(year)) #57 years of recorded data&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 1
 ##   `max(year) - min(year)`
@@ -867,7 +882,7 @@ crop_yield_tidy %&amp;gt;%
 &lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visual analysis&lt;/h1&gt;
 &lt;p&gt;Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let’s start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.&lt;/p&gt;
-&lt;p&gt;We will use &lt;code&gt;slice_sample()&lt;/code&gt; can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It’s worth noting that the randomly selected countries will not always have all crops.&lt;/p&gt;
+&lt;p&gt;We will use &lt;code&gt;slice_sample()&lt;/code&gt; to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let’s choose 9 countries to get a feel for crop yields over time without overwhelming our senses.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
 crops &amp;lt;- crop_yield_tidy %&amp;gt;% distinct(crop) %&amp;gt;%  pull()
@@ -878,7 +893,26 @@ country_random &amp;lt;- crop_yield_tidy %&amp;gt;%
   slice_sample(n = 9) %&amp;gt;% 
   pull()
 
-# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
+crop_yield_tidy %&amp;gt;% 
+  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line()  +
+  facet_wrap(~country, &amp;#39;free_x&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  labs(
+    title = &amp;#39;Crop Yield USA&amp;#39;,
+    y = &amp;#39;Year&amp;#39;,
+    x = &amp;#39;tonnes per hectare per year&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  theme(legend.position =  &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
 
 # Plot crop yield per hectare.
 library(tidytext)
@@ -895,28 +929,23 @@ crop_yield_tidy %&amp;gt;%
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;tonnes per hectare&amp;#39;
   )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
-  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
+line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+  filter(year &amp;gt;= 2000,
+         country %in% top_pops,
+         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_col()  +
-  facet_wrap(~country) +
-  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
   labs(
-    title = &amp;#39;Crop Yield USA&amp;#39;,
-    y = &amp;#39;Crop&amp;#39;,
-    x = &amp;#39;tonnes per hectare per year&amp;#39;
-  )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# this is what I started with.
-# crop_yield_tidy %&amp;gt;% 
-#   filter(country == country_random) %&amp;gt;% 
-#   mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;%
-#   ggplot(aes(yield_hectare, crop, fill = crop)) +
-#   geom_col()  +
-#   facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;)
-
-column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+     y = &amp;#39;yield per hectare&amp;#39;,
+    title = &amp;#39;Crop Yield&amp;#39;
+  )
+line_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-4.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(country %in% top_pops,
          crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
@@ -924,14 +953,14 @@ column_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
-  theme(legend.position =  &amp;#39;none&amp;#39;) +
+  theme() +
   labs(
     title = &amp;#39;Crop Yield&amp;#39;,
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;yield per hectare&amp;#39;
   )
 column_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-5.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
   filter(year &amp;gt;= 2000,
@@ -947,7 +976,7 @@ line_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   )
 line_plot&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to creat 800 models/predictions.&lt;/p&gt;
+&lt;p&gt;Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to create 800 models.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# using tidymodels ..&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>

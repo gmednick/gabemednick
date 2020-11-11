@@ -66,26 +66,28 @@ crop_yield_tidy <- crop_yield %>%
   pivot_longer(wheat:bananas, names_to = 'crop', values_to = 'yield_hectare') %>% 
   drop_na(yield_hectare) 
 
+# Create a vector of the 25 countries with the largest population
 top_pops <- land_use  %>%
   filter(!is.na(code), entity != "World") %>% 
   group_by(entity) %>% 
   filter(year == max(year)) %>% 
   ungroup() %>% 
-  slice_max(population, n = 20) %>% 
+  slice_max(population, n = 25) %>% 
   pull(entity)
+
 
 kable(head(crop_yield_tidy, n = 10))
 
 ```
 # What can we learn from this dataset?
 
-A great place to start an analysis is by grouping and counting features using the `count()` function. For this project, I have not set out with a specific analysis or machine learning predictive task in mind. By spending time with data, counting and plotting it, we can get a feel for relationships and hopefully generate some insight about what types of questions can we answer. 
+A great place to start any analysis is by grouping and counting predictive features using the `count()` function. It often makes sense to combine `count()` with a bar plot to visualize meaningful distributions. Spending time with new data is a worthwhile investment since it lead us to ask better questions and generate ideas that can then be explored using the predictive power of machine learning. 
 
 ```{r}
 crop_yield_tidy %>%
   count(year, country, sort = TRUE)
 
-tidy_select <- crop_yield_tidy %>%
+crop_yield_tidy %>%
   count(country, sort = TRUE) %>%
   filter(n >=500)
 
@@ -103,7 +105,7 @@ crop_yield_tidy %>%
 
 Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let's start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.
 
-We will use `slice_sample()` can be used to randomly select a subset of the total countries. To get a feel for the data, we will select nine countries. It's worth noting that the randomly selected countries will not always have all crops.
+We will use `slice_sample()` to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let's choose 9 countries to get a feel for crop yields over time without overwhelming our senses. 
 ```{r}
 # Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
@@ -115,6 +117,24 @@ country_random <- crop_yield_tidy %>%
   slice_sample(n = 9) %>% 
   pull()
 
+crop_yield_tidy %>% 
+  filter(country == 'United States') %>% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line()  +
+  facet_wrap(~country, 'free_x') +
+  theme(legend.position =  'none') +
+  labs(
+    title = 'Crop Yield USA',
+    y = 'Year',
+    x = 'tonnes per hectare per year'
+  )
+
+crop_yield_tidy %>% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %>%
+  ggplot(aes(yield_hectare, crop, fill = crop)) +
+  geom_col()  +
+  facet_wrap(~country, scales = 'free_y') +
+  theme(legend.position =  'none')
 # another option would be to set the code equal to a set selection of countries: E.g., countries <- c('GUM',	'IND',	'YEM',	'NAM',	'URY', 'USA')
 
 # Plot crop yield per hectare.
@@ -134,26 +154,21 @@ crop_yield_tidy %>%
   )
 
 
-crop_yield_tidy %>% 
-  filter(country == 'United States') %>% 
+# Plot crop yield per hectare per year.
+line_plot <- crop_yield_tidy %>% 
+  filter(year >= 2000,
+         country %in% top_pops,
+         crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_col()  +
-  facet_wrap(~country) +
-  theme(legend.position =  'none') +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_wrap(~country, scales = 'free_y') +
   labs(
-    title = 'Crop Yield USA',
-    y = 'Crop',
-    x = 'tonnes per hectare per year'
+     y = 'yield per hectare',
+    title = 'Crop Yield'
   )
+line_plot
 
-
-# this is what I started with.
-# crop_yield_tidy %>% 
-#   filter(country == country_random) %>% 
-#   mutate(crop = fct_reorder(crop, yield_hectare)) %>%
-#   ggplot(aes(yield_hectare, crop, fill = crop)) +
-#   geom_col()  +
-#   facet_wrap(~country, scales = 'free_y')
 
 column_plot <- crop_yield_tidy %>% 
   filter(country %in% top_pops,
@@ -163,7 +178,7 @@ column_plot <- crop_yield_tidy %>%
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = 'free') +
-  theme(legend.position =  'none') +
+  theme() +
   labs(
     title = 'Crop Yield',
     y = 'Crop',
@@ -189,7 +204,7 @@ line_plot <- crop_yield_tidy %>%
 line_plot
 ```
 
-Next, let's make a regression model for each country and crop--we'll use the top 20 countries and the four crops to creat 800 models/predictions.
+Next, let's make a regression model for each country and crop--we'll use the top 20 countries and the four crops to create 800 models.
 ```{r}
 # using tidymodels ..
 
