@@ -122,7 +122,6 @@ crop_yield_tidy %>%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
   facet_wrap(~country, 'free_x') +
-  theme(legend.position =  'none') +
   labs(
     title = 'Crop Yield USA',
     y = 'Year',
@@ -156,8 +155,7 @@ crop_yield_tidy %>%
 
 # Plot crop yield per hectare per year.
 crop_yield_tidy %>% 
-  filter(year >= 2000,
-         country %in% top_pops,
+  filter(country %in% top_pops,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
@@ -219,7 +217,7 @@ crop_yield_tidy %>%
 
 ```
 
-Next, let's make a regression model for each country and crop--we'll use the top 20 countries and the four crops to create 800 models.
+Next, let's make a regression model for each of the top 20 countries.
 ```{r}
 # library(tidymodels)
 # lm_mod <- crop_yield_tidy %>%

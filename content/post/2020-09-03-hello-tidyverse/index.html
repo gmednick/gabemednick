@@ -482,7 +482,6 @@ crop_yield_tidy %&gt;%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
   facet_wrap(~country, &#39;free_x&#39;) +
-  theme(legend.position =  &#39;none&#39;) +
   labs(
     title = &#39;Crop Yield USA&#39;,
     y = &#39;Year&#39;,
@@ -516,8 +515,7 @@ crop_yield_tidy %&gt;%
 <p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 crop_yield_tidy %&gt;% 
-  filter(year &gt;= 2000,
-         country %in% top_pops,
+  filter(country %in% top_pops,
          crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
@@ -571,7 +569,7 @@ line_plot</code></pre>
     title = &#39;Crop Yield&#39;
   )</code></pre>
 <p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png" width="3000" /></p>
-<p>Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to create 800 models.</p>
+<p>Next, let’s make a regression model for each of the top 20 countries.</p>
 <pre class="r"><code># library(tidymodels)
 # lm_mod &lt;- crop_yield_tidy %&gt;%
 #   drop_na() %&gt;% 
