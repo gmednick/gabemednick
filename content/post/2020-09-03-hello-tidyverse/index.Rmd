@@ -31,6 +31,7 @@ library(tidyverse)
 library(tidymodels)
 library(scales)
 library(lubridate)
+library(tidytext)
 theme_set(theme_light())
 ```
 # Download and view the data
@@ -81,25 +82,24 @@ kable(head(crop_yield_tidy, n = 10))
 ```
 # What can we learn from this dataset?
 
-A great place to start any analysis is by grouping and counting predictive features using the `count()` function. It often makes sense to combine `count()` with a bar plot to visualize meaningful distributions. Spending time with new data is a worthwhile investment since it lead us to ask better questions and generate ideas that can then be explored using the predictive power of machine learning. 
+A great place to start any analysis is by grouping and counting predictive features using the `count()` function. It often makes sense to combine `count()` with a bar plot to visualize meaningful distributions. EDA is arguably the most important step in a machine learning workflow because it gives us insight that we can then use to generate a predictive model. When we run a machine learning model, we should already have an intutive sense about what to expect from our model. 
 
 ```{r}
 crop_yield_tidy %>%
-  count(year, country, sort = TRUE)
+  add_count(year, country, sort = T) %>% 
+  filter(country %in% c("Albania", "Africa", "United States")) # Africa has 11 crops, US has 9 and Albania 6. 
 
 crop_yield_tidy %>%
   count(country, sort = TRUE) %>%
-  filter(n >=500)
+  filter(n >=500) # this gives a list of the countries with the most years + crops 11 (crops) * 51 (year) = 561
 
 crop_yield_tidy %>%
   summarize(max(year)- min(year)) #57 years of recorded data
 
-crop_yield_tidy %>%
-  count(year, crop, sort = T)
+crop_yield_tidy %>% # 249 unique countries
+  distinct(country) %>% 
+  nrow()
 
-crop_yield_tidy %>%
-  filter(country == 'United States') %>%
-  count(crop)
 ```
 # Visual analysis
 
@@ -120,7 +120,7 @@ country_random <- crop_yield_tidy %>%
 crop_yield_tidy %>% 
   filter(country == 'United States') %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line()  +
+  geom_line() +
   facet_wrap(~country, 'free_x') +
   theme(legend.position =  'none') +
   labs(
@@ -138,7 +138,7 @@ crop_yield_tidy %>%
 # another option would be to set the code equal to a set selection of countries: E.g., countries <- c('GUM',	'IND',	'YEM',	'NAM',	'URY', 'USA')
 
 # Plot crop yield per hectare.
-library(tidytext)
+
 # plot of USA data only
 crop_yield_tidy %>% 
   filter(country == 'United States') %>% 
@@ -155,7 +155,7 @@ crop_yield_tidy %>%
 
 
 # Plot crop yield per hectare per year.
-line_plot <- crop_yield_tidy %>% 
+crop_yield_tidy %>% 
   filter(year >= 2000,
          country %in% top_pops,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
@@ -167,10 +167,10 @@ line_plot <- crop_yield_tidy %>%
      y = 'yield per hectare',
     title = 'Crop Yield'
   )
-line_plot
 
 
-column_plot <- crop_yield_tidy %>% 
+
+crop_yield_tidy %>% 
   filter(country %in% top_pops,
          crop == c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %>%
@@ -178,13 +178,13 @@ column_plot <- crop_yield_tidy %>%
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = 'free') +
-  theme() +
+  theme(legend.position = 'none') +
   labs(
     title = 'Crop Yield',
     y = 'Crop',
     x = 'yield per hectare'
   )
-column_plot
+
 ```
 
 ```{r}
@@ -203,10 +203,39 @@ line_plot <- crop_yield_tidy %>%
   )
 line_plot
 ```
+```{r}
+crop_yield_tidy %>% 
+  filter(year >= 2000,
+         country %in% top_pops,
+         crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_wrap(~country, scales = 'free_y') +
+  labs(
+     y = 'yield per hectare',
+    title = 'Crop Yield'
+  )
+
+```
 
 Next, let's make a regression model for each country and crop--we'll use the top 20 countries and the four crops to create 800 models.
 ```{r}
-# using tidymodels ..
+# library(tidymodels)
+# lm_mod <- crop_yield_tidy %>%
+#   drop_na() %>% 
+#   nest(mod_data = c(year, yield_hectare, population)) %>% 
+#   mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .x))) %>% 
+#   mutate(coefs = map(model, tidy)) %>%
+#   unnest(coefs) %>%
+#   filter(term == "year") %>% 
+#   mutate(term = fct_reorder(term, estimate)) %>%
+#   ggplot(aes(estimate, term)) +
+#   geom_point() +
+#   geom_errorbarh(aes(xmin = -std.error, xmax = std.error), height = .1) +
+#   geom_vline(xintercept = 0, color = "red", lty = 2)
+# 
+# lm_mod
 
 ```
 

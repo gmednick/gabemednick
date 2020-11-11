@@ -807,26 +807,27 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;what-can-we-learn-from-this-dataset&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;What can we learn from this dataset?&lt;/h1&gt;
-&lt;p&gt;A great place to start any analysis is by grouping and counting predictive features using the &lt;code&gt;count()&lt;/code&gt; function. It often makes sense to combine &lt;code&gt;count()&lt;/code&gt; with a bar plot to visualize meaningful distributions. Spending time with new data is a worthwhile investment since it lead us to ask better questions and generate ideas that can then be explored using the predictive power of machine learning.&lt;/p&gt;
+&lt;p&gt;A great place to start any analysis is by grouping and counting predictive features using the &lt;code&gt;count()&lt;/code&gt; function. It often makes sense to combine &lt;code&gt;count()&lt;/code&gt; with a bar plot to visualize meaningful distributions. EDA is arguably the most important step in a machine learning workflow because it gives us insight that we can then use to generate a predictive model. When we run a machine learning model, we should already have an intutive sense about what to expect from our model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
-  count(year, country, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 13,075 x 3
-##     year country                              n
-##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;                            &amp;lt;int&amp;gt;
-##  1  1961 Africa                              11
-##  2  1961 Americas                            11
-##  3  1961 Asia                                11
-##  4  1961 Central America                     11
-##  5  1961 Colombia                            11
-##  6  1961 Democratic Republic of Congo        11
-##  7  1961 Eastern Africa                      11
-##  8  1961 Ecuador                             11
-##  9  1961 Land Locked Developing Countries    11
-## 10  1961 Least Developed Countries           11
-## # … with 13,065 more rows&lt;/code&gt;&lt;/pre&gt;
+  add_count(year, country, sort = T) %&amp;gt;% 
+  filter(country %in% c(&amp;quot;Albania&amp;quot;, &amp;quot;Africa&amp;quot;, &amp;quot;United States&amp;quot;)) # Africa has 11 crops, US has 9 and Albania 6. &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,522 x 7
+##    country code   year population crop        yield_hectare     n
+##    &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+##  1 Africa  &amp;lt;NA&amp;gt;   1961  290214016 wheat               0.693    11
+##  2 Africa  &amp;lt;NA&amp;gt;   1961  290214016 rice                1.55     11
+##  3 Africa  &amp;lt;NA&amp;gt;   1961  290214016 maize               1.04     11
+##  4 Africa  &amp;lt;NA&amp;gt;   1961  290214016 soybeans            0.376    11
+##  5 Africa  &amp;lt;NA&amp;gt;   1961  290214016 potatoes            8.18     11
+##  6 Africa  &amp;lt;NA&amp;gt;   1961  290214016 beans               0.587    11
+##  7 Africa  &amp;lt;NA&amp;gt;   1961  290214016 peas                0.679    11
+##  8 Africa  &amp;lt;NA&amp;gt;   1961  290214016 cassava             5.66     11
+##  9 Africa  &amp;lt;NA&amp;gt;   1961  290214016 barley              0.446    11
+## 10 Africa  &amp;lt;NA&amp;gt;   1961  290214016 cocoa_beans         0.254    11
+## # … with 1,512 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
   count(country, sort = TRUE) %&amp;gt;%
-  filter(n &amp;gt;=500)&lt;/code&gt;&lt;/pre&gt;
+  filter(n &amp;gt;=500) # this gives a list of the countries with the most years + crops 11 (crops) * 51 (year) = 561&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 53 x 2
 ##    country                               n
 ##    &amp;lt;chr&amp;gt;                             &amp;lt;int&amp;gt;
@@ -847,37 +848,10 @@ kable(head(crop_yield_tidy, n = 10))&lt;/code&gt;&lt;/pre&gt;
 ##   `max(year) - min(year)`
 ##                     &amp;lt;dbl&amp;gt;
 ## 1                      57&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
-  count(year, crop, sort = T)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 638 x 3
-##     year crop      n
-##    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;
-##  1  2012 maize   201
-##  2  2013 maize   201
-##  3  2014 maize   201
-##  4  2015 maize   201
-##  5  2016 maize   201
-##  6  2017 maize   201
-##  7  2018 maize   201
-##  8  2010 maize   200
-##  9  2011 maize   200
-## 10  2006 maize   199
-## # … with 628 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;%
-  filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;%
-  count(crop)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 2
-##   crop         n
-##   &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
-## 1 bananas     58
-## 2 barley      58
-## 3 beans       58
-## 4 maize       58
-## 5 peas        58
-## 6 potatoes    58
-## 7 rice        58
-## 8 soybeans    58
-## 9 wheat       58&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% # 249 unique countries
+  distinct(country) %&amp;gt;% 
+  nrow()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 249&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visual-analysis&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visual analysis&lt;/h1&gt;
@@ -896,7 +870,7 @@ country_random &amp;lt;- crop_yield_tidy %&amp;gt;%
 crop_yield_tidy %&amp;gt;% 
   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
-  geom_line()  +
+  geom_line() +
   facet_wrap(~country, &amp;#39;free_x&amp;#39;) +
   theme(legend.position =  &amp;#39;none&amp;#39;) +
   labs(
@@ -915,7 +889,7 @@ crop_yield_tidy %&amp;gt;%
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# another option would be to set the code equal to a set selection of countries: E.g., countries &amp;lt;- c(&amp;#39;GUM&amp;#39;,    &amp;#39;IND&amp;#39;,  &amp;#39;YEM&amp;#39;,  &amp;#39;NAM&amp;#39;,  &amp;#39;URY&amp;#39;, &amp;#39;USA&amp;#39;)
 
 # Plot crop yield per hectare.
-library(tidytext)
+
 # plot of USA data only
 crop_yield_tidy %&amp;gt;% 
   filter(country == &amp;#39;United States&amp;#39;) %&amp;gt;% 
@@ -931,7 +905,7 @@ crop_yield_tidy %&amp;gt;%
   )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
-line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+crop_yield_tidy %&amp;gt;% 
   filter(year &amp;gt;= 2000,
          country %in% top_pops,
          crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
@@ -942,10 +916,9 @@ line_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   labs(
      y = &amp;#39;yield per hectare&amp;#39;,
     title = &amp;#39;Crop Yield&amp;#39;
-  )
-line_plot&lt;/code&gt;&lt;/pre&gt;
+  )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-4.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;column_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
   filter(country %in% top_pops,
          crop == c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&amp;gt;%
@@ -953,13 +926,12 @@ line_plot&lt;/code&gt;&lt;/pre&gt;
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = &amp;#39;free&amp;#39;) +
-  theme() +
+  theme(legend.position = &amp;#39;none&amp;#39;) +
   labs(
     title = &amp;#39;Crop Yield&amp;#39;,
     y = &amp;#39;Crop&amp;#39;,
     x = &amp;#39;yield per hectare&amp;#39;
-  )
-column_plot&lt;/code&gt;&lt;/pre&gt;
+  )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-5.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot crop yield per hectare per year.
 line_plot &amp;lt;- crop_yield_tidy %&amp;gt;% 
@@ -976,8 +948,35 @@ line_plot &amp;lt;- crop_yield_tidy %&amp;gt;%
   )
 line_plot&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;crop_yield_tidy %&amp;gt;% 
+  filter(year &amp;gt;= 2000,
+         country %in% top_pops,
+         crop %in% c(&amp;#39;maize&amp;#39;, &amp;#39;potatoes&amp;#39;, &amp;#39;wheat&amp;#39;, &amp;#39;bananas&amp;#39;)) %&amp;gt;% 
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&amp;gt;% 
+  ggplot(aes(year, yield_hectare, color = crop)) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_wrap(~country, scales = &amp;#39;free_y&amp;#39;) +
+  labs(
+     y = &amp;#39;yield per hectare&amp;#39;,
+    title = &amp;#39;Crop Yield&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;3000&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Next, let’s make a regression model for each country and crop–we’ll use the top 20 countries and the four crops to create 800 models.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# using tidymodels ..&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# library(tidymodels)
+# lm_mod &amp;lt;- crop_yield_tidy %&amp;gt;%
+#   drop_na() %&amp;gt;% 
+#   nest(mod_data = c(year, yield_hectare, population)) %&amp;gt;% 
+#   mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .x))) %&amp;gt;% 
+#   mutate(coefs = map(model, tidy)) %&amp;gt;%
+#   unnest(coefs) %&amp;gt;%
+#   filter(term == &amp;quot;year&amp;quot;) %&amp;gt;% 
+#   mutate(term = fct_reorder(term, estimate)) %&amp;gt;%
+#   ggplot(aes(estimate, term)) +
+#   geom_point() +
+#   geom_errorbarh(aes(xmin = -std.error, xmax = std.error), height = .1) +
+#   geom_vline(xintercept = 0, color = &amp;quot;red&amp;quot;, lty = 2)
+# 
+# lm_mod&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>
     </item>
