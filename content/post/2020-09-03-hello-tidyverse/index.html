@@ -6,7 +6,7 @@ slug: hello-tidyverse
 categories: []
 tags: []
 subtitle: 'Work in progress'
-summary: 'Data wrangling and visualization: insights into data analysis with the tidyverse'
+summary: 'This post explores crop yield data with visualization and the lm() function to generate many regression models (a model for each country (25) and crop (4).'
 authors: []
 lastmod: '2020-10-20'
 featured: no
@@ -471,7 +471,6 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 # set.seed(1014) if you want to select the same 9 countries each time
 crops &lt;- crop_yield_tidy %&gt;% distinct(crop) %&gt;%  pull()
 country_random &lt;- crop_yield_tidy %&gt;% 
-  # filter(crop %in% crops) %&gt;% 
   select(country) %&gt;% 
   distinct() %&gt;% 
   slice_sample(n = 9) %&gt;% 
@@ -482,12 +481,13 @@ crop_yield_tidy %&gt;%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
   facet_wrap(~country, &#39;free_x&#39;) +
+  theme(plot.title.position = &#39;plot&#39;) +
   labs(
     title = &#39;Crop Yield USA&#39;,
     y = &#39;Year&#39;,
     x = &#39;tonnes per hectare per year&#39;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="4200" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
 <pre class="r"><code># plot of USA data only
 crop_yield_tidy %&gt;% 
   filter(country == &#39;United States&#39;) %&gt;% 
@@ -495,27 +495,28 @@ crop_yield_tidy %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   facet_wrap(~country, scales = &#39;free_y&#39;) +
-  theme(legend.position =  &#39;none&#39;) +
+  theme(legend.position =  &#39;none&#39;,
+        plot.title.position = &#39;plot&#39;) +
   labs(
     title = &#39;Crop Yield USA&#39;,
     y = &#39;Crop&#39;,
     x = &#39;tonnes per hectare&#39;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="4200" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
 crop_yield_tidy %&gt;% 
-  filter(
-         country %in% country_random,
+  filter(country %in% country_random,
          crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
   facet_wrap(~country, scales = &#39;free_y&#39;) +
+  theme(plot.title.position = &#39;plot&#39;) +
   labs(
      y = &#39;yield per hectare&#39;,
     title = &#39;Crop Yield&#39;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png" width="4200" /></p>
+<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png" width="3000" /></p>
 <pre class="r"><code>crop_yield_tidy %&gt;% 
   filter(country %in% top_pops,
          crop == c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
@@ -524,7 +525,8 @@ crop_yield_tidy %&gt;%
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = &#39;free&#39;) +
-  theme(legend.position = &#39;none&#39;) +
+  theme(legend.position = &#39;none&#39;,
+        plot.title.position = &#39;plot&#39;) +
   labs(
     title = &#39;Crop Yield&#39;,
     y = &#39;Crop&#39;,
@@ -532,12 +534,12 @@ crop_yield_tidy %&gt;%
   )</code></pre>
 <p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="3000" /></p>
 <pre class="r"><code>crop_yield_tidy %&gt;% 
-  filter(
-         country %in% top_pops,
+  filter(country %in% top_pops,
          crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;% 
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
+  theme(plot.title.position = &#39;plot&#39;) +
   facet_wrap(~country, scales = &#39;free_y&#39;) +
   labs(
      y = &#39;yield per hectare&#39;,

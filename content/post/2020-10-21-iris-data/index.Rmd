@@ -33,7 +33,7 @@ theme_set(theme_light())
 ```
 
 # Iris data
-The iris dataset is a classic, so much so that it's included in the datasets package that comes with every base installation of R. You can use `data()` to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., `data(package = 'dplyr')`.
+The iris dataset is a classic, so much so that it's included in the datasets package that comes with every installation of R. You can use `data()` to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., `data(package = 'dplyr')`.
 
 Let's take a look at the data.
 ```{r}
@@ -49,15 +49,13 @@ iris_df %>%  count(species)
 iris_df %>%  str()
 
 ```
-This dataset is clean, but with only 150 observations, we must question whether it's too small to train a reliable model. We will generate bootstrap resamples to make the most of what we have.
+This dataset is clean, but with only 150 observations, it's worth questioning whether a reliable model can be generated. There are four features (sepal length and width, and petal length and width) and there are three unique species. 
 
-We see that we have four features (sepal length and width, and petal length and width) and there are three unique species.. 
-
-**It makes sense to create a model that predicts the species of iris based on the flower's measurements.** 
+**It makes sense to create a classification model that predicts the species of iris based on the flower's measurements.** 
 
 
 # Visualize relationships
-Before we do any kind of machine learning, it's helpful to visualize the data and develop a better understanding of the relationships in our data. This will also help us to have an intuitive sense about the potential predictive power of the data. 
+Before we do any kind of machine learning, it's helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data. 
 
 ```{r}
 sepal <- iris_df %>% 
@@ -109,7 +107,7 @@ iris_df_long %>%
 ```
 
 # Get modelling
-Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, `initial split` provides a 75:25 split for our train and test sets respectively. The function `bootstraps` will take the training data, further split it into a training and test set, then resample and repeat 25 times. This 'resampling' provides a more robust dataset to train our model with.
+Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, `initial split` provides a 75:25 split for our train and test sets respectively. The function `bootstraps` will take the training data, further split it into a training and test set, then resample and repeat this process 25 times. 
 ```{r}
 set.seed(123)
 tidy_split <- initial_split(iris_df)

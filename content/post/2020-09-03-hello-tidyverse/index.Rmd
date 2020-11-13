@@ -6,7 +6,7 @@ slug: hello-tidyverse
 categories: []
 tags: []
 subtitle: 'Work in progress'
-summary: 'Data wrangling and visualization: insights into data analysis with the tidyverse'
+summary: 'This post explores crop yield data with visualization and the lm() function to generate many regression models (a model for each country (25) and crop (4).'
 authors: []
 lastmod: '2020-10-20'
 featured: no
@@ -106,12 +106,11 @@ crop_yield_tidy %>% # 249 unique countries
 Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let's start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.
 
 We will use `slice_sample()` to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let's choose 9 countries to get a feel for crop yields over time without overwhelming our senses. 
-```{r, fig.width=14, fig.height=10}
+```{r}
 # Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
 crops <- crop_yield_tidy %>% distinct(crop) %>%  pull()
 country_random <- crop_yield_tidy %>% 
-  # filter(crop %in% crops) %>% 
   select(country) %>% 
   distinct() %>% 
   slice_sample(n = 9) %>% 
@@ -122,6 +121,7 @@ crop_yield_tidy %>%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
   facet_wrap(~country, 'free_x') +
+  theme(plot.title.position = 'plot') +
   labs(
     title = 'Crop Yield USA',
     y = 'Year',
@@ -136,7 +136,8 @@ crop_yield_tidy %>%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
   geom_col()  +
   facet_wrap(~country, scales = 'free_y') +
-  theme(legend.position =  'none') +
+  theme(legend.position =  'none',
+        plot.title.position = 'plot') +
   labs(
     title = 'Crop Yield USA',
     y = 'Crop',
@@ -145,13 +146,13 @@ crop_yield_tidy %>%
 
 # Plot crop yield per hectare per year.
 crop_yield_tidy %>% 
-  filter(
-         country %in% country_random,
+  filter(country %in% country_random,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
   facet_wrap(~country, scales = 'free_y') +
+  theme(plot.title.position = 'plot') +
   labs(
      y = 'yield per hectare',
     title = 'Crop Yield'
@@ -168,7 +169,8 @@ crop_yield_tidy %>%
   geom_col()  +
   scale_y_reordered() +
   facet_wrap(~country, scales = 'free') +
-  theme(legend.position = 'none') +
+  theme(legend.position = 'none',
+        plot.title.position = 'plot') +
   labs(
     title = 'Crop Yield',
     y = 'Crop',
@@ -177,12 +179,12 @@ crop_yield_tidy %>%
 ```
 ```{r}
 crop_yield_tidy %>% 
-  filter(
-         country %in% top_pops,
+  filter(country %in% top_pops,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>% 
   mutate(crop = fct_reorder(crop, yield_hectare)) %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
+  theme(plot.title.position = 'plot') +
   facet_wrap(~country, scales = 'free_y') +
   labs(
      y = 'yield per hectare',

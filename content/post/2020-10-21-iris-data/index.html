@@ -25,7 +25,7 @@ projects: []
 
 <div id="iris-data" class="section level1">
 <h1>Iris data</h1>
-<p>The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every base installation of R. You can use <code>data()</code> to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., <code>data(package = 'dplyr')</code>.</p>
+<p>The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every installation of R. You can use <code>data()</code> to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., <code>data(package = 'dplyr')</code>.</p>
 <p>Let’s take a look at the data.</p>
 <pre class="r"><code># load the iris data set and clean the column names with janitor::clean_names()
 iris_df&lt;- iris %&gt;% 
@@ -53,13 +53,12 @@ iris_df %&gt;%  str()</code></pre>
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>This dataset is clean, but with only 150 observations, we must question whether it’s too small to train a reliable model. We will generate bootstrap resamples to make the most of what we have.</p>
-<p>We see that we have four features (sepal length and width, and petal length and width) and there are three unique species..</p>
-<p><strong>It makes sense to create a model that predicts the species of iris based on the flower’s measurements.</strong></p>
+<p>This dataset is clean, but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four features (sepal length and width, and petal length and width) and there are three unique species.</p>
+<p><strong>It makes sense to create a classification model that predicts the species of iris based on the flower’s measurements.</strong></p>
 </div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
-<p>Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the relationships in our data. This will also help us to have an intuitive sense about the potential predictive power of the data.</p>
+<p>Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data.</p>
 <pre class="r"><code>sepal &lt;- iris_df %&gt;% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
   geom_point(size = 1) + facet_wrap(~species) +
@@ -110,7 +109,7 @@ iris_df_long %&gt;%
 </div>
 <div id="get-modelling" class="section level1">
 <h1>Get modelling</h1>
-<p>Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, <code>initial split</code> provides a 75:25 split for our train and test sets respectively. The function <code>bootstraps</code> will take the training data, further split it into a training and test set, then resample and repeat 25 times. This ‘resampling’ provides a more robust dataset to train our model with.</p>
+<p>Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, <code>initial split</code> provides a 75:25 split for our train and test sets respectively. The function <code>bootstraps</code> will take the training data, further split it into a training and test set, then resample and repeat this process 25 times.</p>
 <pre class="r"><code>set.seed(123)
 tidy_split &lt;- initial_split(iris_df)
 tidy_split</code></pre>
@@ -226,11 +225,11 @@ glmnet_mod</code></pre>
 glmnet_wf &lt;- workflow() %&gt;%
   add_formula(species ~ .) 
 glmnet_wf</code></pre>
-<pre><code>## ══ Workflow ════════════════════════
+<pre><code>## ══ Workflow ════════════════════════════════════════════════════════════════════
 ## Preprocessor: Formula
 ## Model: None
 ## 
-## ── Preprocessor ────────────────────
+## ── Preprocessor ────────────────────────────────────────────────────────────────
 ## species ~ .</code></pre>
 <pre class="r"><code># add the model to the workflow and use iris_boots to fit our model 25 times
 glmnet_results &lt;- glmnet_wf %&gt;%
