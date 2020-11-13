@@ -7,7 +7,7 @@ headless = true  # This file represents a page section.
 active = true  # activate this widget? true/false
 weight = 30  # Order that this section will appear.
 
-title = ":heart: <i class='fab fa-r-project'  style='color: #FF0000'></i> Blog"
+title = ":heart: <i class='fab fa-r-project'  style='color: #ff6700'></i> <span style='color:#FFBF00'>Blog</span>"
 subtitle = ""
 
 [content]
