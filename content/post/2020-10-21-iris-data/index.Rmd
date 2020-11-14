@@ -49,10 +49,9 @@ iris_df %>%  count(species)
 iris_df %>%  str()
 
 ```
-This dataset is clean, but with only 150 observations, it's worth questioning whether a reliable model can be generated. There are four features (sepal length and width, and petal length and width) and there are three unique species. 
+The data is clean but with only 150 observations, it's worth questioning whether a reliable model can be generated. We'll get back to this question. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species. 
 
-**It makes sense to create a classification model that predicts the species of iris based on the flower's measurements.** 
-
+**Let's use the data to create a classification model that predicts the species of iris based on a flower's measurements.** 
 
 # Visualize relationships
 Before we do any kind of machine learning, it's helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data. 
@@ -256,4 +255,4 @@ collect_predictions(final_rf) %>%
 # Final thoughts
 It's always good to ask the question, 'Do my results make sense'? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data :smile:. 
 
-I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources. 
+I would like to thank the unsung heroes of the tidyverse and tidymodels: **Julia Silge**, **David Robinson** and **Andrew Couch** for creating and sharing amazing, open source learning resources. 

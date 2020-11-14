@@ -18,7 +18,7 @@ image:
 projects: []
 ---
 # Intro 
-This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week's dataset (September 1st, 2020) is from [Our World in Data] (https://ourworldindata.org/crop-yields). There are actually five datasets but we are going to focus on global crop yields. 
+This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week's dataset (September 1st, 2020) is from [Our World in Data](https://ourworldindata.org/crop-yields). There are actually five datasets but we are going to focus on global crop yields. 
 
 ```{r, out.width="100%", include=FALSE}
 library(knitr)

@@ -53,8 +53,8 @@ iris_df %&gt;%  str()</code></pre>
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>This dataset is clean, but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four features (sepal length and width, and petal length and width) and there are three unique species.</p>
-<p><strong>It makes sense to create a classification model that predicts the species of iris based on the flower’s measurements.</strong></p>
+<p>The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. We’ll get back to this question. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.</p>
+<p><strong>Let’s use the data to create a classification model that predicts the species of iris based on a flower’s measurements.</strong></p>
 </div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
@@ -383,5 +383,5 @@ final_rf</code></pre>
 <div id="final-thoughts" class="section level1">
 <h1>Final thoughts</h1>
 <p>It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data :smile:.</p>
-<p>I would like to thank the unsung heroes of the tidyverse and tidymodels, Julia Silge, David Robinson and Andrew Couch for their contributing invaluable, amazing, free learning resources.</p>
+<p>I would like to thank the unsung heroes of the tidyverse and tidymodels: <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing amazing, open source learning resources.</p>
 </div>
