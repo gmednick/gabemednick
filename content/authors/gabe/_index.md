@@ -1,7 +1,8 @@
 ---
 authors:
 - gabe
-bio: I'm a biochemist, educator and wildly passionate about data science, machine learning and bioinformatics.
+bio: I'm a biochemist, educator and passionate data enthusiast.
+
 education:
   courses:
   - course: Postdoctoral fellowship
@@ -52,9 +53,11 @@ superuser: true
 
 ---
 
-My journey into the physical and biological sciences started with a desire to study osteopathic medicine. In the process of completing a biochemistry and molecular biology degree, my interest in the structure and function of the human body grew into a fascination with the invisible structure and inner workings of the cell. I developed a deep interest in both physical chemistry and biochemistry, and my curiosity resulted in a PhD focussed on sensory transduction pathways and light sensing mechanisms in bacteria.
+During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. In my postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a start-up, I worked on proprietary DNA and RNA synthesis. Over the last few years, my insatiable interest in bioinformatics and data science has transformed my skill-set and expanded my professional repertoire.
 
-After finishing my PhD, I developed and implemented innovative teaching practices in chemistry and biology at the university level. More recently (2018-2020), I worked as a senior scientist for a small startup with an emphasis on DNA and RNA synthesis. I love hands-on research but my current professional passion is centered on **data science** and **bioinformatics**. My mission is to facilitate data informed choices that provide insight, drive innovation and optimize decision making.
+I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Trying to find that perfect blend is what drives my passion as a data scientist.
+
+
 
 
 
