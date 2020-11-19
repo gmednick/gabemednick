@@ -1,7 +1,7 @@
 ---
 authors:
 - gabe
-bio: I'm a biochemist, educator and passionate data enthusiast.
+bio: I'm a biochemist, educator and data science enthusiast.
 
 education:
   courses:
