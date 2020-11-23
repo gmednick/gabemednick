@@ -49,7 +49,7 @@ iris_df %>%  count(species)
 iris_df %>%  str()
 
 ```
-The data is clean but with only 150 observations, it's worth questioning whether a reliable model can be generated. We'll get back to this question. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species. 
+The data is clean but with only 150 observations, it's worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species. 
 
 **Let's use the data to create a classification model that predicts the species of iris based on a flower's measurements.** 
 
@@ -106,7 +106,7 @@ iris_df_long %>%
 ```
 
 # Get modelling
-Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, `initial split` provides a 75:25 split for our train and test sets respectively. The function `bootstraps` will take the training data, further split it into a training and test set, then resample and repeat this process 25 times. 
+Before we get to modeling, we need to split the data. By default, `initial split()` provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function `bootstraps()` will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times. 
 ```{r}
 set.seed(123)
 tidy_split <- initial_split(iris_df)
@@ -114,7 +114,7 @@ tidy_split
 iris_train <- training(tidy_split)
 iris_test <- testing(tidy_split)
 
-iris_boots <- bootstraps(iris_train) 
+iris_boots <- bootstraps(iris_train, times = 30) 
 iris_boots
 ```
 
@@ -253,6 +253,6 @@ collect_predictions(final_rf) %>%
 
 
 # Final thoughts
-It's always good to ask the question, 'Do my results make sense'? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data :smile:. 
+It's always good to ask the question, 'Do my results make sense'? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data :smile:. 
 
 I would like to thank the unsung heroes of the tidyverse and tidymodels: **Julia Silge**, **David Robinson** and **Andrew Couch** for creating and sharing amazing, open source learning resources. 

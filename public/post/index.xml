@@ -20,8 +20,8 @@
       <description>
 
 
-&lt;div id=&#34;this-is-a-work-in-progress-like-all-of-my-posts.-this-app-currently-allows-one-to-visualize-the-number-of-new-cases-and-new-deaths-over-time.-the-default-states-are-california-hawaii-and-florida-but-you-can-add-or-remove-states-using-the-selector-box-in-the-sidebar.-the-accompanying-maps-use-color-to-show-the-total-cases-and-total-deaths-per-million-people-by-state.-the-data-is-from-johns-hopkins-university-and-is-updated-daily.&#34; class=&#34;section level5&#34;&gt;
-&lt;h5&gt;This is a work in progress (like all of my posts). This &lt;a href=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;app&lt;/a&gt; currently allows one to visualize the number of new cases and new deaths over time. The default States are California, Hawaii and Florida but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. The data is from &lt;a href=&#34;https://github.com/CSSEGISandData/COVID-19&#34;&gt;Johns Hopkins University&lt;/a&gt; and is updated daily.&lt;/h5&gt;
+&lt;div id=&#34;section-like-all-of-my-posts-this-is-a-work-in-progress.-the-covid-tracker-app-currently-allows-one-to-visualize-the-number-of-new-cases-and-new-deaths-over-time.-the-default-states-are-california-hawaii-and-florida-but-you-can-add-or-remove-states-using-the-selector-box-in-the-sidebar.-the-accompanying-maps-use-color-to-show-the-total-cases-and-total-deaths-per-million-people-by-state.-the-data-is-from-johns-hopkins-university-and-is-updated-daily.-you-can-explore-the-app-here-embedded-in-this-post-or-better-explore-it-using-the-link-above.-the-app-is-hosted-on-shinyapps.io-and-my-code-is-available-on-github&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Like all of my posts, this is a work in progress. The &lt;a href=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;Covid Tracker App&lt;/a&gt; currently allows one to visualize the number of new cases and new deaths over time. The default States are California, Hawaii and Florida but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. The data is from &lt;a href=&#34;https://github.com/CSSEGISandData/COVID-19&#34;&gt;Johns Hopkins University&lt;/a&gt; and is updated daily. You can explore the app here embedded in this post or, better, explore it using the link above. The app is hosted on shinyapps.io and my code is available on &lt;a href=&#34;https://github.com/gmednick/covid-shiny-app&#34;&gt;Git&lt;i class=&#34;fab fa-github&#34;  style=&#34;color: #RRGGBB,&#34;&gt;&lt;/i&gt;hub&lt;/a&gt;&lt;/h5&gt;
 &lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/covid-app/&#34;&gt;
 &lt;/iframe&gt;
 &lt;/div&gt;
@@ -66,7 +66,7 @@ iris_df %&amp;gt;%  str()&lt;/code&gt;&lt;/pre&gt;
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &amp;quot;setosa&amp;quot;,&amp;quot;versicolor&amp;quot;,..: 1 1 1 1 1 1 1 1 1 1 ...&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. We’ll get back to this question. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.&lt;/p&gt;
+&lt;p&gt;The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Let’s use the data to create a classification model that predicts the species of iris based on a flower’s measurements.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
@@ -122,7 +122,7 @@ iris_df_long %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;get-modelling&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Get modelling&lt;/h1&gt;
-&lt;p&gt;Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, &lt;code&gt;initial split&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. The function &lt;code&gt;bootstraps&lt;/code&gt; will take the training data, further split it into a training and test set, then resample and repeat this process 25 times.&lt;/p&gt;
+&lt;p&gt;Before we get to modeling, we need to split the data. By default, &lt;code&gt;initial split()&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function &lt;code&gt;bootstraps()&lt;/code&gt; will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
 tidy_split &amp;lt;- initial_split(iris_df)
 tidy_split&lt;/code&gt;&lt;/pre&gt;
@@ -131,10 +131,10 @@ tidy_split&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_train &amp;lt;- training(tidy_split)
 iris_test &amp;lt;- testing(tidy_split)
 
-iris_boots &amp;lt;- bootstraps(iris_train) 
+iris_boots &amp;lt;- bootstraps(iris_train, times = 30) 
 iris_boots&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Bootstrap sampling 
-## # A tibble: 25 x 2
+## # A tibble: 30 x 2
 ##    splits           id         
 ##    &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;      
 ##  1 &amp;lt;split [113/39]&amp;gt; Bootstrap01
@@ -147,7 +147,7 @@ iris_boots&lt;/code&gt;&lt;/pre&gt;
 ##  8 &amp;lt;split [113/35]&amp;gt; Bootstrap08
 ##  9 &amp;lt;split [113/42]&amp;gt; Bootstrap09
 ## 10 &amp;lt;split [113/41]&amp;gt; Bootstrap10
-## # … with 15 more rows&lt;/code&gt;&lt;/pre&gt;
+## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Recipes&lt;/h1&gt;
@@ -255,7 +255,7 @@ glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
 glmnet_results&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
 ## # Bootstrap sampling 
-## # A tibble: 25 x 6
+## # A tibble: 30 x 6
 ##    splits       id        .metrics      .notes       .extracts    .predictions  
 ##    &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;     &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;        
 ##  1 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
@@ -268,14 +268,14 @@ glmnet_results&lt;/code&gt;&lt;/pre&gt;
 ##  8 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [35 ×…
 ##  9 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
 ## 10 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
-## # … with 15 more rows&lt;/code&gt;&lt;/pre&gt;
+## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# look at the model metrics
 collect_metrics(glmnet_results)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass 0.944    25 0.00642
-## 2 roc_auc  hand_till  0.987    25 0.00234&lt;/code&gt;&lt;/pre&gt;
+## 1 accuracy multiclass 0.939    30 0.00672
+## 2 roc_auc  hand_till  0.986    30 0.00208&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to tweak a few things and walah!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
 rf_mod &amp;lt;- rand_forest() %&amp;gt;%
@@ -297,37 +297,37 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass 0.945    25 0.00764
-## 2 roc_auc  hand_till  0.993    25 0.00126&lt;/code&gt;&lt;/pre&gt;
+## 1 accuracy multiclass 0.946    30 0.00660
+## 2 roc_auc  hand_till  0.994    30 0.00111&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
 ##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
-## 1 setosa     setosa     13.3 
+## 1 setosa     setosa     13.4 
 ## 2 setosa     versicolor  0   
 ## 3 setosa     virginica   0   
 ## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.2 
-## 6 versicolor virginica   1   
+## 5 versicolor versicolor 12.1 
+## 6 versicolor virginica   1.27
 ## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.24
-## 9 virginica  virginica  12.4&lt;/code&gt;&lt;/pre&gt;
+## 8 virginica  versicolor  1.17
+## 9 virginica  virginica  12.3&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
 ##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
-## 1 setosa     setosa     13.3 
-## 2 setosa     versicolor  0   
-## 3 setosa     virginica   0   
-## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.3 
-## 6 versicolor virginica   1.04
-## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.16
-## 9 virginica  virginica  12.4&lt;/code&gt;&lt;/pre&gt;
+## 1 setosa     setosa      13.4
+## 2 setosa     versicolor   0  
+## 3 setosa     virginica    0  
+## 4 versicolor setosa       0  
+## 5 versicolor versicolor  12.2
+## 6 versicolor virginica    1.1
+## 7 virginica  setosa       0  
+## 8 virginica  versicolor   1.1
+## 9 virginica  virginica   12.4&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The ROC curve helps us visually interpret our model performance at every threshold.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   collect_predictions() %&amp;gt;%
@@ -395,7 +395,7 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;final-thoughts&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Final thoughts&lt;/h1&gt;
-&lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
+&lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
 &lt;p&gt;I would like to thank the unsung heroes of the tidyverse and tidymodels: &lt;strong&gt;Julia Silge&lt;/strong&gt;, &lt;strong&gt;David Robinson&lt;/strong&gt; and &lt;strong&gt;Andrew Couch&lt;/strong&gt; for creating and sharing amazing, open source learning resources.&lt;/p&gt;
 &lt;/div&gt;
 </description>

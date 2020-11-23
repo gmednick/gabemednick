@@ -688,7 +688,7 @@ iris_df %&gt;%  str()</code></pre>
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. We’ll get back to this question. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.</p>
+<p>The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.</p>
 <p><strong>Let’s use the data to create a classification model that predicts the species of iris based on a flower’s measurements.</strong></p>
 </div>
 <div id="visualize-relationships" class="section level1">
@@ -744,7 +744,7 @@ iris_df_long %&gt;%
 </div>
 <div id="get-modelling" class="section level1">
 <h1>Get modelling</h1>
-<p>Before we get to modeling, we need to split the data. Since our dataset is small, we are going to take the training set and make bootstrap resamples. By default, <code>initial split</code> provides a 75:25 split for our train and test sets respectively. The function <code>bootstraps</code> will take the training data, further split it into a training and test set, then resample and repeat this process 25 times.</p>
+<p>Before we get to modeling, we need to split the data. By default, <code>initial split()</code> provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function <code>bootstraps()</code> will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times.</p>
 <pre class="r"><code>set.seed(123)
 tidy_split &lt;- initial_split(iris_df)
 tidy_split</code></pre>
@@ -753,10 +753,10 @@ tidy_split</code></pre>
 <pre class="r"><code>iris_train &lt;- training(tidy_split)
 iris_test &lt;- testing(tidy_split)
 
-iris_boots &lt;- bootstraps(iris_train) 
+iris_boots &lt;- bootstraps(iris_train, times = 30) 
 iris_boots</code></pre>
 <pre><code>## # Bootstrap sampling 
-## # A tibble: 25 x 2
+## # A tibble: 30 x 2
 ##    splits           id         
 ##    &lt;list&gt;           &lt;chr&gt;      
 ##  1 &lt;split [113/39]&gt; Bootstrap01
@@ -769,7 +769,7 @@ iris_boots</code></pre>
 ##  8 &lt;split [113/35]&gt; Bootstrap08
 ##  9 &lt;split [113/42]&gt; Bootstrap09
 ## 10 &lt;split [113/41]&gt; Bootstrap10
-## # … with 15 more rows</code></pre>
+## # … with 20 more rows</code></pre>
 </div>
 <div id="recipes" class="section level1">
 <h1>Recipes</h1>
@@ -877,7 +877,7 @@ glmnet_results &lt;- glmnet_wf %&gt;%
 glmnet_results</code></pre>
 <pre><code>## # Resampling results
 ## # Bootstrap sampling 
-## # A tibble: 25 x 6
+## # A tibble: 30 x 6
 ##    splits       id        .metrics      .notes       .extracts    .predictions  
 ##    &lt;list&gt;       &lt;chr&gt;     &lt;list&gt;        &lt;list&gt;       &lt;list&gt;       &lt;list&gt;        
 ##  1 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
@@ -890,14 +890,14 @@ glmnet_results</code></pre>
 ##  8 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [35 ×…
 ##  9 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [42 ×…
 ## 10 &lt;split [113… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [41 ×…
-## # … with 15 more rows</code></pre>
+## # … with 20 more rows</code></pre>
 <pre class="r"><code># look at the model metrics
 collect_metrics(glmnet_results)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1 accuracy multiclass 0.944    25 0.00642
-## 2 roc_auc  hand_till  0.987    25 0.00234</code></pre>
+## 1 accuracy multiclass 0.939    30 0.00672
+## 2 roc_auc  hand_till  0.986    30 0.00208</code></pre>
 <p>Now for a <strong>random forest</strong> model. We only need to tweak a few things and walah!</p>
 <pre class="r"><code>set.seed(1234)
 rf_mod &lt;- rand_forest() %&gt;%
@@ -919,37 +919,37 @@ collect_metrics(rf_results)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   .metric  .estimator  mean     n std_err
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1 accuracy multiclass 0.945    25 0.00764
-## 2 roc_auc  hand_till  0.993    25 0.00126</code></pre>
+## 1 accuracy multiclass 0.946    30 0.00660
+## 2 roc_auc  hand_till  0.994    30 0.00111</code></pre>
 <p>Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   conf_mat_resampled() </code></pre>
 <pre><code>## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
 ##   &lt;fct&gt;      &lt;fct&gt;      &lt;dbl&gt;
-## 1 setosa     setosa     13.3 
+## 1 setosa     setosa     13.4 
 ## 2 setosa     versicolor  0   
 ## 3 setosa     virginica   0   
 ## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.2 
-## 6 versicolor virginica   1   
+## 5 versicolor versicolor 12.1 
+## 6 versicolor virginica   1.27
 ## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.24
-## 9 virginica  virginica  12.4</code></pre>
+## 8 virginica  versicolor  1.17
+## 9 virginica  virginica  12.3</code></pre>
 <pre class="r"><code>rf_results %&gt;%
   conf_mat_resampled() </code></pre>
 <pre><code>## # A tibble: 9 x 3
 ##   Prediction Truth       Freq
 ##   &lt;fct&gt;      &lt;fct&gt;      &lt;dbl&gt;
-## 1 setosa     setosa     13.3 
-## 2 setosa     versicolor  0   
-## 3 setosa     virginica   0   
-## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.3 
-## 6 versicolor virginica   1.04
-## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.16
-## 9 virginica  virginica  12.4</code></pre>
+## 1 setosa     setosa      13.4
+## 2 setosa     versicolor   0  
+## 3 setosa     virginica    0  
+## 4 versicolor setosa       0  
+## 5 versicolor versicolor  12.2
+## 6 versicolor virginica    1.1
+## 7 virginica  setosa       0  
+## 8 virginica  versicolor   1.1
+## 9 virginica  virginica   12.4</code></pre>
 <p>The ROC curve helps us visually interpret our model performance at every threshold.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   collect_predictions() %&gt;%
@@ -1017,7 +1017,7 @@ final_rf</code></pre>
 </div>
 <div id="final-thoughts" class="section level1">
 <h1>Final thoughts</h1>
-<p>It’s always good to ask the question, ‘Do my results make sense’? Both models show near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.</p>
+<p>It’s always good to ask the question, ‘Do my results make sense’? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.</p>
 <p>I would like to thank the unsung heroes of the tidyverse and tidymodels: <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing amazing, open source learning resources.</p>
 </div>
 
@@ -1326,7 +1326,7 @@ final_rf</code></pre>
     This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF0000"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
     <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF7F00"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #9400D3"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #00FF00"></i> 
-<i class="far fa-kiss-wink-heart" style="color: #FFFF00"></i>! The stunning Milky Way photo is by Kristopher Roller.
+<i class="far fa-kiss-wink-heart" style="color: #FFFF00"></i>! Stunning photo of the Milky Way is by Kristopher Roller.
 
     
     <span class="float-right" aria-hidden="true">
