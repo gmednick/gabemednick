@@ -17,7 +17,9 @@ image:
 projects: []
 runtime: 'shiny'
 ---
-##### Like all of my posts, this is a work in progress. The [Covid Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) currently allows one to visualize the number of new cases and new deaths over time. The default States are California, Hawaii and Florida but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. You can explore the app here embedded in this post or, better, explore it using the link above. The app is hosted on shinyapps.io and my code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app)
+##### The [Covid Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) allows one to visualize the number of cases and deaths by day on a State level. California, Hawaii and Florida are selected by defualt but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. If you click on the map, there is an interactive tooltip that provides you with detailed information by State. 
+
+##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. You can explore the app here in this post or open it in a new window by going to the link above. It's hosted on shinyapps.io and my code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app).
 
 
 <iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/covid-app/"> </iframe>
