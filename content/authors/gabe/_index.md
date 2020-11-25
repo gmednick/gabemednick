@@ -16,14 +16,15 @@ education:
     year: 2008
 email: ""
 interests:
+- Working with data in R 
+- Data visualization and machine learning 
+- Creating Dashboards
+- Workflow management
+- Version control
 - Bioinformatics
-- Data visualization
-- Data analysis and modeling
-- Rmarkdown and Blogdown
-- Shiny and flexdashboards
-- Git/Github
-- Workflow management 
 - Command line tools and bash scripting
+- SQL and Python
+
 name: Gabe Mednick
 organizations:
 - name: 
@@ -53,9 +54,9 @@ superuser: true
 
 ---
 
-During graduate school I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a start-up, I worked on proprietary DNA and RNA synthesis. Over the last few years, my insatiable interest in bioinformatics and data science has transformed my skill-set and expanded my professional repertoire.
+During graduate school I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. 
 
-I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Trying to find that perfect blend is what drives my passion as a data scientist.
+Over these last few years, my insatiable interest in bioinformatics and data science has transformed my skill set and expanded my professional repertoire. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.
 
 
 
