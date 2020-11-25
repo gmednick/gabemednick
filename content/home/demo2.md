@@ -50,7 +50,7 @@ subtitle = ""
  css_class = ""
 +++
 
-**Drylab** (computational) skills
+**Drylab skills**
 - Bioinformatics and applied data science (machine learning)
 - Biochemistry-based insights, technology and IP development
 - Reactive web applications 
@@ -58,8 +58,7 @@ subtitle = ""
 - Workflow and database management
 
 
-**Wetlab** skills
-
+**Wetlab skills**
 - Microbiology
 - Molecular biology
 - Nanopore sequencing

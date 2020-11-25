@@ -23,7 +23,7 @@ interests:
 - Version control
 - Bioinformatics
 - Command line tools and bash scripting
-- SQL and Python
+- R, SQL and Python
 
 name: Gabe Mednick
 organizations:
