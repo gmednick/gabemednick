@@ -71,6 +71,11 @@ date_format = "Jan 2006"
   location = "California"
   date_start = "2016-01-01"
   date_end = "2018-01-01"
-  description = """Taught general chemistry and biology with an active learning approach."""
+  description = """lecturer 
+  
+  * General chemistry 
+  * Biology 
+  * Equitable, student centered teaching 
+  """
 
 +++
