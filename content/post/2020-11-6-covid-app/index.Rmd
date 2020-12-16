@@ -150,7 +150,7 @@ library(gganimate)
 library(transformr)
 us_monthly <- us_state %>%
   mutate(month = month(date)) %>% 
-  filter(month >= 9) %>% 
+#  filter(month >= 9) %>% 
   group_by(state, month) %>%
   summarize(
     cases = max(cases),
@@ -176,11 +176,12 @@ p <- plot_usmap(
     alpha = 0.5
   ) 
 
-p <- p + transition_time(month) +
+p <- p + transition_time(as.integer(month)) +
   labs(title = "Month: {frame_time}") 
 
-animate(p, fps=5)
- ```
+animate(p, fps=10,  end_pause = 20)
+```
+
 
 ```{r}
 us_total_sums <- us_data %>%
