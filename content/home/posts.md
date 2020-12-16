@@ -5,7 +5,7 @@
 widget = "pages"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
 active = true  # activate this widget? true/false
-weight = 30  # Order that this section will appear.
+weight = 50  # Order that this section will appear.
 
 title = ":heart: <i class='fab fa-r-project'  style='color: #ff6700'></i> <span style='color:#FFBF00'>Blog</span>"
 subtitle = ""
