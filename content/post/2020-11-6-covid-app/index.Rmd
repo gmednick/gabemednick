@@ -142,8 +142,7 @@ us_counties <- us_counties %>%
     left_join(uid, by = c('state' = 'Province_State', 'county' = 'Admin2')) 
 #    mutate(county = str_c(county, " County"))
 ```
-
-The animated map below (not included in the covid app) shows the change in cases over the last 12 months.
+#### The animated map below shows the changes in cases over the last 12 months. 
 ```{r}
 
 library(gganimate)
@@ -209,7 +208,7 @@ us_total_sums <- us_data %>%
       ungroup() 
 ```
 
-This map includes county level case details (not included in the covid app because of memory appropriation).
+#### This map includes county level case details but was not included in the covid app because of memory appropriation.
 ```{r}
 # Cases per million by county
 states <- plot_usmap("states", 
