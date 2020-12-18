@@ -1,7 +1,7 @@
 ---
 title: COVID Shiny App
 author: Gabe Mednick
-date: '2020-11-06'
+date: '2020-12-18'
 slug: covid-shiny-app
 categories: []
 tags: []
@@ -144,7 +144,8 @@ us_counties <- us_counties %>%
     filter(county != 'Garfield')
 
 ```
-#### The animation below shows the change in cases over the last 12 months. I may add this map to the app in a future iteration! 
+## Time Series Animation
+#### This animated map shows the change in case count over the last 12 months. I might add it to the app in a future iteration. 
 ```{r}
 library(gganimate)
 library(transformr)
@@ -209,7 +210,8 @@ us_total_sums <- us_data %>%
       ungroup() 
 ```
 
-#### The next map includes county level case details. It was not included in the app due to it requires too much memory. The problem with including it here is that it does not have the reactive nature of the Shiny covid app, so the results will be based on the most recent date: `r format(Sys.Date(), "%A, %B %d, %Y")`. 
+## County Level Map
+#### This map includes county level case counts. It was not included in the covid app because it requires too much memory. The problem with including it here is that it does not have the reactive nature of the Shiny covid app, so the results will be based on the most recent date: `r format(Sys.Date(), "%A, %B %d, %Y")`. 
 
 ```{r}
 # Cases per million by county
@@ -267,4 +269,6 @@ ggplotly(ca_map,
       config(displayModeBar = FALSE)
 ```
 
-I recently made some updates on this post and, when I ran the code, almost all of the counties were purple. I had not changed anything, so why was the color spectrum no longer visible. I looked at the case numbers for a couple counties and everything checked out. So what next? There was one spec of yellow (reflecting a large case count) on the map. On closer inspection, the county of Garfield (Montana), had reported more cases than total population. After removing the case count for Garfield, the problem was fixed! Garfield and other counties with missing data are shaded grey. The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. 
+#### I recently made some updates to this post and, when I ran the code, almost all of the counties were purple. I had not changed anything, so why was the color spectrum no longer visible? I looked at the case numbers for a couple counties and everything checked out. So what next? There was one spec of yellow (reflecting a large case number) on the map. On closer inspection, the county of Garfield (Montana), had reported more cases than its total population. After removing the case count for Garfield, the problem was fixed! Garfield and other counties with missing data are shaded in grey. The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. 
+
+#### For the maps in this post, I set global options such that only the code output is visible. If you want to see the underlying code, it can be found on my [github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
