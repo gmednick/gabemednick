@@ -269,6 +269,7 @@ ggplotly(ca_map,
       config(displayModeBar = FALSE)
 ```
 
+
 #### I recently made some updates to this post and, when I ran the code, almost all of the counties were purple. I had not changed anything, so why was the color spectrum no longer visible? I looked at the case numbers for a couple counties and everything checked out. So what next? There was one spec of yellow (reflecting a large case number) on the map. On closer inspection, the county of Garfield (Montana), had reported more cases than its total population. After removing the case count for Garfield, the problem was fixed! Garfield and other counties with missing data are shaded in grey. The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. 
 
 #### For the maps in this post, I set global options such that only the code output is visible. If you want to see the underlying code, it can be found on my [github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
