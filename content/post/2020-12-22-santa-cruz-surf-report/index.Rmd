@@ -1,0 +1,27 @@
+---
+title: Santa Cruz surf reporter
+author: 'Gabe Mednick'
+date: '2020-12-22'
+slug: santa-cruz-surf-report
+categories: []
+tags: []
+subtitle: ''
+summary: "This app provides the most recent data from NOAA's wave model <br> (Pacific) and buoy data near Santa Cruz, California"
+authors: []
+lastmod: '2020-12-22T11:33:04-08:00'
+featured: no
+image: 
+  caption: '[The Lane](steamer-lane.jpg)'
+  focal_point: ''
+  preview_only: no
+projects: []
+runtime: 'shiny'
+---
+
+#### This post uses data from NOAA's wave model and buoy data near Santa Cruz (buoyid = 46042) to report on the surf and wind conditions. You can click this [link](https://biolight-informatics.shinyapps.io/surf_reporter/) or explore the app embedded below. The data is accessed in R with the packages `rnoaa` and `rNOMADS`. The wave model data is in a binary format and somewhat challenging to work with. 
+
+#### In the near future, I plan to make the app more interactive, animate the wave model data and provide value boxes to see the most recent conditions. The code for the app is available on [Git<i class="fab fa-github"  style="color: #32cd32"></i>hub](https://github.com/gmednick/surf-watch/blob/master/app.R).
+
+#### Please note the app takes a minute to load.
+
+<iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/surf_reporter/"> </iframe>

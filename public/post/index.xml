@@ -5,12 +5,34 @@
     <link>/post/</link>
       <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Blog</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Fri, 18 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2020</copyright><lastBuildDate>Tue, 22 Dec 2020 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
       <title>Blog</title>
       <link>/post/</link>
     </image>
+    
+    <item>
+      <title>Santa Cruz surf reporter</title>
+      <link>/post/santa-cruz-surf-report/</link>
+      <pubDate>Tue, 22 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>/post/santa-cruz-surf-report/</guid>
+      <description>
+
+
+&lt;div id=&#34;section-this-post-uses-data-from-noaas-wave-model-and-buoy-data-near-santa-cruz-buoyid-46042-to-report-on-the-surf-and-wind-conditions.-you-can-click-this-link-or-explore-the-app-embedded-below.-the-data-is-accessed-in-r-with-the-packages-rnoaa-and-rnomads.-the-wave-model-data-is-in-a-binary-format-and-somewhat-challenging-to-work-with.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;This post uses data from NOAA’s wave model and buoy data near Santa Cruz (buoyid = 46042) to report on the surf and wind conditions. You can click this &lt;a href=&#34;https://biolight-informatics.shinyapps.io/surf_reporter/&#34;&gt;link&lt;/a&gt; or explore the app embedded below. The data is accessed in R with the packages &lt;code&gt;rnoaa&lt;/code&gt; and &lt;code&gt;rNOMADS&lt;/code&gt;. The wave model data is in a binary format and somewhat challenging to work with.&lt;/h4&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-in-the-near-future-i-plan-to-make-the-app-more-interactive-animate-the-wave-model-data-and-provide-value-boxes-to-see-the-most-recent-conditions.-the-code-for-the-app-is-available-on-github.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;In the near future, I plan to make the app more interactive, animate the wave model data and provide value boxes to see the most recent conditions. The code for the app is available on &lt;a href=&#34;https://github.com/gmednick/surf-watch/blob/master/app.R&#34;&gt;Git&lt;i class=&#34;fab fa-github&#34;  style=&#34;color: #32cd32&#34;&gt;&lt;/i&gt;hub&lt;/a&gt;.&lt;/h4&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-please-note-the-app-takes-a-minute-to-load.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Please note the app takes a minute to load.&lt;/h4&gt;
+&lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/surf_reporter/&#34;&gt;
+&lt;/iframe&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>COVID Shiny App</title>
