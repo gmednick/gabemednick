@@ -1,7 +1,7 @@
 ---
 authors:
 - gabe
-bio: I'm a biochemist, educator and data science enthusiast.
+bio: I'm a biochemist, computational biologist, educator and data science enthusiast.
 
 education:
   courses:
@@ -29,7 +29,7 @@ name: Gabe Mednick
 organizations:
 - name: 
   url: 
-role: Data Scientist, Computational Biologist, Educator & Biochemist
+role: 
 social:
 - icon: envelope
   icon_pack: far
