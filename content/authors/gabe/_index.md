@@ -1,7 +1,7 @@
 ---
 authors:
 - gabe
-bio: I'm a biochemist, computational biologist, educator and data science enthusiast.
+bio: Data scientist, biochemist, computational biologist, educator and life enthusiast.
 
 education:
   courses:

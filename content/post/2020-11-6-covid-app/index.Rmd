@@ -19,7 +19,7 @@ runtime: 'shiny'
 ---
 ##### The [COVID Case Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) allows one to visualize the number of cases and deaths by day on a State level. California, Hawaii and Florida are selected by defualt but you can add or remove States using the selector box in the sidebar. The accompanying maps use color to show the total cases and total deaths per million people by State. Detailed information can be viewed by scrolling over the State of interest. 
 
-##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. You can explore the app here or open it in a new window by going to the link above. It's hosted on Shinyapps.io and my code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R).
+##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. You can explore the app here or open it in a new window by going to the link above. It's hosted on Shinyapps.io and myi code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R).
 
 
 <iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/covid-app/"> </iframe>
@@ -270,6 +270,4 @@ ggplotly(ca_map,
 ```
 
 
-#### I recently made some updates to this post and, when I ran the code, almost all of the counties were purple. I had not changed anything, so why was the color spectrum no longer visible? I looked at the case numbers for a couple counties and everything checked out. So what next? There was one spec of yellow (reflecting a large case number) on the map. On closer inspection, the county of Garfield (Montana), had reported more cases than its total population. After removing the case count for Garfield, the problem was fixed! Garfield and other counties with missing data are shaded in grey. The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. 
-
-#### For the maps in this post, I set global options such that only the code output is visible. If you want to see the underlying code, it can be found on my [github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
+#### The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. Counties with missing data are shaded in grey. For the animation and county-level map in this post, I set global options such that only the code output is visible. If you want to see the underlying code, it can be found on my [github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
