@@ -54,9 +54,9 @@ superuser: true
 
 ---
 
-In graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. During my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. 
+During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. Each of these experiences has been a blessing.
 
-Over the last several years, my insatiable interest in bioinformatics and data science has transformed my skill set and expanded my professional repertoire. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.
+Over the last several years, I have developed an insatiable interest in bioinformatics and data science that has transformed my skill set and expanded my professional repertoire. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.
 
 
 
