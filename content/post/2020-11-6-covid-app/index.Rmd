@@ -149,10 +149,12 @@ us_counties <- us_counties %>%
 ```{r}
 library(gganimate)
 library(transformr)
+library(directlabels)
+
 us_monthly <- us_state %>%
-  mutate(month = month(date)) %>% 
-#  filter(month >= 9) %>% 
-  group_by(state, month) %>%
+  mutate(month = month(date),
+         month_name = factor(month.name[month],levels=month.name)) %>% 
+  group_by(state, month, month_name) %>%
   summarize(
     cases = max(cases),
     deaths = max(deaths),
@@ -177,10 +179,12 @@ p <- plot_usmap(
     alpha = 0.5
   ) 
 
-p <- p + transition_time(as.integer(month)) +
-  labs(title = "Month: {frame_time}") 
+p <- p + 
+  transition_states(month_name) +
+  labs(title = 'Month is {closest_state}') 
+  
 
-animate(p, fps=10,  end_pause = 20)
+animate(p, fps=5, end_pause = 20)
 
 ```
 
@@ -243,7 +247,7 @@ ggplotly(county_map,
 
 ```
 
-#### You can zoom in on select counties in the map above but, since I live in California, I wanted to emphasize 'my' State (ignoring the fact that I was born in Florida and grew up in South Carolina :smile:)!
+#### You can zoom in on select counties in the map above but it's also informative to make maps that focus in on individual States. 
 
 ```{r}
 ca_map <- plot_usmap(
@@ -270,4 +274,4 @@ ggplotly(ca_map,
 ```
 
 
-#### The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. Counties with missing data are shaded in grey. For the animation and county-level map in this post, I set global options such that only the code output is visible. You can view my code here on  [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
+#### The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. Counties with missing data are shaded in grey. For the animation and county-level map in this post, I set global options such that only the code output is visible. The code is available on my  [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
