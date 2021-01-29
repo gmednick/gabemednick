@@ -23,11 +23,11 @@
 
 &lt;div id=&#34;section-marine-voyages&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Marine Voyages&lt;/h2&gt;
-&lt;div id=&#34;section-this-app-uses-leaflet-shinydashboard-and-the-tidyverse-to-explore-a-dataset-on-marine-voyages.-the-data-includes-ship-type-ship-name-speed-origin-dest-date-longitute-and-latitue-among-other-variables.&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;This app uses Leaflet, Shinydashboard and the Tidyverse to explore a dataset on marine voyages. The data includes ship type, ship name, speed, origin, dest, date, longitute and latitue among other variables.&lt;/h4&gt;
+&lt;div id=&#34;section-this-app-uses-leaflet-shinydashboard-and-the-tidyverse-to-explore-a-dataset-on-marine-voyages.-the-data-includes-ship-type-ship-name-speed-origin-destination-date-longitute-and-latitue-among-other-variables.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;This app uses Leaflet, Shinydashboard and the Tidyverse to explore a dataset on marine voyages. The data includes ship type, ship name, speed, origin, destination, date, longitute and latitue among other variables.&lt;/h4&gt;
 &lt;/div&gt;
-&lt;div id=&#34;section-the-app-lets-you-select-a-ship-type-ship-name.-once-selected-the-ships-route-is-displayed-on-a-map-and-some-basic-details-about-the-ship-and-its-voyage-are-displayed-in-value-boxes.&#34; class=&#34;section level4&#34;&gt;
-&lt;h4&gt;The app let’s you select a ship type ship name. Once selected, the ship’s route is displayed on a map and some basic details about the ship and its voyage are displayed in value boxes.&lt;/h4&gt;
+&lt;div id=&#34;section-the-app-lets-you-select-a-ship-type-and-choose-a-ship-by-name.-once-selected-the-ships-route-is-displayed-on-a-map-and-some-basic-details-about-the-ships-voyage-are-displayed-in-value-boxes.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;The app let’s you select a ship type and choose a ship by name. Once selected, the ship’s route is displayed on a map and some basic details about the ship’s voyage are displayed in value boxes.&lt;/h4&gt;
 &lt;/div&gt;
 &lt;div id=&#34;section-you-can-explore-the-app-below-or-open-it-in-a-full-browser-window-here.&#34; class=&#34;section level4&#34;&gt;
 &lt;h4&gt;You can explore the app below or open it in a full browser window &lt;a href=&#34;https://biolight-informatics.shinyapps.io/Marine-travel-routes-app/&#34;&gt;here&lt;/a&gt;.&lt;/h4&gt;
