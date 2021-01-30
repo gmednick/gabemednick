@@ -28,4 +28,4 @@ runtime: 'shiny'
 
 <iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/Marine-travel-routes-app/"> </iframe>
 
-
+#### The code behind the app can be found on my [Github](https://github.com/gmednick/marine-voyages-app/blob/master/app.R) account.

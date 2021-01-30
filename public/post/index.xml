@@ -34,6 +34,9 @@
 &lt;iframe height=&#34;800&#34; width=&#34;100%&#34; frameborder=&#34;no&#34; src=&#34;https://biolight-informatics.shinyapps.io/Marine-travel-routes-app/&#34;&gt;
 &lt;/iframe&gt;
 &lt;/div&gt;
+&lt;div id=&#34;section-the-code-behind-the-app-can-be-found-on-my-github-account.&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;The code behind the app can be found on my &lt;a href=&#34;https://github.com/gmednick/marine-voyages-app/blob/master/app.R&#34;&gt;Github&lt;/a&gt; account.&lt;/h4&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
