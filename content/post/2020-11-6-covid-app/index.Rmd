@@ -21,8 +21,7 @@ runtime: 'shiny'
 
 ##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. You can explore the app here or open it in a new window by going to the link above. It's hosted on Shinyapps.io and my code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R).
 
-
-<iframe height="800" width="100%" frameborder="no" src="https://biolight-informatics.shinyapps.io/covid-app/"> </iframe>
+![](CovidApp.png)
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
