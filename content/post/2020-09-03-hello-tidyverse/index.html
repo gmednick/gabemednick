@@ -18,6 +18,7 @@ image:
 projects: []
 ---
 
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
 <div id="intro" class="section level1">
@@ -28,16 +29,16 @@ projects: []
 <h1>Download and view the data</h1>
 <p>Let’s start by downloading the data from the <a href="https://github.com/rfordatascience/tidytuesday">R4DS Github</a> account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast ‘TidyX’) is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I’m going to stick with the <code>readr::read_csv()</code> from the tidyverse to import the data as a tibble (data frame).</p>
 <pre class="r"><code># Load the data with a readr function
-crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;) %&gt;% 
-  janitor::clean_names() 
+crop_yields &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/key_crop_yields.csv&quot;) %&gt;%
+  janitor::clean_names()
 
-land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  select(entity, code, year, population = total_population_gapminder) %&gt;% 
+land_use &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-01/land_use_vs_yield_change_in_cereal_production.csv&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  select(entity, code, year, population = total_population_gapminder) %&gt;%
   mutate(year = as.numeric(year))
 
-crop_yield &lt;- crop_yields %&gt;% 
-  left_join(land_use, by = c(&#39;code&#39;,  &#39;year&#39;, &#39;entity&#39;))
+crop_yield &lt;- crop_yields %&gt;%
+  left_join(land_use, by = c(&quot;code&quot;, &quot;year&quot;, &quot;entity&quot;))
 
 skimr::skim(crop_yields)</code></pre>
 <table>
@@ -295,7 +296,7 @@ skimr::skim(crop_yields)</code></pre>
 </tbody>
 </table>
 <pre class="r"><code># Here are a few other options for getting to know the data
-# glimpse(crop_yields) 
+# glimpse(crop_yields)
 # summary(crop_yields)
 # View(crop_yields)</code></pre>
 </div>
@@ -303,19 +304,19 @@ skimr::skim(crop_yields)</code></pre>
 <h1>Tidy data: cleaning and reshaping</h1>
 <p>Let’s start with a little data cleaning! <code>skim()</code> from <code>skimr</code> provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function <code>pivot_longer()</code> from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).</p>
 <pre class="r"><code># Use pivot_longer from tidyr to tidy the data.
-crop_yield_tidy &lt;- crop_yield %&gt;% 
-  rename_all(str_remove, &quot;_tonnes.*&quot;) %&gt;% 
-  rename(country = entity) %&gt;% 
-  pivot_longer(wheat:bananas, names_to = &#39;crop&#39;, values_to = &#39;yield_hectare&#39;) %&gt;% 
-  drop_na(yield_hectare) 
+crop_yield_tidy &lt;- crop_yield %&gt;%
+  rename_all(str_remove, &quot;_tonnes.*&quot;) %&gt;%
+  rename(country = entity) %&gt;%
+  pivot_longer(wheat:bananas, names_to = &quot;crop&quot;, values_to = &quot;yield_hectare&quot;) %&gt;%
+  drop_na(yield_hectare)
 
 # Create a vector of the 25 countries with the largest population
-top_pops &lt;- land_use  %&gt;%
-  filter(!is.na(code), entity != &quot;World&quot;) %&gt;% 
-  group_by(entity) %&gt;% 
-  filter(year == max(year)) %&gt;% 
-  ungroup() %&gt;% 
-  slice_max(population, n = 25) %&gt;% 
+top_pops &lt;- land_use %&gt;%
+  filter(!is.na(code), entity != &quot;World&quot;) %&gt;%
+  group_by(entity) %&gt;%
+  filter(year == max(year)) %&gt;%
+  ungroup() %&gt;%
+  slice_max(population, n = 25) %&gt;%
   pull(entity)
 
 
@@ -419,8 +420,8 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 <h1>What can we learn from this dataset?</h1>
 <p>A great place to start any analysis is by grouping and counting predictive features using the <code>count()</code> function. It often makes sense to combine <code>count()</code> with a bar plot to visualize meaningful distributions. EDA is arguably the most important step in a machine learning workflow because it gives us insight that we can then use to generate a predictive model. When we run a machine learning model, we should already have an intutive sense about what to expect from our model.</p>
 <pre class="r"><code>crop_yield_tidy %&gt;%
-  add_count(year, country, sort = T) %&gt;% 
-  filter(country %in% c(&quot;Albania&quot;, &quot;Africa&quot;, &quot;United States&quot;)) # Africa has 11 crops, US has 9 and Albania 6. </code></pre>
+  add_count(year, country, sort = T) %&gt;%
+  filter(country %in% c(&quot;Albania&quot;, &quot;Africa&quot;, &quot;United States&quot;)) # Africa has 11 crops, US has 9 and Albania 6.</code></pre>
 <pre><code>## # A tibble: 1,522 x 7
 ##    country code   year population crop        yield_hectare     n
 ##    &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;int&gt;
@@ -437,7 +438,7 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 ## # … with 1,512 more rows</code></pre>
 <pre class="r"><code>crop_yield_tidy %&gt;%
   count(country, sort = TRUE) %&gt;%
-  filter(n &gt;=500) # this gives a list of the countries with the most years + crops 11 (crops) * 51 (year) = 561</code></pre>
+  filter(n &gt;= 500) # this gives a list of the countries with the most years + crops 11 (crops) * 51 (year) = 561</code></pre>
 <pre><code>## # A tibble: 53 x 2
 ##    country                               n
 ##    &lt;chr&gt;                             &lt;int&gt;
@@ -453,13 +454,13 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 ## 10 Low Income Food Deficit Countries   638
 ## # … with 43 more rows</code></pre>
 <pre class="r"><code>crop_yield_tidy %&gt;%
-  summarize(max(year)- min(year)) #57 years of recorded data</code></pre>
+  summarize(max(year) - min(year)) # 57 years of recorded data</code></pre>
 <pre><code>## # A tibble: 1 x 1
 ##   `max(year) - min(year)`
 ##                     &lt;dbl&gt;
 ## 1                      57</code></pre>
 <pre class="r"><code>crop_yield_tidy %&gt;% # 249 unique countries
-  distinct(country) %&gt;% 
+  distinct(country) %&gt;%
   nrow()</code></pre>
 <pre><code>## [1] 249</code></pre>
 </div>
@@ -469,102 +470,118 @@ kable(head(crop_yield_tidy, n = 10))</code></pre>
 <p>We will use <code>slice_sample()</code> to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let’s choose 9 countries to get a feel for crop yields over time without overwhelming our senses.</p>
 <pre class="r"><code># Randomly select 9 country names
 # set.seed(1014) if you want to select the same 9 countries each time
-crops &lt;- crop_yield_tidy %&gt;% distinct(crop) %&gt;%  pull()
-country_random &lt;- crop_yield_tidy %&gt;% 
-  select(country) %&gt;% 
-  distinct() %&gt;% 
-  slice_sample(n = 9) %&gt;% 
+crops &lt;- crop_yield_tidy %&gt;%
+  distinct(crop) %&gt;%
+  pull()
+country_random &lt;- crop_yield_tidy %&gt;%
+  select(country) %&gt;%
+  distinct() %&gt;%
+  slice_sample(n = 9) %&gt;%
   pull()
 
-crop_yield_tidy %&gt;% 
-  filter(country == &#39;United States&#39;) %&gt;% 
+crop_yield_tidy %&gt;%
+  filter(country == &quot;United States&quot;) %&gt;%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
-  facet_wrap(~country, &#39;free_x&#39;) +
-  theme(plot.title.position = &#39;plot&#39;) +
+  facet_wrap(~country, &quot;free_x&quot;) +
+  theme(plot.title.position = &quot;plot&quot;) +
   labs(
-    title = &#39;Crop Yield USA&#39;,
-    y = &#39;Year&#39;,
-    x = &#39;tonnes per hectare per year&#39;
+    title = &quot;Crop Yield USA&quot;,
+    y = &quot;Year&quot;,
+    x = &quot;tonnes per hectare per year&quot;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-1.png" width="3000" /></p>
+<p><img src="staticunnamed-chunk-5-1.png" width="3000" /></p>
 <pre class="r"><code># plot of USA data only
-crop_yield_tidy %&gt;% 
-  filter(country == &#39;United States&#39;) %&gt;% 
+crop_yield_tidy %&gt;%
+  filter(country == &quot;United States&quot;) %&gt;%
   mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
-  geom_col()  +
-  facet_wrap(~country, scales = &#39;free_y&#39;) +
-  theme(legend.position =  &#39;none&#39;,
-        plot.title.position = &#39;plot&#39;) +
+  geom_col() +
+  facet_wrap(~country, scales = &quot;free_y&quot;) +
+  theme(
+    legend.position = &quot;none&quot;,
+    plot.title.position = &quot;plot&quot;
+  ) +
   labs(
-    title = &#39;Crop Yield USA&#39;,
-    y = &#39;Crop&#39;,
-    x = &#39;tonnes per hectare&#39;
+    title = &quot;Crop Yield USA&quot;,
+    y = &quot;Crop&quot;,
+    x = &quot;tonnes per hectare&quot;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-2.png" width="3000" /></p>
+<p><img src="staticunnamed-chunk-5-2.png" width="3000" /></p>
 <pre class="r"><code># Plot crop yield per hectare per year.
-crop_yield_tidy %&gt;% 
-  filter(country %in% country_random,
-         crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;% 
+crop_yield_tidy %&gt;%
+  filter(
+    country %in% country_random,
+    crop %in% c(&quot;maize&quot;, &quot;potatoes&quot;, &quot;wheat&quot;, &quot;bananas&quot;)
+  ) %&gt;%
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
-  facet_wrap(~country, scales = &#39;free_y&#39;) +
-  theme(plot.title.position = &#39;plot&#39;) +
+  facet_wrap(~country, scales = &quot;free_y&quot;) +
+  theme(plot.title.position = &quot;plot&quot;) +
   labs(
-     y = &#39;yield per hectare&#39;,
-    title = &#39;Crop Yield&#39;
+    y = &quot;yield per hectare&quot;,
+    title = &quot;Crop Yield&quot;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-5-3.png" width="3000" /></p>
-<pre class="r"><code>crop_yield_tidy %&gt;% 
-  filter(country %in% top_pops,
-         crop == c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
+<p><img src="staticunnamed-chunk-5-3.png" width="3000" /></p>
+<pre class="r"><code>crop_yield_tidy %&gt;%
+  filter(
+    country %in% top_pops,
+    crop == c(&quot;maize&quot;, &quot;potatoes&quot;, &quot;wheat&quot;, &quot;bananas&quot;)
+  ) %&gt;%
   mutate(crop = reorder_within(crop, yield_hectare, country)) %&gt;%
   ggplot(aes(yield_hectare, crop, fill = crop)) +
-  geom_col()  +
+  geom_col() +
   scale_y_reordered() +
-  facet_wrap(~country, scales = &#39;free&#39;) +
-  theme(legend.position = &#39;none&#39;,
-        plot.title.position = &#39;plot&#39;) +
+  facet_wrap(~country, scales = &quot;free&quot;) +
+  theme(
+    legend.position = &quot;none&quot;,
+    plot.title.position = &quot;plot&quot;
+  ) +
   labs(
-    title = &#39;Crop Yield&#39;,
-    y = &#39;Crop&#39;,
-    x = &#39;yield per hectare&#39;
+    title = &quot;Crop Yield&quot;,
+    y = &quot;Crop&quot;,
+    x = &quot;yield per hectare&quot;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-6-1.png" width="3000" /></p>
-<pre class="r"><code>crop_yield_tidy %&gt;% 
-  filter(country %in% top_pops,
-         crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;% 
-  mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;% 
+<p><img src="staticunnamed-chunk-6-1.png" width="3000" /></p>
+<pre class="r"><code>crop_yield_tidy %&gt;%
+  filter(
+    country %in% top_pops,
+    crop %in% c(&quot;maize&quot;, &quot;potatoes&quot;, &quot;wheat&quot;, &quot;bananas&quot;)
+  ) %&gt;%
+  mutate(crop = fct_reorder(crop, yield_hectare)) %&gt;%
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line(size = 1, alpha = 0.5) +
-  theme(plot.title.position = &#39;plot&#39;) +
-  facet_wrap(~country, scales = &#39;free_y&#39;) +
+  theme(plot.title.position = &quot;plot&quot;) +
+  facet_wrap(~country, scales = &quot;free_y&quot;) +
   labs(
-     y = &#39;yield per hectare&#39;,
-    title = &#39;Crop Yield&#39;
+    y = &quot;yield per hectare&quot;,
+    title = &quot;Crop Yield&quot;
   )</code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-7-1.png" width="3000" /></p>
+<p><img src="staticunnamed-chunk-7-1.png" width="3000" /></p>
 <p>Next, let’s make a regression model for each of the top 20 countries.</p>
 <pre class="r"><code>library(tidymodels)
 library(ggrepel)
 crop_yield_tidy %&gt;%
   drop_na() %&gt;%
-  filter(country %in% top_pops,
-         crop %in% c(&#39;maize&#39;, &#39;potatoes&#39;, &#39;wheat&#39;, &#39;bananas&#39;)) %&gt;%
+  filter(
+    country %in% top_pops,
+    crop %in% c(&quot;maize&quot;, &quot;potatoes&quot;, &quot;wheat&quot;, &quot;bananas&quot;)
+  ) %&gt;%
   nest(mod_data = c(year, yield_hectare, population)) %&gt;%
-  mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .))) %&gt;%
+  mutate(model = map(mod_data, ~ lm(yield_hectare ~ population + year, data = .))) %&gt;%
   mutate(coefs = map(model, tidy)) %&gt;%
   unnest(coefs) %&gt;%
   filter(term == &quot;year&quot;) %&gt;%
-  mutate(p.value = p.adjust(p.value)) %&gt;% 
+  mutate(p.value = p.adjust(p.value)) %&gt;%
   ggplot(aes(estimate, p.value, label = country)) +
-  geom_vline(xintercept = 0, lty = 2, 
-               size = 1.5, alpha = 0.7, color = &quot;gray50&quot;) +
+  geom_vline(
+    xintercept = 0, lty = 2,
+    size = 1.5, alpha = 0.7, color = &quot;gray50&quot;
+  ) +
   geom_point(aes(color = crop), alpha = 0.8, size = 2.5, show.legend = FALSE) +
   scale_y_log10() +
   facet_wrap(~crop) +
-  geom_text_repel(size = 2.5, family = &quot;Times New Roman&quot;) </code></pre>
-<p><img src="/post/2020-09-03-hello-tidyverse/index_files/figure-html/unnamed-chunk-8-1.png" width="3000" /></p>
+  geom_text_repel(size = 2.5, family = &quot;Times New Roman&quot;)</code></pre>
+<p><img src="staticunnamed-chunk-8-1.png" width="3000" /></p>
 </div>

@@ -29,7 +29,6 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r}
-
 library(tidyverse)
 library(lubridate)
 library(shiny)

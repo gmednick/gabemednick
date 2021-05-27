@@ -18,6 +18,7 @@
       <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
       <guid>/post/iris-classification/</guid>
       <description>
+&lt;script src=&#34;/post/iris-classification/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;div id=&#34;iris-data&#34; class=&#34;section level1&#34;&gt;
@@ -71,7 +72,7 @@ petal &amp;lt;- iris_df %&amp;gt;%
   theme(legend.position = &amp;#39;none&amp;#39;) 
 
 (petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there&amp;#39;s a better way..&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tidy-the-dataset&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tidy the dataset&lt;/h1&gt;
@@ -84,25 +85,25 @@ petal &amp;lt;- iris_df %&amp;gt;%
 iris_df_long %&amp;gt;% 
   ggplot(aes(metric, value, color = species)) +
   geom_boxplot() &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# A nice alternative is to facet by the metric to convey the same information but with added clarity. 
 iris_df_long %&amp;gt;%
   ggplot(aes(species, value, color = species)) +
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# The same information can be displayed by comparing the distributions in histogram.
 iris_df_long %&amp;gt;%
   ggplot(aes(value, fill = species)) +
   geom_histogram(bins = 20, alpha = 0.7) +
   facet_wrap(~ metric, scales = &amp;quot;free_x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# geom_denisty is a nice alternative to geom_histogram.
 iris_df_long %&amp;gt;% 
   ggplot(aes(value, fill = species)) +
   geom_density(alpha = .5) +
   facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;get-modelling&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Get modelling&lt;/h1&gt;
@@ -111,7 +112,7 @@ iris_df_long %&amp;gt;%
 tidy_split &amp;lt;- initial_split(iris_df)
 tidy_split&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## &amp;lt;Analysis/Assess/Total&amp;gt;
-## &amp;lt;113/37/150&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+## &amp;lt;112/38/150&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_train &amp;lt;- training(tidy_split)
 iris_test &amp;lt;- testing(tidy_split)
 
@@ -121,16 +122,16 @@ iris_boots&lt;/code&gt;&lt;/pre&gt;
 ## # A tibble: 30 x 2
 ##    splits           id         
 ##    &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;      
-##  1 &amp;lt;split [113/39]&amp;gt; Bootstrap01
-##  2 &amp;lt;split [113/40]&amp;gt; Bootstrap02
-##  3 &amp;lt;split [113/44]&amp;gt; Bootstrap03
-##  4 &amp;lt;split [113/41]&amp;gt; Bootstrap04
-##  5 &amp;lt;split [113/39]&amp;gt; Bootstrap05
-##  6 &amp;lt;split [113/40]&amp;gt; Bootstrap06
-##  7 &amp;lt;split [113/42]&amp;gt; Bootstrap07
-##  8 &amp;lt;split [113/35]&amp;gt; Bootstrap08
-##  9 &amp;lt;split [113/42]&amp;gt; Bootstrap09
-## 10 &amp;lt;split [113/41]&amp;gt; Bootstrap10
+##  1 &amp;lt;split [112/45]&amp;gt; Bootstrap01
+##  2 &amp;lt;split [112/43]&amp;gt; Bootstrap02
+##  3 &amp;lt;split [112/39]&amp;gt; Bootstrap03
+##  4 &amp;lt;split [112/40]&amp;gt; Bootstrap04
+##  5 &amp;lt;split [112/39]&amp;gt; Bootstrap05
+##  6 &amp;lt;split [112/41]&amp;gt; Bootstrap06
+##  7 &amp;lt;split [112/35]&amp;gt; Bootstrap07
+##  8 &amp;lt;split [112/37]&amp;gt; Bootstrap08
+##  9 &amp;lt;split [112/42]&amp;gt; Bootstrap09
+## 10 &amp;lt;split [112/37]&amp;gt; Bootstrap10
 ## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
@@ -158,45 +159,45 @@ kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
 &lt;tbody&gt;
 &lt;tr class=&#34;odd&#34;&gt;
 &lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1621621&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.384382&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.0270717&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0422303&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.7227690&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2539796&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.0911528&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.1704339&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
 &lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.3983644&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.159657&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7767696&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.6840123&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2188957&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.3368015&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.3665258&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.1981136&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.4836145&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.244589&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0010748&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.1379599&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;virginica&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.0712468&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.0080369&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.9961660&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.8706481&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
 &lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.4923559&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.089539&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.0331285&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4892659&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.5543285&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.2288655&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.4323305&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4811825&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.1873971&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.402225&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.4220083&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.3874109&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;virginica&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.4876555&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.7920225&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.1713477&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.9553358&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
-&lt;td align=&#34;left&#34;&gt;setosa&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;0.7736181&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;1.394953&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.8518454&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.1532614&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;virginica&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.8207125&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.7696463&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.5013655&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.8697351&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -242,24 +243,24 @@ glmnet_results&lt;/code&gt;&lt;/pre&gt;
 ## # A tibble: 30 x 6
 ##    splits       id        .metrics      .notes       .extracts    .predictions  
 ##    &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;     &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;        
-##  1 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
-##  2 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
-##  3 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [44 ×…
-##  4 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
-##  5 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
-##  6 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
-##  7 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
-##  8 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [35 ×…
-##  9 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
-## 10 &amp;lt;split [113… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
+##  1 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [45 ×…
+##  2 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [43 ×…
+##  3 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
+##  4 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
+##  5 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
+##  6 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
+##  7 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [35 ×…
+##  8 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [37 ×…
+##  9 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
+## 10 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [37 ×…
 ## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# look at the model metrics
 collect_metrics(glmnet_results)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
-##   .metric  .estimator  mean     n std_err
-##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass 0.939    30 0.00672
-## 2 roc_auc  hand_till  0.986    30 0.00208&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
+##   .metric  .estimator  mean     n std_err .config             
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
+## 1 accuracy multiclass 0.958    30 0.00507 Preprocessor1_Model1
+## 2 roc_auc  hand_till  0.994    30 0.00119 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to tweak a few things and walah!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
 rf_mod &amp;lt;- rand_forest() %&amp;gt;%
@@ -278,54 +279,54 @@ rf_results &amp;lt;- rf_wf %&amp;gt;%
     control = control_resamples(save_pred = TRUE)
     )
 collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 5
-##   .metric  .estimator  mean     n std_err
-##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass 0.946    30 0.00660
-## 2 roc_auc  hand_till  0.994    30 0.00111&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
+##   .metric  .estimator  mean     n  std_err .config             
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
+## 1 accuracy multiclass 0.950    30 0.00446  Preprocessor1_Model1
+## 2 roc_auc  hand_till  0.994    30 0.000982 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
-##   Prediction Truth       Freq
-##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
-## 1 setosa     setosa     13.4 
-## 2 setosa     versicolor  0   
-## 3 setosa     virginica   0   
-## 4 versicolor setosa      0   
-## 5 versicolor versicolor 12.1 
-## 6 versicolor virginica   1.27
-## 7 virginica  setosa      0   
-## 8 virginica  versicolor  1.17
-## 9 virginica  virginica  12.3&lt;/code&gt;&lt;/pre&gt;
+##   Prediction Truth        Freq
+##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;       &amp;lt;dbl&amp;gt;
+## 1 setosa     setosa     14    
+## 2 setosa     versicolor  0    
+## 3 setosa     virginica   0    
+## 4 versicolor setosa      0    
+## 5 versicolor versicolor 10.2  
+## 6 versicolor virginica   0.833
+## 7 virginica  setosa      0    
+## 8 virginica  versicolor  0.867
+## 9 virginica  virginica  14.2&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
-##   Prediction Truth       Freq
-##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;      &amp;lt;dbl&amp;gt;
-## 1 setosa     setosa      13.4
-## 2 setosa     versicolor   0  
-## 3 setosa     virginica    0  
-## 4 versicolor setosa       0  
-## 5 versicolor versicolor  12.2
-## 6 versicolor virginica    1.1
-## 7 virginica  setosa       0  
-## 8 virginica  versicolor   1.1
-## 9 virginica  virginica   12.4&lt;/code&gt;&lt;/pre&gt;
+##   Prediction Truth        Freq
+##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;       &amp;lt;dbl&amp;gt;
+## 1 setosa     setosa     14    
+## 2 setosa     versicolor  0    
+## 3 setosa     virginica   0    
+## 4 versicolor setosa      0    
+## 5 versicolor versicolor 10.2  
+## 6 versicolor virginica   1.13 
+## 7 virginica  setosa      0    
+## 8 virginica  versicolor  0.867
+## 9 virginica  virginica  13.9&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The ROC curve helps us visually interpret our model performance at every threshold.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   collect_predictions() %&amp;gt;%
   group_by(id) %&amp;gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
   autoplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
   collect_predictions() %&amp;gt;%
   group_by(id) %&amp;gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
   autoplot() +
   theme(legend.position = &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;final-fit&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Final fit&lt;/h1&gt;
@@ -336,46 +337,46 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 
 final_glmnet&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
-## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # Manual resampling 
 ## # A tibble: 1 x 6
 ##   splits       id           .metrics      .notes       .predictions    .workflow
 ##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
-## 1 &amp;lt;split [113… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [37 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+## 1 &amp;lt;split [112… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [38 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_rf &amp;lt;- rf_wf %&amp;gt;%
     add_model(rf_mod) %&amp;gt;%
     last_fit(tidy_split)
 
 final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
-## # Monte Carlo cross-validation (0.75/0.25) with 1 resamples  
+## # Manual resampling 
 ## # A tibble: 1 x 6
 ##   splits       id           .metrics      .notes       .predictions    .workflow
 ##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
-## 1 &amp;lt;split [113… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [37 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+## 1 &amp;lt;split [112… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [38 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;confusion-matrices&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Confusion Matrices&lt;/h1&gt;
 &lt;p&gt;Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_glmnet)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 3
-##   .metric  .estimator .estimate
-##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass         1
-## 2 roc_auc  hand_till          1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
+## 1 accuracy multiclass     0.974 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.991 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_glmnet) %&amp;gt;%
   conf_mat(species, .pred_class) %&amp;gt;% 
   autoplot(type = &amp;#39;heatmap&amp;#39;) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_rf)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 3
-##   .metric  .estimator .estimate
-##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;
-## 1 accuracy multiclass     0.973
-## 2 roc_auc  hand_till      1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
+## 1 accuracy multiclass     0.974 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.998 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_rf) %&amp;gt;%
   conf_mat(species, .pred_class) %&amp;gt;% 
   autoplot(type = &amp;#39;heatmap&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2020-10-21-iris-data/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;final-thoughts&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Final thoughts&lt;/h1&gt;

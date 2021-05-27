@@ -22,7 +22,7 @@ projects: []
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 library(tidyverse)
 library(tidymodels)
 library(janitor)
@@ -30,6 +30,7 @@ library(knitr)
 library(patchwork)
 data("iris")
 theme_set(theme_light())
+
 ```
 
 # Iris data
@@ -75,6 +76,7 @@ petal <- iris_df %>%
 ```
 
 # Tidy the dataset
+
 Let's change the shape of our data by combining the four iris features into a single column (named `metric`) and the associated values will populate a new column (named `value`). This transformation into a longer dataset can be achieved with the function `pivot_longer()`. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.
 
 

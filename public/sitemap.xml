@@ -1,95 +1,60 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>/post/</loc>
-    <lastmod>2021-01-28T11:33:04-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-05-18T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>/</loc>
-    <lastmod>2021-01-28T11:33:04-08:00</lastmod>
-  </url>
-  
-  <url>
+    <lastmod>2021-05-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/post/ameshousing/</loc>
+    <lastmod>2021-05-18T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>/post/marine-voyages/</loc>
     <lastmod>2021-01-28T11:33:04-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/post/santa-cruz-surf-report/</loc>
     <lastmod>2020-12-22T11:33:04-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/post/covid-shiny-app/</loc>
     <lastmod>2020-11-06T13:38:49-08:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/post/iris-classification/</loc>
     <lastmod>2020-10-21T15:11:02-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tag/machine-learning/</loc>
     <lastmod>2020-10-21T15:11:02-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/</loc>
     <lastmod>2020-10-21T15:11:02-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tag/tidymodels/</loc>
     <lastmod>2020-10-21T15:11:02-07:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/post/hello-tidyverse/</loc>
     <lastmod>2020-10-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/projects/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/about/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/talks/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/license/</loc>
     <lastmod>2018-06-28T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/author/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/talk/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/authors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/publication_types/</loc>
   </url>
-  
 </urlset>

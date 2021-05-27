@@ -24,7 +24,8 @@ This post uses data from the <i class='fab fa-r-project'  style='color: #367588'
 library(knitr)
 knitr::opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, 
                       echo = TRUE, dpi = 300, cache.lazy = FALSE,
-                      tidy = "styler", fig.width = 10, fig.height = 6)
+                      tidy = "styler", fig.width = 10, fig.height = 6,
+                      fig.path = "static")
 options(cli.width = 70, width = 70)
 
 library(tidyverse)
