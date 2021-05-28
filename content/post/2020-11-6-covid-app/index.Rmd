@@ -19,7 +19,7 @@ runtime: 'shiny'
 ---
 ##### The [COVID Case Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) allows one to visualize the number of cases and deaths per State over time. California, Hawaii and Florida are selected by default but you can add or remove States using the selector box in the sidebar. The interactive maps use color to show the total cases and total deaths per million people by State. Detailed information can be viewed by scrolling over the State of interest. 
 
-##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. The app is hosted [here](https://biolight-informatics.shinyapps.io/covid-app/) but unfortunately, the Shinyapps.io hosting service times out before the data can load so you'll need to run it on your own machine until I find a fix. The code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R).
+##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. The app is hosted [here](https://biolight-informatics.shinyapps.io/covid-app/) but but has recently stopped working because loading the data surpasses the free tier usage on Shinyapps.io. You can still run it on your own machine until I can find a fix. The code is available on [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R).
 
 ![](covid-app-img.png)
 
@@ -143,7 +143,7 @@ us_counties <- us_counties %>%
 
 ```
 ## Time Series Animation
-#### This animated map shows the change in case count over the last 12 months. I might add it to the app in a future iteration. 
+#### This animated map shows the change in case count over the first 12 months of the COVID pandemic.
 ```{r}
 library(gganimate)
 library(transformr)
@@ -213,7 +213,7 @@ us_total_sums <- us_data %>%
 ```
 
 ## County Level Map
-#### This map includes county level case counts. I wanted to include it in the covid app but it cosumes too much memory for the free tier of hosting on [Shinyapps.io](https://www.shinyapps.io/). Unlike the Shiny app which updates with new data, this map is static. This code chunk was last updated on `r format(Sys.Date(), "%A, %B %d, %Y")`. 
+#### This map includes county level case counts. The detail is great but it uses too much memory to host. Unlike the Shiny covid app, this post will only update when I compile the document (last updated on `r format(Sys.Date(), "%A, %B %d, %Y")`).
 
 ```{r}
 # Cases per million by county
@@ -245,7 +245,7 @@ ggplotly(county_map,
 
 ```
 
-#### You can zoom in on select counties in the map above but it's also informative to make maps that focus in on individual States. 
+#### Zooming on Calinfornia. C'mon y'all, we're all in this together! It sure would be beautiful to see some community team work across this sacred land. 
 
 ```{r}
 ca_map <- plot_usmap(
@@ -272,4 +272,4 @@ ggplotly(ca_map,
 ```
 
 
-#### The color package I am using, Viridis, can be perceived by viewers with common forms of color blindness. Counties with missing data are shaded in grey. For the animation and county-level map in this post, I set global options such that only the code output is visible. The code is available on my  [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd) account.
+#### I love the color package Viridis, used throughout this post to convey informatin with color. This color palette is used to preserve information for viewers with common forms of color blindness. Counties with missing data are shaded in grey. The code behind behind the maps and animatins is available on [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd).
