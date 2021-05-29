@@ -272,4 +272,4 @@ ggplotly(ca_map,
 ```
 
 
-#### The color package, Viridis, was used throughout this post to convey information with color. This color palette is designed to preserve information for viewers with common forms of color blindness. The code behind behind the maps and animation is available on [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd).
+#### The color package, Viridis, was used throughout this post to convey information with color. This color palette is designed to preserve information for viewers with common forms of color blindness. The code behind the maps and animation is available on [Github](https://github.com/gmednick/gabemednick/blob/master/content/post/2020-11-6-covid-app/index.Rmd).
