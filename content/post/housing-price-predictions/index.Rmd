@@ -2,7 +2,9 @@
 title: "Housing Price Predictions"
 author: "Gabe Mednick"
 date: '2021-05-18'
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 categories: []
 tags: []
 subtitle: ''
@@ -19,8 +21,7 @@ slug: AmesHousing
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, 
-                      fig.path = 'static/')
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 library(tidyverse)
 library(tidymodels)
 library(AmesHousing)
@@ -30,7 +31,7 @@ library(htmlwidgets)
 theme_set(theme_light())
 ```
 
-### This post is a work in progress. I hope to start out with a bare-bones modeling workflow using the Tidymodels ecosystem for machine learning in R. Once we have a basic workflow, we can try and improve model performance by switching out the model, resampling and/or further custominzing the data engineering steps. 
+#### This post is a work in progress. I hope to start out with a bare-bones modeling workflow using the Tidymodels ecosystem for machine learning in R. Once we have a basic workflow, we can try and improve model performance by switching out the model, resampling and/or further custominzing the data engineering steps. 
 
 We are going to use the Ames housing dataset, available  in the `AmesHousing` package, to create a model for price prediction. The dataset contains 81 features on 3000 home sales around the University in Ames, Iowa between 2006-2010. We're going to try and use these features to train a linear regression model. This version of the data is clean but we will need to do some basic data engineering before we can train our model and test it. 
 
@@ -128,7 +129,7 @@ ames_random_samp %>% group_by(neighborhood) %>% leaflet(data = .,
 
 ## Splitting the data 
 
-Now that we have a better feel for the data, let's split it into a training and test sets using the `rsample` package. We may also use `vfold_cv()` to resample the training set later on. 
+Now that we have a better feel for the data, let's  use the `rsample` package to split the data into training and test sets. For more robust predictions, we may also want to use `vfold_cv()` to resample the training set later on. 
 
 ```{r}
 library(rsample)
@@ -142,15 +143,16 @@ ames_test <- testing(ames_split)
 
 ## Data preprocessing
 
-Data engineering with the `recipes` package, provides an arsenal of data transformations that may be necessary and beneficial to the predictive power of our trained machine learning model. 
+Feature engineering with the `recipes` package provides an expansive series of data manipulation steps that can be woven together to elegantly preprocess our data before machine learning. 
 
 ```{r}
 library(recipes) 
 
 ames_rec <- 
-  recipe(sale_price ~ ., data = ames_train) %>%
-  step_log(sale_price, base = 10) %>% 
+  recipe(sale_price ~ ., data = ames_train) %>% # Specify the model--in our case, we are using all variables (.) to predict sale price.
+  step_log(sale_price, base = 10) %>% # take the log of sale price
   step_other(neighborhood, threshold = 0.01) %>% 
+  step_normalize(all_numeric()) %>% 
   step_dummy(all_nominal())
 
 ```
@@ -166,6 +168,7 @@ ames_lm <- linear_reg() %>%
 ## Creating a workflow, fitting the model and making predictions on the testset
 
 ```{r}
+library(workflows) #loaded with tidymodels
 lm_wkfl <- 
   workflow() %>% 
   add_model(ames_lm) %>% 
@@ -177,14 +180,29 @@ ames_wkfl_fit <- lm_wkfl %>%
 ames_wkfl_fit %>%
   collect_metrics()
 
-ames_preds <- ames_wkfl_fit %>%
+ames_wkfl_fit %>%
   collect_predictions()
+
 ```
 
 ## Visualizing R-squared
 
 ```{r}
-ggplot(ames_preds, aes(x = sale_price, y = .pred)) +
+ames_wkfl_fit %>%
+  collect_predictions() %>% 
+  mutate(sale_price = 10^sale_price,
+         .pred = 10^.pred) %>% 
+  ggplot(aes(x = sale_price, y = .pred)) +
+  geom_point() +
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title = 'R-Squared Plot',
+       y = 'Predicted Sale Price',
+       x = 'Actual Sale Price')
+
+ames_wkfl_fit %>%
+  collect_predictions() %>% 
+  ggplot(aes(x = sale_price, y = .pred)) +
   geom_point() +
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +

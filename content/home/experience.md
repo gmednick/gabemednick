@@ -20,7 +20,7 @@ date_format = "Jan 2006"
 [[experience]]
   title = "VP of informatics"
   company = "Deepen Analytics"
-  company_url = ""
+  company_url = "https://www.deepenanalytics.com/"
   location = "California"
   date_start = "2020-08-01"
   date_end = ""
