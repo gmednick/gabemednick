@@ -56,7 +56,7 @@ folds <- vfold_cv(ames_train, v = 10)
 
 ## Data preprocessing 
 
-The feature engineering steps in this post are based on Julia Silge and Max Khun's [tidymodels with R textbook](https://www.tmwr.org/). 
+The feature engineering steps in this post are based on Julia Silge and Max Khun's [tidymodels with R](https://www.tmwr.org/) textbook. 
 
 ```{r}
 ames_rec <- 
