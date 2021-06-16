@@ -26,7 +26,7 @@ interests:
 - R, SQL and Python
 
 name: Gabe Mednick
-organizations:
+organizations: 
 - name: 
   url: 
 role: 
@@ -51,7 +51,7 @@ social:
   icon_pack: ai
   link:
 superuser: true
-
+title: Gabriel Mednick, PhD
 ---
 
 During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. Each of these experiences has been full of valuable lessons and hidden blessings. 

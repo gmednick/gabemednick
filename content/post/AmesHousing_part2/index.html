@@ -1,0 +1,384 @@
+---
+title: "Housing Price Predictions part 2"
+author: "Gabe Mednick"
+date: '2021-06-15'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: Comparing regression models using the tidymodels framework for machine learning
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: AmesHousing2
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>In this post, we will use the Ames housing data to compare several models. The models will be trained to predict sale price and performance will be measured by the root mean squared error (rmse).<br />
+We will compare a simple linear regression (lm) with glmnet (lasso and elastic-net regularized generalized linear model), decision trees, random forest and xgboost models. Where appropriate, we will also try to improve model performance with hyperparameter tuning. Let’s get to it!</p>
+<pre class="r"><code>ames_df &lt;- make_ames() %&gt;% 
+  janitor::clean_names()  %&gt;% # extracting the data from the AmesHousing package and converting all column names to lower, snake_case
+  mutate(sale_price = log10(sale_price))</code></pre>
+<div id="splitting-and-creating-k-fold-cross-validation-data" class="section level2">
+<h2>Splitting and creating k-fold cross-validation data</h2>
+<pre class="r"><code>library(rsample)
+set.seed(518)
+
+ames_split &lt;- initial_split(ames_df, prop = 0.8, strata = &quot;sale_price&quot;) 
+
+ames_train &lt;- training(ames_split)
+ames_test &lt;- testing(ames_split)
+
+folds &lt;- vfold_cv(ames_train, v = 10)</code></pre>
+</div>
+<div id="data-preprocessing" class="section level2">
+<h2>Data preprocessing</h2>
+<p>The feature engineering steps in this post are based on Julia Silge and Max Khun’s <a href="https://www.tmwr.org/">tidymodels with R textbook</a>.</p>
+<pre class="r"><code>ames_rec &lt;- 
+  recipe(sale_price ~ neighborhood + gr_liv_area + year_built + bldg_type,
+         data = ames_train) %&gt;%
+  step_log(gr_liv_area, base = 10) %&gt;% 
+  step_corr(all_numeric(), - all_outcomes()) %&gt;% 
+  step_nzv(all_predictors()) %&gt;% 
+  step_other(neighborhood, threshold = 0.01) %&gt;% 
+  step_dummy(all_nominal_predictors()) %&gt;% 
+  step_interact( ~ gr_liv_area:starts_with(&quot;bldg_type_&quot;))
+
+ames_rec %&gt;%  prep() %&gt;% juice() #view the transformed data</code></pre>
+<pre><code>## # A tibble: 2,342 x 33
+##    gr_liv_area year_built sale_price neighborhood_College_C… neighborhood_Old_T…
+##          &lt;dbl&gt;      &lt;int&gt;      &lt;dbl&gt;                   &lt;dbl&gt;               &lt;dbl&gt;
+##  1        2.95       1961       5.02                       0                   0
+##  2        2.99       1971       4.98                       0                   0
+##  3        3.04       1971       5.02                       0                   0
+##  4        3.03       1977       5.11                       0                   0
+##  5        2.92       1975       5.08                       0                   0
+##  6        2.96       1979       5.00                       0                   0
+##  7        2.88       1984       5.10                       0                   0
+##  8        3.01       1920       4.83                       0                   0
+##  9        3.28       1978       5.05                       0                   0
+## 10        2.95       1967       5.09                       0                   0
+## # … with 2,332 more rows, and 28 more variables: neighborhood_Edwards &lt;dbl&gt;,
+## #   neighborhood_Somerset &lt;dbl&gt;, neighborhood_Northridge_Heights &lt;dbl&gt;,
+## #   neighborhood_Gilbert &lt;dbl&gt;, neighborhood_Sawyer &lt;dbl&gt;,
+## #   neighborhood_Northwest_Ames &lt;dbl&gt;, neighborhood_Sawyer_West &lt;dbl&gt;,
+## #   neighborhood_Mitchell &lt;dbl&gt;, neighborhood_Brookside &lt;dbl&gt;,
+## #   neighborhood_Crawford &lt;dbl&gt;, neighborhood_Iowa_DOT_and_Rail_Road &lt;dbl&gt;,
+## #   neighborhood_Timberland &lt;dbl&gt;, neighborhood_Northridge &lt;dbl&gt;,
+## #   neighborhood_Stone_Brook &lt;dbl&gt;,
+## #   neighborhood_South_and_West_of_Iowa_State_University &lt;dbl&gt;,
+## #   neighborhood_Clear_Creek &lt;dbl&gt;, neighborhood_Meadow_Village &lt;dbl&gt;,
+## #   neighborhood_Briardale &lt;dbl&gt;, neighborhood_Bloomington_Heights &lt;dbl&gt;,
+## #   neighborhood_other &lt;dbl&gt;, bldg_type_TwoFmCon &lt;dbl&gt;, bldg_type_Duplex &lt;dbl&gt;,
+## #   bldg_type_Twnhs &lt;dbl&gt;, bldg_type_TwnhsE &lt;dbl&gt;,
+## #   gr_liv_area_x_bldg_type_TwoFmCon &lt;dbl&gt;,
+## #   gr_liv_area_x_bldg_type_Duplex &lt;dbl&gt;, gr_liv_area_x_bldg_type_Twnhs &lt;dbl&gt;,
+## #   gr_liv_area_x_bldg_type_TwnhsE &lt;dbl&gt;</code></pre>
+</div>
+<div id="variable-importance" class="section level2">
+<h2>Variable importance</h2>
+<p>Before we delve into building models, let’s consider which features have the most explanatory power based on the random forest model.</p>
+<pre class="r"><code>rand_forest(mode = &quot;regression&quot;) %&gt;%
+  set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;) %&gt;%
+  fit(sale_price ~ neighborhood + gr_liv_area + year_built + bldg_type, 
+      data = ames_train) %&gt;%
+  vip::vip()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code># Let&#39;s visualize the relationship between sale price and gr_liv_area. 
+
+ggplot(ames_train, aes(x = gr_liv_area, y = sale_price)) + 
+  geom_point(alpha = .2) + 
+  facet_wrap(~ bldg_type) + 
+  geom_smooth(method = lm, formula = y ~ x, se = FALSE, col = &quot;red&quot;) + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  labs(x = &quot;Gross Living Area&quot;, y = &quot;Sale Price (USD)&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-2.png" width="672" />
+## Model evaluation</p>
+<p>We expect our model to be better than random chance but how do we know? We can generate the value of a dummy (random chance) model by calculating the standard deviation of sale price.</p>
+<pre class="r"><code>sd(ames_train$sale_price)</code></pre>
+<pre><code>## [1] 0.1787969</code></pre>
+<pre class="r"><code># Random chance value: 0.1787969</code></pre>
+</div>
+<div id="model-1-linear-model" class="section level2">
+<h2>Model 1: linear model</h2>
+<pre class="r"><code>set.seed(212)
+
+ames_lm &lt;- linear_reg() %&gt;% 
+  set_engine(&quot;lm&quot;)
+
+ames_wkflow &lt;- workflow() %&gt;% 
+  add_model(ames_lm) %&gt;% 
+  add_recipe(ames_rec)
+
+ames_model_train &lt;- ames_wkflow %&gt;% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+# best_lm &lt;- select_best(ames_model_train)
+# 
+# final_wkflow &lt;- finalize_workflow(ames_wkflow, best_lm)
+# 
+# final_lm_res &lt;- last_fit(final_wkflow, ames_split)
+# 
+# final_lm_res %&gt;%  collect_metrics() # rmse: 0.07682275
+
+
+ames_model_train %&gt;% 
+  collect_metrics(summarize = F) %&gt;% 
+  arrange(.estimate) %&gt;% 
+  filter(.metric == &quot;rmse&quot;)</code></pre>
+<pre><code>## # A tibble: 10 x 5
+##    id     .metric .estimator .estimate .config             
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+##  1 Fold06 rmse    standard      0.0712 Preprocessor1_Model1
+##  2 Fold03 rmse    standard      0.0723 Preprocessor1_Model1
+##  3 Fold10 rmse    standard      0.0737 Preprocessor1_Model1
+##  4 Fold08 rmse    standard      0.0749 Preprocessor1_Model1
+##  5 Fold02 rmse    standard      0.0776 Preprocessor1_Model1
+##  6 Fold01 rmse    standard      0.0798 Preprocessor1_Model1
+##  7 Fold07 rmse    standard      0.0808 Preprocessor1_Model1
+##  8 Fold04 rmse    standard      0.0820 Preprocessor1_Model1
+##  9 Fold05 rmse    standard      0.0917 Preprocessor1_Model1
+## 10 Fold09 rmse    standard      0.0938 Preprocessor1_Model1</code></pre>
+<pre class="r"><code># mean rmse for linear model: 0.07974068 </code></pre>
+</div>
+<div id="model-2-glmnet" class="section level2">
+<h2>Model 2: Glmnet</h2>
+<pre class="r"><code>set.seed(212)
+
+ames_glmnet &lt;- linear_reg(penalty = tune(), 
+                          mixture = tune()) %&gt;% 
+  set_engine(&quot;glmnet&quot;) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+ames_glmnet_wkflow &lt;- workflow() %&gt;% 
+  add_model(ames_glmnet) %&gt;% 
+  add_recipe(ames_rec)
+
+glmnet_grid &lt;- grid_random(parameters(ames_glmnet),
+                           size = 5)
+
+glmnet_tunegrid &lt;- ames_glmnet_wkflow %&gt;%
+  tune_grid(resamples = folds,
+            grid = glmnet_grid,
+            metrics = metric_set(rmse),
+            control = control_grid(save_pred = TRUE))
+
+glmnet_tunegrid %&gt;% collect_metrics()</code></pre>
+<pre><code>## # A tibble: 5 x 8
+##    penalty mixture .metric .estimator   mean     n std_err .config             
+##      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 1.13e- 6   0.119 rmse    standard   0.0802    10 0.00246 Preprocessor1_Model1
+## 2 5.89e- 9   0.403 rmse    standard   0.0802    10 0.00247 Preprocessor1_Model2
+## 3 1.18e-10   0.452 rmse    standard   0.0802    10 0.00246 Preprocessor1_Model3
+## 4 2.81e- 2   0.898 rmse    standard   0.100     10 0.00284 Preprocessor1_Model4
+## 5 3.22e- 3   0.927 rmse    standard   0.0813    10 0.00246 Preprocessor1_Model5</code></pre>
+<pre class="r"><code>autoplot(glmnet_tunegrid)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>best_rmse &lt;- select_best(glmnet_tunegrid)
+
+final_glmnet &lt;- finalize_workflow(ames_glmnet_wkflow, best_rmse)
+
+final_glmnet %&gt;% 
+  fit(data = ames_train) %&gt;% 
+  pull_workflow_fit() %&gt;% 
+  vip::vip(geom = &quot;point&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<pre class="r"><code>final_glmnet_res &lt;- last_fit(final_glmnet, ames_split)
+
+final_glmnet_res %&gt;% 
+  collect_metrics() # rmse: .0769</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric .estimator .estimate .config             
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard      0.0769 Preprocessor1_Model1
+## 2 rsq     standard      0.795  Preprocessor1_Model1</code></pre>
+</div>
+<div id="model-3-decision-tree" class="section level2">
+<h2>Model 3: Decision Tree</h2>
+<pre class="r"><code>ames_decision_tree &lt;- decision_tree() %&gt;% 
+  set_engine(&quot;rpart&quot;) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+decision_tree_wkflow &lt;- workflow() %&gt;% 
+  add_model(ames_decision_tree) %&gt;% 
+  add_recipe(ames_rec)
+
+ames_decision_train &lt;- decision_tree_wkflow %&gt;% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_decision_train)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator  mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.106    10 0.00274 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>ames_decision_train %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator  mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.106    10 0.00274 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>best_dec_tree &lt;- select_best(ames_decision_train)
+
+final_dec_tree &lt;- finalize_workflow(decision_tree_wkflow, best_dec_tree)
+
+final_dec_results &lt;- last_fit(final_dec_tree, ames_split)
+
+final_dec_results %&gt;% collect_metrics() # rmse: .09885</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric .estimator .estimate .config             
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard      0.0989 Preprocessor1_Model1
+## 2 rsq     standard      0.666  Preprocessor1_Model1</code></pre>
+<pre class="r"><code># mean rmse = 0.1064535</code></pre>
+</div>
+<div id="model-4-random-forest" class="section level2">
+<h2>Model 4: Random Forest</h2>
+<pre class="r"><code>ames_rand_forest &lt;- rand_forest() %&gt;% 
+  set_engine(&quot;ranger&quot;) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+rf_wkflow &lt;- workflow() %&gt;% 
+  add_model(ames_rand_forest) %&gt;% 
+  add_recipe(ames_rec)
+
+ames_rf_train &lt;- rf_wkflow %&gt;% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_rf_train) # rmse = .0825</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.0820    10 0.00202 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>ames_rf_train %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.0820    10 0.00202 Preprocessor1_Model1</code></pre>
+<pre class="r"><code># mean rmse = .0823</code></pre>
+</div>
+<div id="random-forest-with-tuning" class="section level2">
+<h2>Random Forest with tuning</h2>
+<pre class="r"><code>set.seed(222)
+
+ames_rand_forest_tune &lt;- rand_forest(
+  trees = 500,
+  mtry = tune(),
+  min_n = tune()) %&gt;% 
+  set_engine(&quot;ranger&quot;) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+rf_wkflow &lt;- workflow() %&gt;% 
+  add_model(ames_rand_forest) %&gt;% 
+  add_recipe(ames_rec)
+
+hypercube_grid &lt;- grid_latin_hypercube(
+  min_n(),
+  finalize(mtry(), ames_train)
+)
+
+
+rf_tunegrid &lt;- rf_wkflow %&gt;%
+  tune_grid(resamples = folds,
+            grid = hypercube_grid,
+            metrics = metric_set(rmse),
+            control = control_grid(save_pred = TRUE))
+
+
+ames_rf_train &lt;- rf_wkflow %&gt;% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_rf_train) # rmse = 0.08237551</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.0817    10 0.00204 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>ames_rf_train %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.0817    10 0.00204 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>#mean rmse: 0.08253951  </code></pre>
+</div>
+<div id="model-5-xgboost" class="section level2">
+<h2>Model 5: Xgboost</h2>
+<pre class="r"><code>ames_xgboost &lt;- boost_tree() %&gt;% 
+  set_engine(&quot;xgboost&quot;) %&gt;% 
+  set_mode(&quot;regression&quot;)
+
+train_xgboost &lt;- workflow() %&gt;% 
+  add_model(ames_xgboost) %&gt;% 
+  add_recipe(ames_rec) %&gt;% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+train_xgboost %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   0.0845    10 0.00260 Preprocessor1_Model1</code></pre>
+<pre class="r"><code># rmse: 0.08462137</code></pre>
+</div>
+<div id="xgboost-with-tuning" class="section level2">
+<h2>Xgboost with tuning</h2>
+<pre class="r"><code>set.seed(123)
+
+ # Create the specification with placeholders
+boost_spec &lt;- boost_tree(
+    trees = 500,
+    learn_rate = tune(),
+    tree_depth = tune(),
+    sample_size = tune()) %&gt;%
+  set_mode(&quot;regression&quot;) %&gt;%
+  set_engine(&quot;xgboost&quot;)
+
+boost_wkflow &lt;- workflow() %&gt;% 
+  add_recipe(ames_rec) %&gt;% 
+  add_model(boost_spec)
+
+boost_grid &lt;- grid_random(parameters(boost_spec),
+                          size = 5)
+
+ames_tune &lt;- boost_wkflow %&gt;%  
+  tune_grid(resamples = folds,
+            grid = boost_grid,
+            metrics = metric_set(rmse))
+
+show_best(ames_tune)</code></pre>
+<pre><code>## # A tibble: 5 x 9
+##   tree_depth learn_rate sample_size .metric .estimator   mean     n std_err
+##        &lt;int&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1          3   1.08e- 2       0.710 rmse    standard   0.0851    10 0.00253
+## 2         14   9.18e- 6       0.615 rmse    standard   4.70      10 0.00377
+## 3         15   5.66e- 6       0.508 rmse    standard   4.71      10 0.00377
+## 4          3   1.29e- 6       0.193 rmse    standard   4.72      10 0.00377
+## 5         15   2.57e-10       0.961 rmse    standard   4.72      10 0.00377
+## # … with 1 more variable: .config &lt;chr&gt;</code></pre>
+<pre class="r"><code>autoplot(ames_tune)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>boost_tune_result &lt;- show_best(ames_tune) %&gt;%
+  select(.metric, mean) %&gt;% 
+  arrange(mean) %&gt;% 
+  filter(row_number() == 1)</code></pre>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>In this analysis, the linear and glmnet models were the best performers. Often, random forest and xgboost will outperform a simple linear model. In this example, their performance was comparable but not improved. In a follow-up post, I’d like to try the stacks package which can combine multiple models into a new hybrid model referred to as an ensemble.</p>
+<p>This was my first time using the tune package and the tuning grid is still somewhat confusing to me. The tuned models showed no significant improvement but I would not rule out user error until I’ve gained more experience with tuning.</p>
+</div>

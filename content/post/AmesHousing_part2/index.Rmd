@@ -1,0 +1,347 @@
+---
+title: "Housing Price Predictions part 2"
+author: "Gabe Mednick"
+date: '2021-06-15'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: Comparing regression models using the tidymodels framework for machine learning
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: AmesHousing2
+---
+
+In this post, we will use the Ames housing data to compare several models. The models will be trained to predict sale price and performance will be measured by the root mean squared error (rmse).   
+We will compare a simple linear regression (lm) with glmnet (lasso and elastic-net regularized generalized linear model), decision trees, random forest and xgboost models. Where appropriate, we will also try to improve model performance with hyperparameter tuning.  Let's get to it!
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+library(tidyverse)
+library(tidymodels)
+library(AmesHousing)
+theme_set(theme_light())
+doParallel::registerDoParallel(cores = 4) #parallel processing: allows multiple cores to work while training the resampled data.
+```
+
+
+```{r}
+ames_df <- make_ames() %>% 
+  janitor::clean_names()  %>% # extracting the data from the AmesHousing package and converting all column names to lower, snake_case
+  mutate(sale_price = log10(sale_price))
+```
+
+
+## Splitting and creating k-fold cross-validation data
+
+```{r}
+library(rsample)
+set.seed(518)
+
+ames_split <- initial_split(ames_df, prop = 0.8, strata = "sale_price") 
+
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+folds <- vfold_cv(ames_train, v = 10)
+```
+
+## Data preprocessing 
+
+The feature engineering steps in this post are based on Julia Silge and Max Khun's [tidymodels with R textbook](https://www.tmwr.org/). 
+
+```{r}
+ames_rec <- 
+  recipe(sale_price ~ neighborhood + gr_liv_area + year_built + bldg_type,
+         data = ames_train) %>%
+  step_log(gr_liv_area, base = 10) %>% 
+  step_corr(all_numeric(), - all_outcomes()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_other(neighborhood, threshold = 0.01) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact( ~ gr_liv_area:starts_with("bldg_type_"))
+
+ames_rec %>%  prep() %>% juice() #view the transformed data
+```
+
+## Variable importance
+
+Before we delve into building models, let's consider which features have the most explanatory power based on the random forest model.
+
+```{r}
+rand_forest(mode = "regression") %>%
+  set_engine("ranger", importance = "impurity") %>%
+  fit(sale_price ~ neighborhood + gr_liv_area + year_built + bldg_type, 
+      data = ames_train) %>%
+  vip::vip()
+
+# Let's visualize the relationship between sale price and gr_liv_area. 
+
+ggplot(ames_train, aes(x = gr_liv_area, y = sale_price)) + 
+  geom_point(alpha = .2) + 
+  facet_wrap(~ bldg_type) + 
+  geom_smooth(method = lm, formula = y ~ x, se = FALSE, col = "red") + 
+  scale_x_log10() + 
+  scale_y_log10() + 
+  labs(x = "Gross Living Area", y = "Sale Price (USD)")
+```
+## Model evaluation
+
+We expect our model to be better than random chance but how do we know? We can generate the value of a dummy (random chance) model by calculating the standard deviation of sale price.
+
+```{r}
+sd(ames_train$sale_price)
+# Random chance value: 0.1787969
+```
+
+## Model 1: linear model
+
+```{r}
+set.seed(212)
+
+ames_lm <- linear_reg() %>% 
+  set_engine("lm")
+
+ames_wkflow <- workflow() %>% 
+  add_model(ames_lm) %>% 
+  add_recipe(ames_rec)
+
+ames_model_train <- ames_wkflow %>% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+# best_lm <- select_best(ames_model_train)
+# 
+# final_wkflow <- finalize_workflow(ames_wkflow, best_lm)
+# 
+# final_lm_res <- last_fit(final_wkflow, ames_split)
+# 
+# final_lm_res %>%  collect_metrics() # rmse: 0.07682275
+
+
+ames_model_train %>% 
+  collect_metrics(summarize = F) %>% 
+  arrange(.estimate) %>% 
+  filter(.metric == "rmse")
+
+# mean rmse for linear model: 0.07974068 
+```
+
+## Model 2: Glmnet 
+
+```{r}
+set.seed(212)
+
+ames_glmnet <- linear_reg(penalty = tune(), 
+                          mixture = tune()) %>% 
+  set_engine("glmnet") %>% 
+  set_mode("regression")
+
+ames_glmnet_wkflow <- workflow() %>% 
+  add_model(ames_glmnet) %>% 
+  add_recipe(ames_rec)
+
+glmnet_grid <- grid_random(parameters(ames_glmnet),
+                           size = 5)
+
+glmnet_tunegrid <- ames_glmnet_wkflow %>%
+  tune_grid(resamples = folds,
+            grid = glmnet_grid,
+            metrics = metric_set(rmse),
+            control = control_grid(save_pred = TRUE))
+
+glmnet_tunegrid %>% collect_metrics()
+
+autoplot(glmnet_tunegrid)
+
+best_rmse <- select_best(glmnet_tunegrid)
+
+final_glmnet <- finalize_workflow(ames_glmnet_wkflow, best_rmse)
+
+final_glmnet %>% 
+  fit(data = ames_train) %>% 
+  pull_workflow_fit() %>% 
+  vip::vip(geom = "point")
+
+final_glmnet_res <- last_fit(final_glmnet, ames_split)
+
+final_glmnet_res %>% 
+  collect_metrics() # rmse: .0769
+```
+
+## Model 3: Decision Tree
+
+```{r}
+ames_decision_tree <- decision_tree() %>% 
+  set_engine("rpart") %>% 
+  set_mode("regression")
+
+decision_tree_wkflow <- workflow() %>% 
+  add_model(ames_decision_tree) %>% 
+  add_recipe(ames_rec)
+
+ames_decision_train <- decision_tree_wkflow %>% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_decision_train)
+
+ames_decision_train %>% 
+  collect_metrics()
+
+best_dec_tree <- select_best(ames_decision_train)
+
+final_dec_tree <- finalize_workflow(decision_tree_wkflow, best_dec_tree)
+
+final_dec_results <- last_fit(final_dec_tree, ames_split)
+
+final_dec_results %>% collect_metrics() # rmse: .09885
+# mean rmse = 0.1064535
+```
+
+## Model 4: Random Forest
+
+```{r}
+ames_rand_forest <- rand_forest() %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+
+rf_wkflow <- workflow() %>% 
+  add_model(ames_rand_forest) %>% 
+  add_recipe(ames_rec)
+
+ames_rf_train <- rf_wkflow %>% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_rf_train) # rmse = .0825
+
+ames_rf_train %>% 
+  collect_metrics()
+
+# mean rmse = .0823
+
+```
+
+## Random Forest with tuning
+
+```{r}
+set.seed(222)
+
+ames_rand_forest_tune <- rand_forest(
+  trees = 500,
+  mtry = tune(),
+  min_n = tune()) %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+
+rf_wkflow <- workflow() %>% 
+  add_model(ames_rand_forest) %>% 
+  add_recipe(ames_rec)
+
+hypercube_grid <- grid_latin_hypercube(
+  min_n(),
+  finalize(mtry(), ames_train)
+)
+
+
+rf_tunegrid <- rf_wkflow %>%
+  tune_grid(resamples = folds,
+            grid = hypercube_grid,
+            metrics = metric_set(rmse),
+            control = control_grid(save_pred = TRUE))
+
+
+ames_rf_train <- rf_wkflow %>% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+show_best(ames_rf_train) # rmse = 0.08237551
+
+ames_rf_train %>% 
+  collect_metrics()
+
+#mean rmse: 0.08253951	
+```
+
+## Model 5: Xgboost
+
+```{r}
+
+ames_xgboost <- boost_tree() %>% 
+  set_engine("xgboost") %>% 
+  set_mode("regression")
+
+train_xgboost <- workflow() %>% 
+  add_model(ames_xgboost) %>% 
+  add_recipe(ames_rec) %>% 
+  fit_resamples(resamples = folds,
+                metrics = metric_set(rmse))
+
+train_xgboost %>% 
+  collect_metrics()
+
+# rmse: 0.08462137
+```
+
+
+## Xgboost with tuning
+
+```{r}
+set.seed(123)
+
+ # Create the specification with placeholders
+boost_spec <- boost_tree(
+    trees = 500,
+    learn_rate = tune(),
+    tree_depth = tune(),
+    sample_size = tune()) %>%
+  set_mode("regression") %>%
+  set_engine("xgboost")
+
+boost_wkflow <- workflow() %>% 
+  add_recipe(ames_rec) %>% 
+  add_model(boost_spec)
+
+boost_grid <- grid_random(parameters(boost_spec),
+                          size = 5)
+
+ames_tune <- boost_wkflow %>%  
+  tune_grid(resamples = folds,
+            grid = boost_grid,
+            metrics = metric_set(rmse))
+
+show_best(ames_tune)
+
+autoplot(ames_tune)
+
+boost_tune_result <- show_best(ames_tune) %>%
+  select(.metric, mean) %>% 
+  arrange(mean) %>% 
+  filter(row_number() == 1)
+
+```
+
+
+## Discussion
+
+In this analysis, the linear and glmnet models were the best performers. Often, random forest and xgboost will outperform a simple linear model. In this example, their performance was comparable but not improved. In a follow-up post, I'd like to try the stacks package which can combine multiple models into a new hybrid model referred to as an ensemble.
+
+This was my first time using the tune package and the tuning grid is still somewhat confusing to me. The tuned models showed no significant improvement but I would not rule out user error until I've gained more experience with tuning.
+
+
+
+
+
+
+
+
+
