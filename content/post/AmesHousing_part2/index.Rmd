@@ -356,8 +356,9 @@ This was my first time using the tune package and the tuning grid is still somew
 ```{r}
 library(kableExtra)
 
-model <- c('linear_model', 'glmnet_model', 'decision_tree', 'random_forest', 'random_forest_tuned', 'xgboost', 'xgboost_tuned')
+model <- c('linear', 'glmnet', 'decision tree', 'random forest', 'random forest tuned', 'xgboost', 'xgboost tuned')
 
+# Function to extract best  rmse from each model
 extract_rmse <- function(tbl) { 
   tbl %>% 
   collect_metrics(summarize = F) %>% 
@@ -369,12 +370,12 @@ extract_rmse <- function(tbl) {
 
 results = list(ames_model_train, glmnet_tunegrid, ames_decision_train, ames_rf_train, rf_tunegrid, train_xgboost, ames_tune)
 
-model_results <- map_df(results, extract_rmse) %>% 
-  dplyr::mutate(model_name = model) %>% 
-  dplyr::select(model_name, rmse) %>% 
+model_results <- map_df(results, extract_rmse) %>%
+  mutate(Model = model) %>% 
+  dplyr::select(Model, rmse) %>% 
   arrange(rmse)
 
-kable(model_results, caption = "Summary of Model performance")
+kable(model_results, caption = "Summary of model performance")
 ```
 
 

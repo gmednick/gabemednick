@@ -416,8 +416,9 @@ ames_tune %&gt;%
 <p>This was my first time using the tune package and the tuning grid is still somewhat confusing to me. Using the <code>collect_metrics()</code> function, we can see all the possible hyperparamter values that were tested along with the resulting rmse. Let’s pull the best values into one table to see which model performed the best.</p>
 <pre class="r"><code>library(kableExtra)
 
-model &lt;- c(&#39;linear_model&#39;, &#39;glmnet_model&#39;, &#39;decision_tree&#39;, &#39;random_forest&#39;, &#39;random_forest_tuned&#39;, &#39;xgboost&#39;, &#39;xgboost_tuned&#39;)
+model &lt;- c(&#39;linear&#39;, &#39;glmnet&#39;, &#39;decision tree&#39;, &#39;random forest&#39;, &#39;random forest tuned&#39;, &#39;xgboost&#39;, &#39;xgboost tuned&#39;)
 
+# Function to extract best  rmse from each model
 extract_rmse &lt;- function(tbl) { 
   tbl %&gt;% 
   collect_metrics(summarize = F) %&gt;% 
@@ -429,20 +430,20 @@ extract_rmse &lt;- function(tbl) {
 
 results = list(ames_model_train, glmnet_tunegrid, ames_decision_train, ames_rf_train, rf_tunegrid, train_xgboost, ames_tune)
 
-model_results &lt;- map_df(results, extract_rmse) %&gt;% 
-  dplyr::mutate(model_name = model) %&gt;% 
-  dplyr::select(model_name, rmse) %&gt;% 
+model_results &lt;- map_df(results, extract_rmse) %&gt;%
+  mutate(Model = model) %&gt;% 
+  dplyr::select(Model, rmse) %&gt;% 
   arrange(rmse)
 
-kable(model_results, caption = &quot;Summary of Model performance&quot;)</code></pre>
+kable(model_results, caption = &quot;Summary of model performance&quot;)</code></pre>
 <table>
 <caption>
-<span id="tab:unnamed-chunk-13">Table 1: </span>Summary of Model performance
+<span id="tab:unnamed-chunk-13">Table 1: </span>Summary of model performance
 </caption>
 <thead>
 <tr>
 <th style="text-align:left;">
-model_name
+Model
 </th>
 <th style="text-align:right;">
 rmse
@@ -452,7 +453,7 @@ rmse
 <tbody>
 <tr>
 <td style="text-align:left;">
-random_forest_tuned
+random forest tuned
 </td>
 <td style="text-align:right;">
 0.0708296
@@ -460,7 +461,7 @@ random_forest_tuned
 </tr>
 <tr>
 <td style="text-align:left;">
-xgboost_tuned
+xgboost tuned
 </td>
 <td style="text-align:right;">
 0.0714156
@@ -476,7 +477,7 @@ xgboost
 </tr>
 <tr>
 <td style="text-align:left;">
-glmnet_model
+glmnet
 </td>
 <td style="text-align:right;">
 0.0770956
@@ -484,7 +485,7 @@ glmnet_model
 </tr>
 <tr>
 <td style="text-align:left;">
-linear_model
+linear
 </td>
 <td style="text-align:right;">
 0.0775731
@@ -492,7 +493,7 @@ linear_model
 </tr>
 <tr>
 <td style="text-align:left;">
-random_forest
+random forest
 </td>
 <td style="text-align:right;">
 0.0814132
@@ -500,7 +501,7 @@ random_forest
 </tr>
 <tr>
 <td style="text-align:left;">
-decision_tree
+decision tree
 </td>
 <td style="text-align:right;">
 0.0937154
