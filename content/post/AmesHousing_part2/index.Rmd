@@ -347,11 +347,9 @@ boost_tune_result <- show_best(ames_tune) %>%
 ```
 
 
-## Discussion
+## Results
 
-In this analysis, the linear and glmnet models were the best performers. Often, random forest and xgboost will outperform a simple linear model. In this example, their performance was comparable but not improved. In a follow-up post, I'd like to try the stacks package which can combine multiple models into a new hybrid model referred to as an ensemble.
-
-This was my first time using the tune package and the tuning grid is still somewhat confusing to me. Using the `collect_metrics()` function, we can see all the possible hyperparamter values that were tested along with the resulting rmse. Let's pull the best values into one table to see which model performed the best.
+In this analysis, we compared various regression models and used the tune package to optimize hyperparameter values. The `collect_metrics()` function allows us to see the possible hyperparameter combinations and the resulting rmse. Let's compare the rmse values to rank model performance.
 
 ```{r}
 library(kableExtra)
