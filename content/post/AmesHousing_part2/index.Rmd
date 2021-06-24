@@ -373,7 +373,7 @@ model_results <- map_df(results, extract_rmse) %>%
   dplyr::select(Model, rmse) %>% 
   arrange(rmse)
 
-kable(model_results, caption = "Summary of model performance")
+kable(model_results, format = "html", table.attr = "style = \"color: white;\"", caption = "Summary of model performance")
 ```
 
 

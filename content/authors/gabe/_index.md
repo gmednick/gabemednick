@@ -56,7 +56,7 @@ title: Gabriel Mednick, PhD
 
 During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. Each of these experiences has been full of valuable lessons and hidden blessings. 
 
-My interest in bioinformatics and data science has spanned several years. What started out as an effort to expand my scientific toolbox has turned into a passion for programming and predictive modeling. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is an art and a science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.
+My interest in bioinformatics and data science started out as an effort to expand my scientific toolbox and quickly turned into a passion for programming and predictive modeling. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploratory analysis to creating models, deriving predictions and communicating results is a blend of craft and science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.
 
 
 

@@ -410,10 +410,9 @@ ames_tune %&gt;%
   arrange(mean) %&gt;% 
   filter(row_number() == 1)</code></pre>
 </div>
-<div id="discussion" class="section level2">
-<h2>Discussion</h2>
-<p>In this analysis, the linear and glmnet models were the best performers. Often, random forest and xgboost will outperform a simple linear model. In this example, their performance was comparable but not improved. In a follow-up post, I’d like to try the stacks package which can combine multiple models into a new hybrid model referred to as an ensemble.</p>
-<p>This was my first time using the tune package and the tuning grid is still somewhat confusing to me. Using the <code>collect_metrics()</code> function, we can see all the possible hyperparamter values that were tested along with the resulting rmse. Let’s pull the best values into one table to see which model performed the best.</p>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>In this analysis, we compared various regression models and used the tune package to optimize hyperparameter values. The <code>collect_metrics()</code> function allows us to see the possible hyperparameter combinations and the resulting rmse. Let’s compare the rmse values to rank model performance.</p>
 <pre class="r"><code>library(kableExtra)
 
 model &lt;- c(&#39;linear&#39;, &#39;glmnet&#39;, &#39;decision tree&#39;, &#39;random forest&#39;, &#39;random forest tuned&#39;, &#39;xgboost&#39;, &#39;xgboost tuned&#39;)
@@ -435,8 +434,8 @@ model_results &lt;- map_df(results, extract_rmse) %&gt;%
   dplyr::select(Model, rmse) %&gt;% 
   arrange(rmse)
 
-kable(model_results, caption = &quot;Summary of model performance&quot;)</code></pre>
-<table>
+kable(model_results, format = &quot;html&quot;, table.attr = &quot;style = \&quot;color: white;\&quot;&quot;, caption = &quot;Summary of model performance&quot;)</code></pre>
+<table style="color: white;">
 <caption>
 <span id="tab:unnamed-chunk-13">Table 1: </span>Summary of model performance
 </caption>
