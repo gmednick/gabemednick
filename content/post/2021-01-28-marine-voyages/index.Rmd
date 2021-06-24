@@ -20,9 +20,9 @@ runtime: 'shiny'
 
 ## Marine Voyages
 
-#### This app uses Leaflet, Shinydashboard and the Tidyverse to explore a dataset on marine voyages. The data includes ship type, ship name, speed, origin, destination, date, longitute and latitue among other variables. 
+#### This app uses Leaflet, Shinydashboard and the Tidyverse to explore a dataset on marine voyages. The data includes ship type, ship name, speed, origin, destination, date, longitude and latitude among other variables. 
 
-#### The app let's you select a ship type and choose a ship by name. Once selected, the ship's route is displayed on a map and some basic details about the ship's voyage are displayed in value boxes.
+#### The app let's you select a ship type and choose a ship by name from drop-down menus. The selected ship's route is then displayed on a map and basic details about the ship's voyage are returned in value boxes.
 
 #### You can explore the app below or open it in a full browser window [here](https://biolight-informatics.shinyapps.io/Marine-travel-routes-app/).
 
