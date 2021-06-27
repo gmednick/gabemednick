@@ -221,20 +221,39 @@ library(RColorBrewer)
 library(wordcloud)
 pal <- brewer.pal(8,"Dark2")
 
-words_df %>%
+words_expanded <- office_df %>% 
+  unnest_tokens('word', 'text') %>%
+  inner_join(top_characters %>% 
+               select(character), by = 'character') %>% 
+  anti_join(stop_words, by = 'word') %>%
+  filter(!word %in% junk_words,
+         !word %in% names_blacklist) %>% 
+  count(character, word) %>% 
+  group_by(character) %>% 
+  slice_max(n, n = 50)
+```
+
+Most words in The Office
+```{r}
+words_expanded %>%
   ungroup() %>% 
   with(wordcloud(word, n, random.order = FALSE, max.words = 50, colors=pal))
+```
 
-words_df %>%
+Most common words for Jim
+```{r}
+words_expanded %>%
   ungroup() %>% 
   filter(character == "Jim") %>% 
   with(wordcloud(word, n, random.order = FALSE, max.words = 50, colors=pal))
+```
 
-words_df %>%
+Most common words for Pam
+```{r}
+words_expanded %>%
   ungroup() %>% 
   filter(character == "Pam") %>% 
   with(wordcloud(word, n, random.order = FALSE, max.words = 50, colors=pal))
 ```
 
-
-#### This post was a lot of fun to work on and I hope to do a lot more NLP analysis in the future. NLP provides a powerful way to condense large amounts of text data into easily interpretable insights. The Tidytext package is a great way to work with text and complements the Tidyverse ecosystem. 
+#### This post was a lot of fun to work on and I hope to do more NLP analysis in the future. NLP provides a powerful way to condense large amounts of text data into easily interpretable insights. The Tidytext package is a great way to work with text and complements the Tidyverse ecosystem. 
