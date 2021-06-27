@@ -1,16 +1,16 @@
 ---
 title: "Hourly percentage change for top 100 cryptos"
 author: "Gabe Mednick"
-date: '2021-06-26'
+date: '2021-06-27'
 output:
   html_document:
     df_print: paged
 categories: []
 tags: []
 subtitle: ''
-summary: Plotting hourly percent change for top 100 cryptos
+summary: Webscraping to generate custom data for crypto analysis
 authors: []
-lastmod: '2021-06-05T11:33:04-08:00'
+lastmod: ''
 featured: no
 image:
   caption: ''
