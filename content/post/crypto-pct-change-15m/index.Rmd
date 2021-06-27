@@ -228,6 +228,22 @@ btc_chart %>%
 ```
 
 ```{r}
+q_minute <- btc_chart %>% 
+  filter(date >= '2021-06-26 14:54:57') 
+
+btc_minute_plot <- q_minute %>% 
+  ggplot(aes(date, price, color = volume, group = 1)) +
+  geom_line() +
+  labs(title = "Bitcoin price chart", x = "", y = "") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_x_datetime(
+    name = "",
+    labels = label_date("%I:%M %p", tz = "PST8PDT")) +
+  scale_y_continuous(labels = scales::dollar)  
+
+#ggsave("btc-hrly-pct.png", btc_minute_plot, bg = "transparent")
+
 granular_15min <- read_tsv("granular_15min.tsv") %>% 
   mutate(time_stamp = str_remove(time_stamp, "Z"),
     time_stamp = ymd_hms(time_stamp)) %>% 
@@ -238,25 +254,14 @@ bar_plot <- granular_15min  %>%
   count(change) %>% 
   ggplot(aes(time_stamp, n, fill = granular)) +
   geom_col() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
   scale_x_datetime(
     name = "time",
-    labels = label_date("%I:%M %p", tz = "PST8PDT"))
+    labels = label_date("%I:%M %p", tz = "PST8PDT")) +
+  labs(y = NULL)
 
 #ggsave("alt100-15min-pct.png", bar_plot, bg = "transparent")
-
-q_minute <- btc_chart %>% 
-  filter(date >= '2021-06-26 14:54:57') 
-
-btc_minute_plot <- q_minute %>% 
-  ggplot(aes(date, price, color = volume, group = 1)) +
-  geom_line() +
-  labs(title = "Bitcoin price chart") +
-  scale_x_datetime(
-    name = "date",
-    labels = label_date("%I:%M %p", tz = "PST8PDT")) +
-  scale_y_continuous(labels = scales::dollar) 
-
-#ggsave("btc-hrly-pct.png", btc_minute_plot, bg = "transparent")
 
 btc_minute_plot / bar_plot
 ```
