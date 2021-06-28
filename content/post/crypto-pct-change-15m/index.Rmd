@@ -115,7 +115,7 @@ granular_hourly %>%
   geom_col() +
   #scale_fill_viridis_d(option = "viridis") +
   #scale_fill_discrete(guide = guide_legend(reverse = TRUE)) +
-  labs(title =  paste0("Hourly change for top 200 cryptos: ", format(Sys.time(), "%B %d, %Y @ %I:%M %p", tz = "PST8PDT")),
+  labs(title =  paste0("Hourly change for top 100 cryptos: ", format(Sys.time(), "%B %d, %Y @ %I:%M %p", tz = "PST8PDT")),
        fill = "hourly % change",
        y = "", x = "") +
   theme(panel.grid.major = element_blank(), 
@@ -152,7 +152,7 @@ pct_change_plot <- granular_hourly %>%
   count(granular) %>% 
   ggplot(aes(granular, n, fill = granular)) +
   geom_col() +
-  labs(title = paste0("Hourly percent change for top 200 cryptos: ", format(Sys.time(), "%B %d @ %I:%M %p", tz = "PST8PDT")),
+  labs(title = paste0("Hourly percent change for top 100 cryptos: ", format(Sys.time(), "%B %d @ %I:%M %p", tz = "PST8PDT")),
        x = "", y = "Coin count") + 
   theme(legend.position = "none")
 
@@ -166,7 +166,7 @@ pct_change_btc_eth_removed <- granular_hourly %>%
   count(granular) %>% 
   ggplot(aes(granular, n, fill = granular)) +
   geom_col() +
-  labs(title = "Hourly percent change for top 198 cryptos",
+  labs(title = "Hourly percent change for top 98 cryptos",
        subtitle = "Bitcoin and Ethereum removed",
        x = "", y = "Coin count") + 
   theme(legend.position = "none") 
