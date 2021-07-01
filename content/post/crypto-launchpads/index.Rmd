@@ -1,0 +1,384 @@
+---
+title: "Crypto launchpad analysis"
+author: "Gabe Mednick"
+date: '2021-07-01'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: Comparing crypto launchpads with webscraping and API data
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: launchpads
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+```
+
+# Introduction to Launchpads
+
+This post uses data streamed from Coingecko's API to explore several 'launchpad' crypto companies. These companies partner with new projects launching into the crypto space and provide a mechanism for fundraising and exposure via partnerships and the launchpad's community of token holders. In turn, the token holders benefit from early access to new projects by either a lottery or guaranteed allocations. 
+
+After providing basic analysis of several launchpads, I will take a more in-depth look at a company called Trustswap. I will webscrape the company's roadmap from their [website](https://trustswap.org) and also scrape pertinent details from [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Lastly, I will explore the common words from Trustswap's [Twitter handle](https://twitter.com/TrustSwap) via natural language processing. Let's get started!
+
+```{r}
+library(tidyverse)
+library(tidyr)
+library(plotly)
+library(lubridate)
+library(httr)
+library(jsonlite)
+library(viridis)
+library(scales)
+library(rvest)
+library(gt)
+library(rtweet)
+library(wordcloud2)
+theme_set(theme_light())
+```
+
+```{r}
+# The first thing we need to do is access the coin ids of interest from Coingecko's complete coin list. 
+
+coin_list <- GET("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
+coin_list <- content(coin_list, as = "text")
+
+coins_df <- fromJSON(coin_list, flatten = TRUE) # convert from JSON to a data frame
+
+# use `View(coins_df)` and search for coin of interest to get the coin ids 
+
+launchpads = c("swap", "paid", "bscpad", "kpad", "pols", "poolz", "dao")
+
+# extract coin ids as a list to for CG's API: "https://www.coingecko.com/en/api"
+
+coin_ids <- coins_df %>% 
+  filter(symbol %in% launchpads) %>%
+  pull(id) %>% 
+  paste0(., collapse=",")
+```
+
+# Data Extraction via CoinGecko's API
+
+```{r}
+# list of launchpads for this post
+tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance", "KickPad")) %>% gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+
+# get market data
+launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Ckickpad%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
+  content(., as = "text") %>% 
+  fromJSON(., flatten = TRUE)
+
+```
+
+# Market cap and volume comparisons 
+
+```{r}
+market_cap_plt <- launchpad_df %>% 
+  mutate(name = fct_reorder(name, market_cap)) %>% 
+  ggplot(aes(market_cap, name, fill = market_cap_change_24h)) +
+  geom_col() +
+  labs(x = 'Market cap', y = NULL, 
+       title = "Market cap",
+       fill = "24hr change") +
+  #theme(legend.position = "none") +
+  scale_x_continuous(labels = dollar) +
+  scale_fill_viridis_c()
+
+tot_volume_plt <- launchpad_df %>% 
+  mutate(name = fct_reorder(name, total_volume)) %>% 
+  ggplot(aes(total_volume, name, fill = total_volume)) +
+  geom_col() +
+  labs(x = 'Volume', y = NULL, 
+       title = "Total volume") +
+  theme(legend.position = "none") +
+  scale_x_continuous(labels = dollar) +
+  scale_fill_viridis_c()
+  
+
+library(patchwork)
+market_cap_plt / tot_volume_plt
+```
+
+
+# 24 hour price and percentage change 
+
+```{r}
+launchpad_df %>% 
+  mutate(name = fct_reorder(name, current_price)) %>% 
+  ggplot(aes(current_price, name, color = price_change_percentage_24h)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = low_24h, xmax = high_24h), width = 0.001) +
+  labs(title = paste0("Price range for ", format(Sys.Date(), '%b %d, %Y')),
+       "Current price", y ="",
+       color = "Price change % (24hr)") +
+  scale_x_continuous(labels = dollar) +
+  scale_color_viridis_c()
+```
+
+```{r}
+launchpad_df %>% 
+  mutate(name =  fct_reorder(name, price_change_percentage_24h),
+         price_change_24h_dec = price_change_percentage_24h/100) %>%
+  ggplot(aes(price_change_24h_dec, name, fill = price_change_percentage_24h)) +
+  geom_col() + 
+  scale_fill_gradientn(colours = viridis(256, option = "D")) +
+  labs(title = paste0("Launchpad token % change for ", format(Sys.Date(), '%b %d, %Y')),
+       x = 'Daily % change', 
+       fill = '% change', 
+       y = "") +
+  theme(plot.title = element_text(hjust = -.5)) +
+  scale_x_continuous(labels = percent) 
+```
+
+# Percentage change intervals
+
+```{r}
+library(tidytext)
+
+launchpads_long <- launchpad_df %>% 
+  select(name, 'percentage_1h' = price_change_percentage_1h_in_currency, 'percentage_24h' = price_change_percentage_24h_in_currency, 'percentage_7d' = price_change_percentage_7d_in_currency, 'percentage_14d' = price_change_percentage_14d_in_currency, 'percentage_30d' = price_change_percentage_30d_in_currency, 'percentage_200d' = price_change_percentage_200d_in_currency) %>% 
+  pivot_longer(-name, names_to = "price_change_interval", values_to = "price_change") %>% drop_na() %>% 
+  mutate(price_change_interval = factor(price_change_interval, levels = c('percentage_1h', 'percentage_24h', 'percentage_7d', 'percentage_14d', 'percentage_30d', 'percentage_200d')))
+
+launchpads_long %>% 
+  mutate(name = reorder_within(name, price_change, price_change_interval)) %>% 
+  ggplot(aes(price_change, name, fill = price_change)) +
+  geom_col() + 
+  scale_y_reordered() +
+  scale_x_continuous(labels = scales::label_percent(scale = 1, accuracy = 1)) +
+  facet_wrap(~price_change_interval, scales = "free") +
+  theme(legend.position = "none") + 
+  labs(title = "Price change % intervals",
+       y = "",
+       x = "Price change by %") +
+  scale_fill_viridis_c()
+
+```
+
+# Plotting historic price charts
+
+```{r}
+#get urls for historical data
+# e.g.,
+swap_url = "https://api.coingecko.com/api/v3/coins/trustswap/market_chart?vs_currency=usd&days=max"
+
+# create urls function
+make_url <- function(id) {
+  paste0("https://api.coingecko.com/api/v3/coins/", id, "/market_chart?vs_currency=usd&days=max")
+}
+
+# make url for historical chart data
+launchpad_historical <- launchpad_df %>% 
+  mutate(historical_url = map(id, make_url))  %>% 
+  unnest(cols = c(historical_url))
+
+# function to extraxt data frame
+get_historical <- function(url) {
+    url %>% 
+    GET() %>% 
+    content(., as = "text") %>% 
+    fromJSON(., flatten = TRUE)  
+}
+
+launchpad_charts <- launchpad_historical %>% 
+  select(id, name, historical_url) %>% 
+  mutate(hist_data = map(historical_url, get_historical)) %>% 
+  select(id, name, hist_data)
+
+#convert historical data to data.frame
+matrix_to_df <- function(tbl) {
+  tbl %>% 
+  do.call(data.frame, .) %>%
+          as_tibble %>% 
+  select('time' = prices.1, 'price' = prices.2,
+         'market_cap' = market_caps.2, 'volume' = total_volumes.2) %>% 
+  mutate(time = time/1000,
+         time = as.Date(as.POSIXct(time, origin="1970-01-01")))
+}
+
+labels = list("polkastarter", "dao-maker", "bscpad", "trustswap", "paid-network", "poolz-finance", "kickpad")
+
+# plotting function
+p <- function(tbl) {
+  tbl %>% 
+    ggplot(aes(time, price, color = volume)) +
+    geom_line() +
+    labs(title = "",
+         y = "",
+         x = "") + #paste0("Chart for ", labels)) did not work
+    scale_y_continuous(labels = scales::dollar) +
+    scale_color_viridis_c() +
+    theme(legend.position = "none") 
+}
+
+a <- launchpad_charts %>% 
+  mutate(results = map(hist_data, matrix_to_df)) 
+
+dao_plot <- a$results[[1]] %>% 
+  p() + 
+  labs(title = "DAO Maker")
+
+polka_plot <- a$results[[2]] %>%
+  p() + 
+  labs(title = "Polkastarter")
+
+bsc_plot <- a$results[[3]] %>% 
+  p() +
+  labs(title = "BSCPAD")
+
+swap_plot <- a$results[[4]] %>% 
+  p() +
+  labs(title = "Trustswap")
+
+paid_plot <- a$results[[5]] %>% 
+  p() +
+  labs(title = "Paid-network")
+
+poolz_plot <- a$results[[6]] %>% 
+  p() +
+  labs(title = "Poolz Finance")
+
+kickpad_plot <- a$results[[7]] %>% 
+  p() +
+  labs(title = "Kickpad")
+
+
+(swap_plot + dao_plot + polka_plot)  /
+  (paid_plot + poolz_plot + bsc_plot)
+
+# Automates plot generation without labels
+# a %>% 
+#   mutate(plots = map(results, p)) %>% 
+#   pull(plots) 
+ 
+```
+
+# Taking a closer look at Trustswap
+<center>
+![Trustswap](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
+
+```{r}
+#test function with swap url
+swap_ly <- get_historical(swap_url) %>% 
+  do.call(data.frame, .) %>%
+          as_tibble %>% 
+  select('time' = prices.1, 'price' = prices.2,
+         'market_cap' = market_caps.2, 'volume' = total_volumes.2) %>% 
+  mutate(time = time/1000,
+         time = as.Date(as.POSIXct(time, origin="1970-01-01"))) %>% 
+  ggplot(aes(time, price)) +
+  geom_line() +
+  geom_point(size = 0.8, aes(color = volume)) +
+  labs(title = "Price chart for Trustswap") +
+  scale_y_continuous(labels = dollar) +
+  scale_color_viridis_c(option = "D") 
+
+# creating an interactive price chart
+ggplotly(swap_ly)
+```
+
+# Webscraping data
+
+```{r}
+url = "https://www.trustswap.org/roadmap"
+
+ts_roadmap <- read_html(url) %>%
+  html_nodes('.roadmap-stage__date , .roadmap-stage__feature') %>% 
+  html_text() %>% 
+  tibble() %>% 
+  rename("roadmap" = '.')
+
+#kable(ts_roadmap)
+
+ts_roadmap %>% gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+```
+
+
+```{r}
+url_ethscan <- "https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe"
+
+ether_scan_scrape <- read_html(url_ethscan) %>% 
+  html_nodes('#ContentPlaceHolder1_tr_tokenHolders .mb-md-0 , .col-6:nth-child(1) .d-block , #pricebutton , .mb-1 span , #ContentPlaceHolder1_trNoOfTxns .mb-md-0 , #totaltxns , #ContentPlaceHolder1_tr_tokenHolders .mr-3 , .hash-tag') %>% 
+  html_text() %>%
+  str_remove_all(., "\n") %>%
+  str_remove_all(., "@.*") %>%
+  str_remove_all(., "\\$") %>%
+  str_remove_all(., "-") %>%
+  str_remove_all(., ",") %>%
+  tibble() %>% 
+  rename("value" = '.') %>% 
+  filter(!str_detect(value, "[a-zA-Z]")) %>% 
+  mutate(value = str_squish(value),
+         value = round(as.numeric(value), 2)) %>% 
+  drop_na()
+
+ether_scan_scrape$item <- c("price (USD)", "fully diluted market cap", "total supply", "holders") 
+
+ether_scan_scrape %>% 
+  select(item, value) %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+```
+
+# Analysis of the most common words for @trustswap
+
+```{r}
+
+trust_tweets <- search_tweets('@trustswap', n = 10000, include_rts = TRUE, lang = 'en')
+
+tt_words <- trust_tweets %>% 
+  select(screen_name, text, retweet_count, favorite_count, created_at) %>% 
+  unnest_tokens(word, text, token = "tweets") %>% 
+  anti_join(stop_words, by = 'word') %>% 
+  mutate(word = str_replace_all(word, "[[:punct:]]", ""),
+         word = str_replace_all(word, "[^\x01-\x7F]", ""),
+         word = str_replace_all(word,"#[a-z,A-Z]*", ""),
+         word = str_remove_all(word, "[[:space:]]")) %>% 
+  filter(word != 'trustswap') 
+
+tt_words %>% 
+  count(word, sort = TRUE) %>% 
+  slice(2:21) %>% 
+  mutate(word = fct_reorder(word, n)) %>% 
+  ggplot(aes(n, word, fill = word)) +
+  geom_col() +
+  theme(legend.position = 'none') +
+  labs(title = 'Most common words for @trustswap',
+       x = 'frequency of words') +
+  scale_fill_viridis_d()
+
+tt_words %>% 
+  count(word, sort = TRUE) %>% 
+  slice(2:50) %>%  
+  with(wordcloud2(., size = .4, shape = 'circle'))
+```
+
+
+
+
