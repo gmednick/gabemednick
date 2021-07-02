@@ -229,19 +229,19 @@ p <- function(tbl) {
 a <- launchpad_charts %>% 
   mutate(results = map(hist_data, matrix_to_df)) 
 
-dao_plot <- a$results[[1]] %>% 
+polka_plot <- a$results[[1]] %>% 
   p() + 
   labs(title = "Polkastarter")
 
-polka_plot <- a$results[[2]] %>%
+dao_plot <- a$results[[2]] %>%
   p() + 
   labs(title = "DAO Maker")
 
-bsc_plot <- a$results[[3]] %>% 
+swap_plot <- a$results[[3]] %>% 
   p() +
   labs(title = "Trustswap")
 
-swap_plot <- a$results[[4]] %>% 
+bsc_plot <- a$results[[4]] %>% 
   p() +
   labs(title = "BSCPAD")
 
