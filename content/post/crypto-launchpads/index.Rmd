@@ -231,19 +231,19 @@ a <- launchpad_charts %>%
 
 dao_plot <- a$results[[1]] %>% 
   p() + 
-  labs(title = "DAO Maker")
+  labs(title = "Polkastarter")
 
 polka_plot <- a$results[[2]] %>%
   p() + 
-  labs(title = "Polkastarter")
+  labs(title = "DAO Maker")
 
 bsc_plot <- a$results[[3]] %>% 
   p() +
-  labs(title = "BSCPAD")
+  labs(title = "Trustswap")
 
 swap_plot <- a$results[[4]] %>% 
   p() +
-  labs(title = "Trustswap")
+  labs(title = "BSCPAD")
 
 paid_plot <- a$results[[5]] %>% 
   p() +
