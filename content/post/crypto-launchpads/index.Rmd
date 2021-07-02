@@ -73,10 +73,11 @@ coin_ids <- coins_df %>%
 tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance", "KickPad")) %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "lightcyan"),
+      cell_fill(color = "#35b0ab"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
+#scales::show_col(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"))
 
 # get market data
 launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Ckickpad%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
@@ -292,7 +293,7 @@ swap_ly <- get_historical(swap_url) %>%
 ggplotly(swap_ly)
 ```
 
-# Webscraping data
+# Webscraping Trustswap's roadmap and tokenomics
 
 ```{r}
 url = "https://www.trustswap.org/roadmap"
@@ -303,12 +304,10 @@ ts_roadmap <- read_html(url) %>%
   tibble() %>% 
   rename("roadmap" = '.')
 
-#kable(ts_roadmap)
-
 ts_roadmap %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "lightcyan"),
+      cell_fill(color = "#35b0ab"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -340,19 +339,19 @@ ether_scan_scrape %>%
   gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "lightcyan"),
+      cell_fill(color = "#35b0ab"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
 ```
 
-# Analysis of the most common words for @trustswap
+# Searching the twitter API for tweets that reference @trustswap
 
 ```{r}
 
 trust_tweets <- search_tweets('@trustswap', n = 10000, include_rts = TRUE, lang = 'en')
 
-tt_words <- trust_tweets %>% 
+ts_words <- trust_tweets %>% 
   select(screen_name, text, retweet_count, favorite_count, created_at) %>% 
   unnest_tokens(word, text, token = "tweets") %>% 
   anti_join(stop_words, by = 'word') %>% 
@@ -362,18 +361,18 @@ tt_words <- trust_tweets %>%
          word = str_remove_all(word, "[[:space:]]")) %>% 
   filter(word != 'trustswap') 
 
-tt_words %>% 
+ts_words %>% 
   count(word, sort = TRUE) %>% 
   slice(2:21) %>% 
   mutate(word = fct_reorder(word, n)) %>% 
   ggplot(aes(n, word, fill = word)) +
   geom_col() +
   theme(legend.position = 'none') +
-  labs(title = 'Most common words for @trustswap',
+  labs(title = 'Most common words in tweets that reference @trustswap',
        x = 'frequency of words') +
   scale_fill_viridis_d()
 
-tt_words %>% 
+ts_words %>% 
   count(word, sort = TRUE) %>% 
   slice(2:50) %>%  
   with(wordcloud2(., size = .4, shape = 'circle'))
