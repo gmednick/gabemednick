@@ -21,9 +21,9 @@ slug: crypto
 ---
 In this post, I use the httr package to access bitcoin's 24hr price chart from the [CoinGecko](https://www.coingecko.com/en) crypto market [api](https://www.coingecko.com/en/api). The rvest package is used to scrape the hourly percentage change for the top 100 cryptos (by market cap) from CG's website. The cron task scheduler is then set to run the webscraping script every 15 minutes and write the data to a spread sheet, giving me the percentage change on a 15 minute interval.
 
-Once we have we have collected enough data, I plan to use it for predicting the percentage change for bitcoin. In order for this to work, the task scheduler and webscraping script will need to run in the cloud. Ideally, I will turn this post into a Shiny app so that it can be used for real time analysis and price prediction.
+Once we have collected enough data, I plan to use it for predicting the percentage change for Bitcoin. In order for this to work, the task scheduler and webscraping script will need to run in the cloud. Ideally, this post will be turned into a Shiny app so that it can be used for real time analysis and price prediction.
 
-Currently this post shows several ways to view the hourly percentage changes (as a static snapshot). I've categorized the data as positive and negative and created 9 different levels of change for a more nuanced view. Categories include: `ice age (< -6%), freezing (-4-6%), cold (-2-4%), chilly (-0-2%), neutral (0%), luke warm (0-2%), warm (2-4%), toasty (4-6%), hot (>6%)`.
+Currently this post shows several ways to view the hourly percentage changes as a static snapshot. I've categorized the hourly percentage change as positive and negative, as well as creating a more nuanced scale with the following categories: `ice age (< -6%), freezing (-4-6%), cold (-2-4%), chilly (-0-2%), neutral (0%), luke warm (0-2%), warm (2-4%), toasty (4-6%), hot (>6%)`.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
