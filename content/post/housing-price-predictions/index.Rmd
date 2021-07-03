@@ -31,7 +31,7 @@ library(htmlwidgets)
 theme_set(theme_light())
 ```
 
-#### This post is a work in progress. I hope to start out with a bare-bones modeling workflow using the Tidymodels ecosystem for machine learning in R. Once we have a basic workflow, we can try and improve model performance by switching out the model, resampling and/or further custominzing the data engineering steps. 
+### This post is a work in progress. I am going to start with a bare-bones model workflow using the Tidymodels ecosystem for machine learning in R. We will then explore ways to improve our models predictive prowess. 
 
 We are going to use the Ames housing dataset, available  in the `AmesHousing` package, to create a model for price prediction. The dataset contains 81 features on 3000 home sales around the University in Ames, Iowa between 2006-2010. We're going to try and use these features to train a linear regression model. This version of the data is clean but we will need to do some basic data engineering before we can train our model and test it. 
 
