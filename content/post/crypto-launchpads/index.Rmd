@@ -1,5 +1,5 @@
 ---
-title: "Crypto launchpad analysis"
+title: "Crypto launchpad platforms"
 author: "Gabe Mednick"
 date: '2021-07-01'
 output:
@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Comparing crypto launchpads with webscraping and API data
+summary: Visualizing market dynamics for crypto launchpads and accessing twitter data for natural language processing. 
 authors: []
 lastmod: ''
 featured: no
@@ -26,20 +26,22 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 # Introduction to Launchpads
 
-This post uses data streamed from Coingecko's API to explore several 'launchpad' crypto companies. These companies partner with new projects launching into the crypto space and provide a mechanism for fundraising and exposure via partnerships and the launchpad's community of token holders. In turn, the token holders benefit from early access to new projects by either a lottery or guaranteed allocations. 
+This post uses market data from Coingecko's API to explore several launchpad cryptocurrency companies. These launchpads partner with new projects to help them launch into the crypto space by providing a mechanism for fundraising and exposure to the launchpad's connections and community of token holders. In turn, the token holders benefit from early investment access to these new projects. 
 
-After providing basic analysis of several launchpads, I will take a more in-depth look at a company called Trustswap. I will webscrape the company's roadmap from their [website](https://trustswap.org) and also scrape pertinent details from [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Lastly, I will explore the common words from Trustswap's [Twitter handle](https://twitter.com/TrustSwap) via natural language processing. Let's get started!
+After providing basic visual analysis of several launchpads, I will take a deeper dive into TrustSwap. I will webscrape the company's roadmap from their [website](https://trustswap.org) and also scrape pertinent details from [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). We will then use the rtweets package to explore the most frequent words that are used in tweets that reference the the [@TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
 
 ```{r}
+# loading packages 
 library(tidyverse)
-library(tidyr)
 library(plotly)
 library(lubridate)
 library(httr)
 library(jsonlite)
+library(patchwork)
 library(viridis)
 library(scales)
 library(rvest)
+library(tidytext)
 library(gt)
 library(rtweet)
 library(wordcloud2)
@@ -47,19 +49,17 @@ theme_set(theme_light())
 ```
 
 ```{r}
-# The first thing we need to do is access the coin ids of interest from Coingecko's complete coin list. 
+# Taccess the coin ids of interest from Coingecko's complete coin list. 
 
 coin_list <- GET("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
 coin_list <- content(coin_list, as = "text")
 
 coins_df <- fromJSON(coin_list, flatten = TRUE) # convert from JSON to a data frame
-
 # use `View(coins_df)` and search for coin of interest to get the coin ids 
 
 launchpads = c("swap", "paid", "bscpad", "kpad", "pols", "poolz", "dao")
 
-# extract coin ids as a list to for CG's API: "https://www.coingecko.com/en/api"
-
+# extract coin ids as a comma separated list for CG's API. Cut paste the output of this code at https://www.coingecko.com/en/api" and use the coins/markets API.
 coin_ids <- coins_df %>% 
   filter(symbol %in% launchpads) %>%
   pull(id) %>% 
@@ -73,11 +73,11 @@ coin_ids <- coins_df %>%
 tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance", "KickPad")) %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#35b0ab"),
+      cell_fill(color = "#448CF6"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
-#scales::show_col(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"))
+#scales::show_col(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#448CF6"))
 
 # get market data
 launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Ckickpad%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
@@ -110,8 +110,6 @@ tot_volume_plt <- launchpad_df %>%
   scale_x_continuous(labels = dollar) +
   scale_fill_viridis_c()
   
-
-library(patchwork)
 market_cap_plt / tot_volume_plt
 ```
 
@@ -149,7 +147,6 @@ launchpad_df %>%
 # Percentage change intervals
 
 ```{r}
-library(tidytext)
 
 launchpads_long <- launchpad_df %>% 
   select(name, 'percentage_1h' = price_change_percentage_1h_in_currency, 'percentage_24h' = price_change_percentage_24h_in_currency, 'percentage_7d' = price_change_percentage_7d_in_currency, 'percentage_14d' = price_change_percentage_14d_in_currency, 'percentage_30d' = price_change_percentage_30d_in_currency, 'percentage_200d' = price_change_percentage_200d_in_currency) %>% 
@@ -307,7 +304,7 @@ ts_roadmap <- read_html(url) %>%
 ts_roadmap %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#35b0ab"),
+      cell_fill(color = "#448CF6"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -339,7 +336,7 @@ ether_scan_scrape %>%
   gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#35b0ab"),
+      cell_fill(color = "#448CF6"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
