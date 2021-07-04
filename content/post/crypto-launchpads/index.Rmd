@@ -74,7 +74,7 @@ Here is a table showing the launchpad projects to query for market data via Coin
 tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance", "KickPad")) %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -93,7 +93,7 @@ launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=
 launchpad_df %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -328,7 +328,7 @@ read_html(medium_url) %>%
   gt()  %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -350,7 +350,7 @@ read_html(ts_url) %>%
   gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -373,7 +373,7 @@ ts_roadmap <- read_html(url) %>%
 ts_roadmap %>% gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
@@ -405,7 +405,7 @@ ether_scan_scrape %>%
   gt() %>%
   tab_style(
     style = list(
-      cell_fill(color = "#448CF6"),
+      cell_fill(color = "#1F968BFF"),
       cell_text(weight = "bold")
       ),
     locations = cells_body())
