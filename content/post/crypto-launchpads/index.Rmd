@@ -82,7 +82,7 @@ tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID 
 
 # Data Extraction 
 
-Let's get the data take a look at the data.
+Let's get the data take a look at it.
 
 ```{r}
 # get market data
@@ -315,7 +315,7 @@ swaply_plot <- swap_ly %>%
 ggplotly(swaply_plot)
 ```
 
-A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad but we need to dig deeper to find out what services they offer.
+A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad but we'll need to dig deeper to find out what services they offer.
 
 ```{r}
 medium_url <- "https://trustswap.medium.com/"
@@ -443,7 +443,7 @@ ts_words %>%
   scale_fill_viridis_d()
 ```
 
-Another convenient way to visualize the most common words is the word cloud which uses word size to represent frequency.
+Another convenient way to visualize the most common words is a word cloud that uses word size to represent frequency.
 
 ```{r}
 ts_words %>% 
