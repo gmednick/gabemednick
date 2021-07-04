@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 
 This post uses market data from Coingecko's API to explore several launchpad cryptocurrency companies. These launchpads partner with new projects to help them launch into the crypto space by providing a mechanism for fundraising and exposure to the launchpad's connections and community of token holders. In turn, the token holders benefit from early investment access to these new projects. 
 
-After exploring basic market comparisons, I will take a deeper dive into TrustSwap. We will look at the company's fundamental objectives and webscrape regarding its services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org),  [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Then we will wrap up with some natural language processing using Twitter data related to the [@TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
+After exploring basic market comparisons, I will take a deeper dive into TrustSwap. We will look at the company's fundamental objectives and webscrape info regarding its services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org) and [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Finally, we will use natural language processing to process Twitter data related to the [TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
 
 ```{r}
 # loading packages 
