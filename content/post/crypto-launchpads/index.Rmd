@@ -21,7 +21,7 @@ slug: launchpads
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 ```
 
 # Introduction to Launchpads
@@ -360,7 +360,7 @@ This list of services does not include their recent acquisition of the CryptoApp
 
 # Roadmap and tokenomics
 
-Let's do a little more webscraping and see what TrustSwap has up its sleeves. 
+Let's go a little deeper to see what TrustSwap has up its sleeves. 
 ```{r}
 url = "https://www.trustswap.org/roadmap"
 
@@ -411,7 +411,7 @@ ether_scan_scrape %>%
     locations = cells_body())
 ```
 
-# Searching Twitter for tweets that tag @trustswap
+# Searching Twitter for tweets that reference @trustswap
 
 ```{r}
 trust_tweets <- search_tweets('@trustswap', n = 10000, include_rts = TRUE, lang = 'en')
@@ -428,7 +428,7 @@ ts_words <- trust_tweets %>%
   filter(word != 'trustswap')
 ```
 
-Now that we've converted the tweets into 'tokens' and removed stop words, we can count the tokens and display the most frequently used words as a bar graph.
+Now that we've broken the tweets up into individual words or 'tokens', we can count the tokens and display the most frequently used words as a bar graph.
 
 ```{r}
 ts_words %>% 
@@ -443,12 +443,12 @@ ts_words %>%
   scale_fill_viridis_d()
 ```
 
-Another convenient way to view the most common words is the word cloud where word frequency is represented by size.
+Another convenient way to visualize the most common words is the word cloud which uses word size to represent frequency.
 
 ```{r}
 ts_words %>% 
   count(word, sort = TRUE) %>% 
-  slice(2:50) %>%  
+  slice(2:51) %>%  
   with(wordcloud2(., size = .4, shape = 'circle'))
 ```
 
