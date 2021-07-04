@@ -280,7 +280,7 @@ kickpad_plot <- a$results[[7]] %>%
  
 ```
 
-# Zooming in on TrustSwap
+# The TrustSwap ecosystem
 <center>
 ![](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
 </center>
@@ -302,7 +302,7 @@ vline <- swap_ly %>%
   select(time) %>% 
   slice(1)
 
-swap_ly %>% 
+swaply_plot <- swap_ly %>% 
   ggplot(aes(time, price)) +
   geom_line() +
   geom_vline(xintercept = vline$time, lty = 2, color = "midnightblue") +
@@ -312,10 +312,10 @@ swap_ly %>%
   scale_color_viridis_c(option = "D") 
 
 # creating an interactive price chart
-ggplotly()
+ggplotly(swaply_plot)
 ```
 
-A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad but we need to did deeper to find out what services they offer.
+A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad but we need to dig deeper to find out what services they offer.
 
 ```{r}
 medium_url <- "https://trustswap.medium.com/"
@@ -336,7 +336,7 @@ read_html(medium_url) %>%
 ```
 
 
-TrustSwap's website does not have a description but rather, they provide a list of services. Scrolling down there is a description of each service, which are essentially stand-alone projects that complement each other. 
+TrustSwap's website does not have a single description but rather, they provide a portal to their services followed by a detailed explanation about each service. 
 ![TrustSwap services](swap_services.png)
 
 ```{r}
@@ -443,7 +443,7 @@ ts_words %>%
   scale_fill_viridis_d()
 ```
 
-Another convenient way to view the most common words is as a word cloud where word frequency is represented by size.
+Another convenient way to view the most common words is the word cloud where word frequency is represented by size.
 
 ```{r}
 ts_words %>% 
