@@ -49,7 +49,7 @@ theme_set(theme_light())
 ```
 
 ```{r}
-# Taccess the coin ids of interest from Coingecko's complete coin list. 
+# access the coin ids of interest from Coingecko's complete coin list. 
 
 coin_list <- GET("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
 coin_list <- content(coin_list, as = "text")
@@ -66,7 +66,8 @@ coin_ids <- coins_df %>%
   paste0(., collapse=",")
 ```
 
-# Data Extraction via CoinGecko's API
+
+Here is a table showing the launchpad projects to query for market data via CoinGecko's API.
 
 ```{r}
 # list of launchpads for this post
@@ -77,16 +78,29 @@ tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID 
       cell_text(weight = "bold")
       ),
     locations = cells_body())
-#scales::show_col(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#448CF6"))
+```
 
+# Data Extraction 
+
+Let's get the data take a look at the data.
+
+```{r}
 # get market data
 launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Ckickpad%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
   content(., as = "text") %>% 
   fromJSON(., flatten = TRUE)
 
+launchpad_df %>% gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#448CF6"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+  
 ```
 
-# Market cap and volume comparisons 
+# Market cap and volume 
 
 ```{r}
 market_cap_plt <- launchpad_df %>% 
@@ -266,9 +280,12 @@ kickpad_plot <- a$results[[7]] %>%
  
 ```
 
-# Taking a closer look at Trustswap
+# Zooming in on TrustSwap
 <center>
-![Trustswap](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
+![](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
+</center>
+
+Let's start by rendering the historical price data as an interactive Plotly chart that allows the user to interact with the data by scrolling over the plot. 
 
 ```{r}
 #test function with swap url
@@ -278,20 +295,72 @@ swap_ly <- get_historical(swap_url) %>%
   select('time' = prices.1, 'price' = prices.2,
          'market_cap' = market_caps.2, 'volume' = total_volumes.2) %>% 
   mutate(time = time/1000,
-         time = as.Date(as.POSIXct(time, origin="1970-01-01"))) %>% 
+         time = as.Date(as.POSIXct(time, origin="1970-01-01"))) 
+
+vline <- swap_ly %>% 
+  filter(price == max(price)) %>% 
+  select(time) %>% 
+  slice(1)
+
+swap_ly %>% 
   ggplot(aes(time, price)) +
   geom_line() +
+  geom_vline(xintercept = vline$time, lty = 2, color = "midnightblue") +
   geom_point(size = 0.8, aes(color = volume)) +
   labs(title = "Price chart for Trustswap") +
   scale_y_continuous(labels = dollar) +
   scale_color_viridis_c(option = "D") 
 
 # creating an interactive price chart
-ggplotly(swap_ly)
+ggplotly()
 ```
 
-# Webscraping Trustswap's roadmap and tokenomics
+A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad but we need to did deeper to find out what services they offer.
 
+```{r}
+medium_url <- "https://trustswap.medium.com/"
+
+read_html(medium_url) %>% 
+  html_node(".nb .ba") %>% 
+  html_text() %>% 
+  tibble() %>% 
+  rename(`Company description` = ".") %>% 
+  gt()  %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#448CF6"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+
+```
+
+
+TrustSwap's website does not have a description but rather, they provide a list of services. Scrolling down there is a description of each service, which are essentially stand-alone projects that complement each other. 
+![TrustSwap services](swap_services.png)
+
+```{r}
+ts_url <- "https://www.trustswap.org/"
+
+read_html(ts_url) %>% 
+  html_nodes("#smartmint .section-heading__title , #swappable .section-heading__title , .staking-swap .section-heading__title , .section-heading__desc , .section-heading__sub , .smartlock__heading .section-heading__title , .launchpad__desc , .launchpad__title") %>% 
+  html_text() %>% 
+  tibble() %>% 
+  rename(`TrustSwap services` = ".") %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#448CF6"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
+
+```
+This list of services does not include their recent acquisition of the CryptoApp.
+
+# Roadmap and tokenomics
+
+Let's do a little more webscraping and see what TrustSwap has up its sleeves. 
 ```{r}
 url = "https://www.trustswap.org/roadmap"
 
@@ -299,7 +368,7 @@ ts_roadmap <- read_html(url) %>%
   html_nodes('.roadmap-stage__date , .roadmap-stage__feature') %>% 
   html_text() %>% 
   tibble() %>% 
-  rename("roadmap" = '.')
+  rename("Roadmap" = '.')
 
 ts_roadmap %>% gt() %>%
   tab_style(
@@ -310,6 +379,7 @@ ts_roadmap %>% gt() %>%
     locations = cells_body())
 ```
 
+TrustSwap's basic tokenomics can be found on etherscan.io -- The Ethereum Blockchain Explorer 
 
 ```{r}
 url_ethscan <- "https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe"
@@ -330,7 +400,6 @@ ether_scan_scrape <- read_html(url_ethscan) %>%
   drop_na()
 
 ether_scan_scrape$item <- c("price (USD)", "fully diluted market cap", "total supply", "holders") 
-
 ether_scan_scrape %>% 
   select(item, value) %>% 
   gt() %>%
@@ -342,12 +411,12 @@ ether_scan_scrape %>%
     locations = cells_body())
 ```
 
-# Searching the twitter API for tweets that reference @trustswap
+# Searching Twitter for tweets that tag @trustswap
 
 ```{r}
-
 trust_tweets <- search_tweets('@trustswap', n = 10000, include_rts = TRUE, lang = 'en')
 
+# converting tweets to word tokens and removing stop words.
 ts_words <- trust_tweets %>% 
   select(screen_name, text, retweet_count, favorite_count, created_at) %>% 
   unnest_tokens(word, text, token = "tweets") %>% 
@@ -356,8 +425,12 @@ ts_words <- trust_tweets %>%
          word = str_replace_all(word, "[^\x01-\x7F]", ""),
          word = str_replace_all(word,"#[a-z,A-Z]*", ""),
          word = str_remove_all(word, "[[:space:]]")) %>% 
-  filter(word != 'trustswap') 
+  filter(word != 'trustswap')
+```
 
+Now that we've converted the tweets into 'tokens' and removed stop words, we can count the tokens and display the most frequently used words as a bar graph.
+
+```{r}
 ts_words %>% 
   count(word, sort = TRUE) %>% 
   slice(2:21) %>% 
@@ -368,7 +441,11 @@ ts_words %>%
   labs(title = 'Most common words in tweets that reference @trustswap',
        x = 'frequency of words') +
   scale_fill_viridis_d()
+```
 
+Another convenient way to view the most common words is as a word cloud where word frequency is represented by size.
+
+```{r}
 ts_words %>% 
   count(word, sort = TRUE) %>% 
   slice(2:50) %>%  
