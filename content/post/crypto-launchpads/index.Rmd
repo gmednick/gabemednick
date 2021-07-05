@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 
 This post uses market data from Coingecko's API for exploratory data analysis of several launchpad cryptocurrency companies. These companies partner with new projects and help them launch into the crypto space by providing a mechanism for fundraising and exposure to the launchpad's connections and community of token holders. In turn, the token holders benefit from early investment access to these new projects. 
 
-After visualizing market data, I will take a deeper dive into TrustSwap. We will consider TrustSwaps's fundamental objectives by webscraping info regarding their services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org) and [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Finally, we will use natural language processing to process Twitter data related to the [TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
+After visualizing market data, I will take a deeper dive into TrustSwap. We will consider TrustSwaps's fundamental objectives by webscraping info regarding their services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org) and [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Finally, we will use natural language processing to explore tweets that reference the [TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
 
 ```{r}
 # loading packages 
@@ -317,7 +317,7 @@ swaply_plot <- swap_ly %>%
 ggplotly(swaply_plot)
 ```
 
-A one-line description of TrustSwap is available on their Medium page. They are more than just a launchpad so let's dig deeper and find out what services they offer.
+A one-line description of TrustSwap is available on their Medium page. It turns out they are more than just a launchpad.
 
 ```{r}
 medium_url <- "https://trustswap.medium.com/"
@@ -338,7 +338,7 @@ read_html(medium_url) %>%
 ```
 
 
-TrustSwap's website does not have a single description but rather, they provide a portal to their services followed by a detailed explanation about each service. 
+TrustSwap's website does not have a simple description but rather, provides a portal and a description of each service they offer. 
 ![TrustSwap services](swap_services.png)
 Image of the TrustSwap portal
 
@@ -359,11 +359,13 @@ read_html(ts_url) %>%
     locations = cells_body())
 
 ```
-This list of services does not include their recent acquisition of the CryptoApp.
+
+This impressive list of services doesn't even include their recent acquisition of the The Crypto App.
 
 ## Roadmap and tokenomics
 
-Let's dig a little deeper and see what TrustSwap has up its sleeve. 
+To read TrustSwap's future, we can use webscraping to extract their roadmap and find out what's up their sleeve. 
+
 ```{r}
 url = "https://www.trustswap.org/roadmap"
 
