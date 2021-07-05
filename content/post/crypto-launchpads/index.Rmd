@@ -66,7 +66,6 @@ coin_ids <- coins_df %>%
   paste0(., collapse=",")
 ```
 
-
 This table lists the launchpad projects that we will query for market data via CoinGecko's API.
 
 ```{r}
@@ -126,7 +125,6 @@ tot_volume_plt <- launchpad_df %>%
   
 market_cap_plt / tot_volume_plt
 ```
-
 
 ## 24 hour price change 
 
@@ -315,6 +313,7 @@ swaply_plot <- swap_ly %>%
 
 # creating an interactive price chart
 ggplotly(swaply_plot)
+
 ```
 
 A one-line description of TrustSwap is available on their Medium page. It turns out they are more than just a launchpad.
@@ -338,9 +337,9 @@ read_html(medium_url) %>%
 ```
 
 
-TrustSwap's website does not have a simple description but rather, provides a portal and a description of each service they offer. 
+TrustSwap's website does not have a simple description but rather, provides a portal and a description of each service they offer. Here is an image of the service portal taken from TrustSwap's website.
+
 ![TrustSwap services](swap_services.png)
-Image of the TrustSwap portal
 
 ```{r}
 ts_url <- "https://www.trustswap.org/"
@@ -364,7 +363,7 @@ This impressive list of services doesn't even include their recent acquisition o
 
 ## Roadmap and tokenomics
 
-To read TrustSwap's future, we can use webscraping to extract their roadmap and find out what's up their sleeve. 
+No need for a crystal ball to read TrustSwap's future. We can use webscraping to extract their roadmap and find out what they've got up their sleeves. 
 
 ```{r}
 url = "https://www.trustswap.org/roadmap"
