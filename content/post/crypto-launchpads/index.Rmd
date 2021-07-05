@@ -80,7 +80,7 @@ tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID 
     locations = cells_body())
 ```
 
-# Data Extraction 
+## Data Extraction 
 
 Let's get the data take a look at it.
 
@@ -100,7 +100,7 @@ launchpad_df %>% gt() %>%
   
 ```
 
-# Market cap and volume 
+## Market cap and volume 
 
 ```{r}
 market_cap_plt <- launchpad_df %>% 
@@ -128,7 +128,7 @@ market_cap_plt / tot_volume_plt
 ```
 
 
-# 24 hour price change 
+## 24 hour price change 
 
 ```{r}
 launchpad_df %>% 
@@ -143,7 +143,7 @@ launchpad_df %>%
   scale_color_viridis_c()
 ```
 
-# 24 hour percentage change 
+## 24 hour percentage change 
 
 ```{r}
 launchpad_df %>% 
@@ -160,7 +160,7 @@ launchpad_df %>%
   scale_x_continuous(labels = percent) 
 ```
 
-# Percentage change intervals
+## Percentage change intervals
 
 ```{r}
 
@@ -184,7 +184,7 @@ launchpads_long %>%
 
 ```
 
-# Plotting historic price charts
+## Plotting historic price charts
 
 ```{r}
 #get urls for historical data
@@ -361,7 +361,7 @@ read_html(ts_url) %>%
 ```
 This list of services does not include their recent acquisition of the CryptoApp.
 
-# Roadmap and tokenomics
+## Roadmap and tokenomics
 
 Let's dig a little deeper and see what TrustSwap has up its sleeve. 
 ```{r}
@@ -414,7 +414,7 @@ ether_scan_scrape %>%
     locations = cells_body())
 ```
 
-# Searching Twitter for tweets that reference @trustswap
+## Searching Twitter for tweets that reference @trustswap
 
 ```{r}
 trust_tweets <- search_tweets('@trustswap', n = 10000, include_rts = TRUE, lang = 'en')
@@ -451,11 +451,11 @@ Another cool way to visualize the most common words is a word cloud where word s
 ```{r}
 ts_words %>% 
   count(word, sort = TRUE) %>% 
-  slice(2:51) %>%  
+  slice(2:nrow(ts_words)) %>%  
   with(wordcloud2(., size = .4, shape = 'circle'))
 ```
-
-Let's look at the sentiment for tweets that reference @TrustSwap
+br></br>
+Let's look at the sentiment for tweets that reference @TrustSwap. It's always nice to end on a positive note :smile:!
 
 ```{r}
 ts_words %>% 
@@ -467,6 +467,6 @@ ts_words %>%
   scale_fill_discrete(type = c("#482677FF", "#2D718EFF"))
 ```
 
-It's always nice to end on a positive note :smile:!
+
 
 
