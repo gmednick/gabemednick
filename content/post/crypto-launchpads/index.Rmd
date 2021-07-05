@@ -454,7 +454,7 @@ ts_words %>%
   slice(2:nrow(ts_words)) %>%  
   with(wordcloud2(., size = .4, shape = 'circle'))
 ```
-br></br>
+<br></br>
 Let's look at the sentiment for tweets that reference @TrustSwap. It's always nice to end on a positive note :smile:!
 
 ```{r}
