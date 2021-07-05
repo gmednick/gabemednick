@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Visualizing market dynamics for crypto launchpads, webscraping and accessing twitter data for natural language processing. 
+summary: Visualizing market dynamics, webscraping and accessing twitter data for natural language processing. 
 authors: []
 lastmod: ''
 featured: no
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 
 This post uses market data from Coingecko's API for exploratory data analysis of several launchpad cryptocurrency companies. These companies partner with new projects and help them launch into the crypto space by providing a mechanism for fundraising and exposure to the launchpad's connections and community of token holders. In turn, the token holders benefit from early investment access to these new projects. 
 
-After visualizing market data, I will take a deeper dive into TrustSwap. We will consider TrustSwaps's fundamental objectives by webscraping info regarding their services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org) and [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Finally, we will use natural language processing to explore tweets that reference the [TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
+After visualizing market data for 6 launchpads, I will take a deeper dive into TrustSwap. We will consider TrustSwaps's fundamental objectives by webscraping info regarding their services, roadmap and tokenomics from various sources such as TrustSwap's [website](https://trustswap.org) and [etherscan](https://etherscan.io/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe). Finally, we will use natural language processing to explore tweets that reference the [TrustSwap](https://twitter.com/TrustSwap) Twitter handle. Let's get started!
 
 ```{r}
 # loading packages 
@@ -57,7 +57,7 @@ coin_list <- content(coin_list, as = "text")
 coins_df <- fromJSON(coin_list, flatten = TRUE) # convert from JSON to a data frame
 # use `View(coins_df)` and search for coin of interest to get the coin ids 
 
-launchpads = c("swap", "paid", "bscpad", "kpad", "pols", "poolz", "dao")
+launchpads = c("swap", "paid", "bscpad", "pols", "poolz", "dao")
 
 # extract coin ids as a comma separated list for CG's API. Cut paste the output of this code at https://www.coingecko.com/en/api" and use the coins/markets API.
 coin_ids <- coins_df %>% 
@@ -70,7 +70,7 @@ This table lists the launchpad projects that we will query for market data via C
 
 ```{r}
 # list of launchpads for this post
-tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance", "KickPad")) %>% gt() %>%
+tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID Network", "Poolz Finance")) %>% gt() %>%
   tab_style(
     style = list(
       cell_fill(color = "#2D718EFF"),
@@ -85,7 +85,7 @@ Let's start by importing the data and taking a look at it.
 
 ```{r}
 # get market data
-launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Ckickpad%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
+launchpad_df <- GET("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bscpad%2Cdao-maker%2Cpaid-network%2Cpolkastarter%2Cpoolz-finance%2Ctrustswap&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y") %>%  
   content(., as = "text") %>% 
   fromJSON(., flatten = TRUE)
 
@@ -223,8 +223,6 @@ matrix_to_df <- function(tbl) {
          time = as.Date(as.POSIXct(time, origin="1970-01-01")))
 }
 
-labels = list("polkastarter", "dao-maker", "bscpad", "trustswap", "paid-network", "poolz-finance", "kickpad")
-
 # plotting function
 p <- function(tbl) {
   tbl %>% 
@@ -265,10 +263,6 @@ poolz_plot <- a$results[[6]] %>%
   p() +
   labs(title = "Poolz Finance")
 
-kickpad_plot <- a$results[[7]] %>% 
-  p() +
-  labs(title = "Kickpad")
-
 
 (swap_plot + dao_plot + polka_plot)  /
   (paid_plot + poolz_plot + bsc_plot)
@@ -285,7 +279,7 @@ kickpad_plot <- a$results[[7]] %>%
 ![](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
 </center>
 
-We can render the historical price data for TrustSwap as an interactive chart that allows the user to engage with the data by scrolling over the plot. 
+We can render the historical price data for TrustSwap as an interactive chart which allows the user to engage with the data by scrolling over the plot. 
 
 ```{r}
 #test function with swap url
@@ -361,7 +355,7 @@ read_html(ts_url) %>%
 
 ```
 
-This impressive list of services doesn't even include their recent acquisition of the The Crypto App.
+This impressive list of services doesn't even include their recent acquisition of The Crypto App.
 
 ## Roadmap and tokenomics
 
@@ -449,7 +443,7 @@ ts_words %>%
   scale_fill_viridis_d()
 ```
 
-Word clouds are a great way to visualize the most common words. Word size is used to represent the frequency a word's usage.
+Word clouds are a great way to visualize the most common words. Word size is used to represent the frequency of a word's usage.
 
 ```{r}
 ts_words %>% 
