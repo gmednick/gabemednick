@@ -81,7 +81,7 @@ tibble(Launchpads = c("Polkastarter", "DAO Maker", "Trustswap", "BSCPAD", "PAID 
 
 ## Data Extraction 
 
-Let's get the data take a look at it.
+Let's start by importing the data and taking a look at it.
 
 ```{r}
 # get market data
@@ -285,7 +285,7 @@ kickpad_plot <- a$results[[7]] %>%
 ![](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
 </center>
 
-Let's render the historical price data for TrustSwap as an interactive chart that allows the user interact with the data by scrolling over the plot. 
+We can render the historical price data for TrustSwap as an interactive chart that allows the user to engage with the data by scrolling over the plot. 
 
 ```{r}
 #test function with swap url
@@ -317,7 +317,7 @@ ggplotly(swaply_plot)
 ```
 <br></br>
 
-A one-line description of TrustSwap is available on their Medium page. It turns out they are more than just a launchpad.
+A one-line description of TrustSwap is available on their Medium page. It turns out that they are much more than just a launchpad.
 
 ```{r}
 medium_url <- "https://trustswap.medium.com/"
@@ -337,10 +337,11 @@ read_html(medium_url) %>%
 
 ```
 
+TrustSwap's website provides a portal and a detailed description of each service they offer. Here is an image of the service portal taken from TrustSwap's website.
 
-TrustSwap's website does not have a simple description but rather, provides a portal and a description of each service they offer. Here is an image of the service portal taken from TrustSwap's website.
+![](swap_services.png)
 
-![TrustSwap services](swap_services.png)
+Webscraping TrustSwap's website for service details
 
 ```{r}
 ts_url <- "https://www.trustswap.org/"
@@ -448,7 +449,7 @@ ts_words %>%
   scale_fill_viridis_d()
 ```
 
-Another cool way to visualize the most common words is a word cloud where word size is used to represent frequency.
+Word clouds are a great way to visualize the most common words. Word size is used to represent the frequency a word's usage.
 
 ```{r}
 ts_words %>% 
@@ -457,7 +458,7 @@ ts_words %>%
   with(wordcloud2(., size = .4, shape = 'circle'))
 ```
 <br></br>
-Let's look at the sentiment for tweets that reference @TrustSwap. It's always nice to end on a positive note :smile:!
+Finally, let's consider the sentiment for tweets that reference @TrustSwap... It's always nice to end on a positive note :smile:!
 
 ```{r}
 ts_words %>% 
