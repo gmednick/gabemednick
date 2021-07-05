@@ -315,6 +315,7 @@ swaply_plot <- swap_ly %>%
 ggplotly(swaply_plot)
 
 ```
+<br></br>
 
 A one-line description of TrustSwap is available on their Medium page. It turns out they are more than just a launchpad.
 
