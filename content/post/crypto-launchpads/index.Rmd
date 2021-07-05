@@ -24,7 +24,7 @@ slug: launchpads
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
 ```
 
-# Introduction to Launchpads
+## Introduction to Launchpads
 
 This post uses market data from Coingecko's API for exploratory data analysis of several launchpad cryptocurrency companies. These companies partner with new projects and help them launch into the crypto space by providing a mechanism for fundraising and exposure to the launchpad's connections and community of token holders. In turn, the token holders benefit from early investment access to these new projects. 
 
@@ -282,7 +282,7 @@ kickpad_plot <- a$results[[7]] %>%
  
 ```
 
-# The TrustSwap ecosystem
+## The TrustSwap ecosystem
 <center>
 ![](https://assets.coingecko.com/coins/images/11795/large/Trustswap.png?1594311216)
 </center>
