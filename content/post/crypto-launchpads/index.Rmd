@@ -464,6 +464,6 @@ ts_words %>%
   scale_fill_discrete(type = c("#482677FF", "#2D718EFF"))
 ```
 
-
+The code magic behind this post is available on [GitHub](https://github.com/gmednick/gabemednick/blob/master/content/post/crypto-launchpads/index.Rmd)
 
 
