@@ -22,6 +22,7 @@ runtime: 'shiny'
 ##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. The app is hosted [here](https://biolight-informatics.shinyapps.io/covid-app/) on Shinyapps.io. You can also grab my code [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R) and run it on your own machine if you have R and RStudio installed. 
 
 ![This is what the app looks like!](covid-app-img.png)
+
 #### In this post, I'm including a few extra visualizations and an animation.
 
 ```{r include = FALSE}
