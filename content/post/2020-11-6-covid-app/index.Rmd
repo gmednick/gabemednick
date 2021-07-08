@@ -21,9 +21,10 @@ runtime: 'shiny'
 
 ##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. The app is hosted [here](https://biolight-informatics.shinyapps.io/covid-app/) on Shinyapps.io. You can also grab my code [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R) and run it on your own machine if you have R and RStudio installed. 
 
-![This is what the app looks like!](covid-app-img.png)
+![Image of the reactive dashboard!](covid-app-img.png)
 
-#### In this post, I'm including a few extra visualizations and an animation.
+
+#### In this post, I've added a county-level case map and an animation that are not in the reactive dashboard.
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
@@ -144,13 +145,16 @@ us_counties <- us_counties %>%
     filter(county != 'Garfield')
 
 ```
+
 ## Time Series Animation
+
 #### This animated map shows the change in case count (per million people) over the first 12 months of the COVID-19 pandemic.
+
 ```{r}
 library(gganimate)
 library(transformr)
 library(directlabels)
-
+library(gifski)
 us_monthly <- us_state %>%
   mutate(month = month(date),
          month_name = factor(month.name[month],levels=month.name)) %>% 
@@ -215,6 +219,7 @@ us_total_sums <- us_data %>%
 ```
 
 ## County Level Map
+
 #### This map includes county level case counts. Scroll over the map to get detailed information on a specific county. Counties with missing data are shown in gray. Unlike the Shiny covid app, this post will only update when I compile the document (last updated on `r format(Sys.Date(), "%A, %B %d, %Y")`).
 
 ```{r}
@@ -247,7 +252,7 @@ ggplotly(county_map,
 
 ```
 
-#### Let's take a closer look and see how California is fairing. 
+#### Let's take a closer look at California. 
 
 ```{r}
 ca_map <- plot_usmap(
