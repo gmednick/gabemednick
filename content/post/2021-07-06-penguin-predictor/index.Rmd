@@ -1,0 +1,383 @@
+---
+title: "Palmer penguins"
+author: "Gabe Mednick"
+date: '2021-07-07'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: Testing 4 different models for predicting penguin species using bill length and depth 
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: penguin
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+```
+
+## Introduction
+
+In this post, I use the Palmer penguins dataset to create a model for penguin classification. The data contains 3 penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth for training our model and compare the performance of 4 different models: multinomial regression, random forest, k-nearest neighbors and xgboost. Finally, we will convert the script into a command line tool that takes two measurements (bill length and depth) as input and returns the predicted penguin species. Stay tuned for updates!
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(gt)
+theme_set(theme_light())
+
+#load data from the palmerpenguins package
+palmer_df <- read_csv(path_to_file("penguins.csv"))
+
+palmer_df %>% head() %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+
+
+palmer_df %>% 
+  count(species) %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),       
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+
+palmer_df %>% 
+  count(island) %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+
+palmer_df %>% 
+  count(species, island) %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )#since chinstrap and gentoo inhabit Dream and Biscoe repectively, it would not be a fair predictor variable
+
+palmer_df %>% 
+  summarize(min_year = min(year),
+            max_year = max(year),
+            observations = n(),
+            missing_obs = sum(is.na(.))) %>% 
+  gt() %>%   tab_style(     style = list(       cell_fill(color = "#2D6A65")       ),     locations = cells_body(     )       ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+```
+
+```{r}
+palmer_long <- palmer_df %>% 
+  drop_na() %>%
+  pivot_longer(bill_length_mm:body_mass_g, 
+               names_to = "characteristic", 
+               values_to = "value") 
+
+palmer_long %>%
+  group_by(species) %>% 
+ # filter(characteristic != "body_mass_g") %>% 
+  ggplot(aes(value, species, fill = species)) +
+  geom_boxplot() +
+  facet_wrap(~characteristic, scales = 'free_x') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d()
+
+```
+```{r}
+palmer_long %>%
+  group_by(species) %>% 
+ # filter(characteristic != "body_mass_g") %>% 
+  ggplot(aes(value, species, fill = sex)) +
+  geom_boxplot() +
+  facet_wrap(~characteristic, scales = 'free_x') +
+  scale_fill_discrete(type = c("#DCE318FF", "#287D8EFF"))
+
+```
+```{r}
+palmer_long %>%
+  group_by(species) %>% 
+ # filter(characteristic != "body_mass_g") %>% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~characteristic, scales = 'free') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d()
+
+```
+
+
+```{r}
+palmer_df %>% 
+  group_by(species) %>% 
+  drop_na() %>% 
+  summarize(`average bill depth` = median(bill_depth_mm),
+            `average bill length` = median(bill_length_mm),
+            `average body mass` = median(body_mass_g),
+            `average flipper length` = median(flipper_length_mm)) %>% 
+  mutate(across(.cols = starts_with("average"), .fns = round))  %>% #across(.cols = everything(), .fns = NULL, ..., .names = NULL)
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+```
+
+## Prediction model
+
+
+
+```{r}
+library(tidymodels)
+set.seed(777)
+
+spl <- palmer_df %>% initial_split(prop = .8, strata = species)
+
+palmer_train <- training(spl)
+
+palmer_test <- testing(spl)
+
+cv_resamples <- palmer_train %>% vfold_cv()
+```
+
+Before we can train a model, we need to decide what feature engineering steps are needed. We also need to specify the formula that tells our model what we are trying to predict and which features to use for the prediction.
+
+```{r}
+recipe_1 <- recipe(species ~ ., data = palmer_train) %>% 
+  step_impute_median(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors()) %>% 
+  step_impute_knn(sex) %>% 
+  step_dummy(all_nominal(), -all_outcomes()) %>% 
+  step_normalize(all_numeric_predictors()) 
+
+recipe <- recipe(species ~ bill_length_mm + bill_depth_mm, data = palmer_train) %>% 
+  step_impute_median(all_predictors()) %>%
+  step_normalize(all_predictors()) 
+  
+```
+
+## Create models, set modes and engines
+
+```{r}
+mn_mod <- multinom_reg() %>% 
+  set_mode("classification") %>% 
+  set_engine('nnet')
+  
+rf_mod <- rand_forest() %>% 
+  set_mode("classification") %>% 
+  set_engine("ranger")
+
+knn_mod <- nearest_neighbor() %>% 
+  set_mode("classification") %>% 
+  set_engine("kknn")
+
+xg_mod <- boost_tree() %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+
+```
+
+## Weaving it together with `workflow()`
+
+#### Multinomial regression model
+```{r}
+mn_workflow <- workflow() %>% 
+  add_recipe(recipe) %>% 
+  add_model(mn_mod)
+
+mn_mod_fit <- mn_workflow %>% 
+  fit(data = palmer_train)
+
+mn_mod_preds <- mn_mod_fit %>% 
+  predict(new_data = palmer_test,
+          type = 'class')
+
+mn_results <- palmer_test %>% 
+  select(species) %>% 
+  bind_cols(mn_mod_preds) 
+
+metrics <- metric_set(accuracy, sens, spec)
+
+metric_results <- mn_results %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'multinom_reg') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)
+
+mn_results %>% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %>% 
+  autoplot(type = "heatmap")
+  
+```
+
+#### Random Forest model
+```{r}
+rf_workflow <- workflow() %>% 
+  add_recipe(recipe) %>% 
+  add_model(rf_mod) 
+
+rf_mod_fit <- rf_workflow %>% 
+  fit(data = palmer_train)
+
+rf_mod_preds <- rf_mod_fit %>% 
+  predict(new_data = palmer_test,
+          type = 'class')
+
+rf_results <- palmer_test %>% 
+  select(species) %>% 
+  bind_cols(rf_mod_preds) 
+
+rf_results %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'rf_mod') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)
+
+rf_results %>% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %>% 
+  autoplot(type = "heatmap")
+
+```
+
+#### K-nearest neighbors model
+```{r}
+knn_workflow <- workflow() %>% 
+  add_recipe(recipe) %>% 
+  add_model(knn_mod) 
+
+knn_mod_fit <- knn_workflow %>% 
+  fit(data = palmer_train)
+
+knn_mod_preds <- knn_mod_fit %>% 
+  predict(new_data = palmer_test,
+          type = 'class')
+
+knn_results <- palmer_test %>% 
+  select(species) %>% 
+  bind_cols(knn_mod_preds) 
+
+knn_results %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'knn_mod') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)
+
+knn_results %>% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %>% 
+  autoplot(type = "heatmap")
+  
+```
+
+#### Xgboost model
+```{r}
+xg_workflow <- workflow() %>% 
+  add_recipe(recipe) %>% 
+  add_model(xg_mod)
+
+xg_mod_fit <- xg_workflow %>% 
+  fit(data = palmer_train)
+
+xg_mod_preds <- xg_mod_fit %>% 
+  predict(new_data = palmer_test,
+          type = 'class')
+
+xg_results <- palmer_test %>% 
+  select(species) %>% 
+  bind_cols(xg_mod_preds) 
+
+metrics <- metric_set(accuracy, sens, spec)
+
+xg_results %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'xgboost') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)
+
+xg_results %>% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %>% 
+  autoplot(type = "heatmap")
+```
+
+#### Results table
+```{r}
+metric_results <- mn_results %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'multinom_reg') %>% 
+  metrics(truth = species,
+          estimate = .pred_class) %>% 
+  bind_rows(rf_results %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'rf_mod') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)) %>% 
+  bind_rows(knn_results %>% 
+  mutate_if(is.character, as.factor) %>% 
+  mutate(model = 'knn_mod') %>% 
+  metrics(truth = species,
+          estimate = .pred_class)) %>% 
+  bind_rows(xg_results %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(model = 'xg_mod') %>%
+  metrics(truth = species,
+          estimate = .pred_class)) %>%
+  bind_cols(model_type = c('multinomial regression', 'multinomial regression', 'multinomial regression', 'random forest', 'random forest', 'random forest', 'knn', 'knn', 'knn', 'xgboost', 'xgboost', 'xgboost')) 
+
+metric_results %>% 
+  select(model = model_type, measure = `.metric`, value = `.estimate`) %>% 
+  filter(measure == 'accuracy') %>% 
+  arrange(-value) %>% 
+  gt() %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2D6A65"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+    )    
+  )
+```
+
+

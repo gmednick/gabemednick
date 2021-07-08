@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Visualizing market dynamics, webscraping and accessing twitter data for natural language processing. 
+summary: Visualizing market dynamics, webscraping and accessing twitter data for natural language processing 
 authors: []
 lastmod: ''
 featured: no
