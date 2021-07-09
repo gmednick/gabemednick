@@ -17,7 +17,7 @@ image:
 projects: []
 runtime: 'shiny'
 ---
-##### The [US COVID Case Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) allows one to visualize the number of cases and deaths per State over time. California, Hawaii and Florida are selected by default but you can add or remove States using the selector box in the sidebar. The interactive maps use color to show the daily cases and deaths per million people by State. Detailed information can be viewed by scrolling over the State of interest. 
+##### The [US COVID Case Tracker App](https://biolight-informatics.shinyapps.io/covid-app/) allows one to visualize the number of cases and deaths per State over time. California, Hawaii and Florida are selected by default but you can add or remove States using the selector box in the sidebar. The interactive maps use color to show the total cases and deaths per million people by State. Detailed information can be viewed by scrolling over the State of interest. 
 
 ##### The data is from [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19) and is updated daily. The app is hosted [here](https://biolight-informatics.shinyapps.io/covid-app/) on Shinyapps.io. You can also grab my code [Git<i class="fab fa-github"  style="color: #RRGGBB,"></i>hub](https://github.com/gmednick/covid-shiny-app/blob/master/app.R) and run it on your own machine if you have R and RStudio installed. 
 
