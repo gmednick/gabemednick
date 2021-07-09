@@ -1,0 +1,26 @@
+---
+title: Crypto Dash
+author: 'Gabe Mednick'
+date: '2021-07-09'
+slug: santa-cruz-surf-report
+categories: []
+tags: []
+subtitle: ''
+summary: "This interactive dashboard lets the user select a cryptocurrency and returns an interactive price chart. It also lets the user explore Twitter using natural language processing"
+authors: []
+lastmod: ''
+featured: no
+image: 
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+runtime: 'cryptoDash'
+---
+
+#### Welome to the Crypto Dash! This dashboard lets you search the top 2000 coins by market cap. It returns the market cap, volume and an interactive price chart. It also allows the user to explore Twitter signals using NLP (This feature currently only works locally--I am waiting on a Twitter developer account so I can make it publicly available.) 
+
+#### The code for the app is available on [Git<i class="fab fa-github"  style="color: #FFCC00"></i>hub](https://github.com/gmednick/crypto-dash/blob/master/app.R). You can explore the [Crypto Dash](https://biolight-informatics.shinyapps.io/bitcoin-dashboard/) in a new browser window or embedded in this post. Please give it a minute to load. 
+
+
+<iframe height="800" width="100%" frameborder="no" src=" https://biolight-informatics.shinyapps.io/bitcoin-dashboard/"> </iframe>
