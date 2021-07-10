@@ -359,7 +359,7 @@ This impressive list of services doesn't even include their recent acquisition o
 
 ## Roadmap and tokenomics
 
-No need for a crystal ball to read TrustSwap's future. We can use webscraping to extract their roadmap and find out what they've got up their sleeves. 
+No need for a :crystal_ball: to read TrustSwap's future. We can use webscraping to extract their roadmap and find out what they've got up their sleeves. 
 
 ```{r}
 url = "https://www.trustswap.org/roadmap"

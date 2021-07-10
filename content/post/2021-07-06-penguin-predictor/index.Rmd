@@ -25,9 +25,13 @@ slug: penguin
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
+:penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin:
+
 ## Introduction
 
-In this post, I use the Palmer penguins dataset to create a model for penguin classification. The data contains 3 penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth for training our model and compare the performance of 4 different models: multinomial regression, random forest, k-nearest neighbors and xgboost. Finally, we will convert the script into a command line tool that takes two measurements (bill length and depth) as input and returns the predicted penguin species. Stay tuned for updates!
+In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are included: multinomial regression, random forest, k-nearest neighbors and xgboost. 
+
+After training the models, we will convert the script into a command line tool that takes model choice, bill length and depth as variable inputs and returns the predicted penguin species. 
 
 ```{r}
 library(tidyverse)
@@ -311,6 +315,7 @@ knn_results %>% conf_mat(.,
 ```
 
 #### Xgboost model
+
 ```{r}
 xg_workflow <- workflow() %>% 
   add_recipe(recipe) %>% 
@@ -342,6 +347,7 @@ xg_results %>% conf_mat(.,
 ```
 
 #### Results table
+
 ```{r}
 metric_results <- mn_results %>%
   mutate_if(is.character, as.factor) %>% 
@@ -380,4 +386,27 @@ metric_results %>%
   )
 ```
 
+# penguin-prediction-tool
 
+This tool uses classifcation algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill (mm) depth. Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used). Accuracy of prediction for the four models on the test set were as follows:
+
+<img width="492" alt="image" src="https://user-images.githubusercontent.com/45637747/125153890-b5727880-e10b-11eb-8baa-31c59ae57727.png">
+
+The script utilizes the argparser package in R for parsing command-line arguments. The following examples show the incantation for running the Rscript with the following arguments: model, bill length and bill depth. 
+
+Ex 1: Rscript penguin_sh_tool.R model=mn_mod_fit bill_length=39 bill_depth=18         <br>
+Ex 2: Rscript penguin_sh_tool.R knn_mod_fit 50 18                                    <br>
+Ex 3: Rscript penguin_sh_tool.R rf_mod_fit 50 18                                      <br>
+Ex 4. Rscript penguin_sh_tool.R xg_mod_fit 50 14                                     <br>
+
+In the command line, the output of Ex 3 includes the following messages
+
+<img width="685" alt="image" src="https://user-images.githubusercontent.com/45637747/125153826-3d0bb780-e10b-11eb-83eb-92625e231ac0.png">
+
+and returns the predicted species based on the user inputs.
+
+<img width="240" alt="image" src="https://user-images.githubusercontent.com/45637747/125153850-704e4680-e10b-11eb-9933-ea8a855c5365.png">
+
+If you want to make your own penguin predictions, the script is available on [GitHub](https://github.com/gmednick/penguin-prediction-tool/blob/main/penguin_sh_tool.R) <br>
+
+:penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin: :penguin:
