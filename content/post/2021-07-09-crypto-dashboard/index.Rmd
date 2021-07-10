@@ -6,7 +6,7 @@ slug: crypto-dash
 categories: []
 tags: []
 subtitle: ''
-summary: "This interactive dashboard lets the user select a cryptocurrency and returns an interactive price chart. It also lets the user explore Twitter using natural language processing"
+summary: "This interactive dashboard lets the user select a cryptocurrency and returns an interactive price chart. You can also explore Twitter using natural language processing"
 authors: []
 lastmod: ''
 featured: no
@@ -18,9 +18,9 @@ projects: []
 runtime: 'cryptoDash'
 ---
 
-#### Welome to the Crypto Dash! This dashboard lets you search the top 2000 coins by market cap. It returns the market cap, volume and an interactive price chart. It also allows the user to explore Twitter signals using NLP (This feature currently only works locally--I am waiting on a Twitter developer account so I can make it publicly available.) 
+#### Welome to the Crypto Dash! This dashboard lets the user search the top 2000 cryptocurrencies by market cap and returns the coin's market cap, volume and an interactive price chart. It also allows the user to explore Twitter signals using NLP (This feature currently only works locally--I am waiting on a Twitter developer account so I can make it publicly available.) 
 
-#### You can explore the [Crypto Dash](https://biolight-informatics.shinyapps.io/bitcoin-dashboard/) in a new browser window (preferred) or embedded in this post. Please give it a minute to load. The code is available on [Git<i class="fab fa-github"  style="color: #FFCC00"></i>hub](https://github.com/gmednick/crypto-dash/blob/master/app.R). 
+#### You can open the [Crypto Dash](https://biolight-informatics.shinyapps.io/bitcoin-dashboard/) in a new browser window or explore it here embedded in this post. Please give it a minute to load. The code is available on [Git<i class="fab fa-github"  style="color: #FFCC00"></i>hub](https://github.com/gmednick/crypto-dash/blob/master/app.R). 
 
 
 <iframe height="800" width="100%" frameborder="no" src=" https://biolight-informatics.shinyapps.io/bitcoin-dashboard/"> </iframe>
