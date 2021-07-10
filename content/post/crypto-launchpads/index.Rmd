@@ -317,7 +317,7 @@ A one-line description of TrustSwap is available on their Medium page. It turns 
 medium_url <- "https://trustswap.medium.com/"
 
 read_html(medium_url) %>% 
-  html_node(".nb .ba") %>% 
+  html_node(".mg .bb") %>% 
   html_text() %>% 
   tibble() %>% 
   rename(`Company description` = ".") %>% 
