@@ -29,7 +29,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 ## Introduction
 
-In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are included: multinomial regression, random forest, k-nearest neighbors and xgboost. 
+In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are included: multinomial regression, random forest, k-nearest neighbors and xgboost. 
 
 After training the models, we will convert the script into a command line tool that lets the user select the model, bill length and depth, and returns the predicted penguin species. 
 
@@ -37,6 +37,7 @@ After training the models, we will convert the script into a command line tool t
 library(tidyverse)
 library(palmerpenguins)
 library(gt)
+library(patchwork)
 theme_set(theme_light())
 
 #load data from the palmerpenguins package
@@ -183,7 +184,7 @@ palmer_test <- testing(spl)
 cv_resamples <- palmer_train %>% vfold_cv()
 ```
 
-Before we can train a model, we need to decide what feature engineering steps are needed. We also need to specify the formula that tells our model what we are trying to predict and which features to use for the prediction.
+Before we can train our models, we need to decide which feature engineering steps are needed. We also need to specify the formula that tells our model what we are predicting and which explanatory features to use.
 
 ```{r}
 recipe_1 <- recipe(species ~ ., data = palmer_train) %>% 
@@ -247,10 +248,11 @@ metric_results <- mn_results %>%
   metrics(truth = species,
           estimate = .pred_class)
 
-mn_results %>% conf_mat(.,
+mn_p <- mn_results %>% conf_mat(.,
          truth = species,
          estimate = .pred_class) %>% 
-  autoplot(type = "heatmap")
+  autoplot(type = "heatmap") +
+  ggtitle("Multinomial regression")
   
 ```
 
@@ -277,10 +279,11 @@ rf_results %>%
   metrics(truth = species,
           estimate = .pred_class)
 
-rf_results %>% conf_mat(.,
+rf_p <- rf_results %>% conf_mat(.,
          truth = species,
          estimate = .pred_class) %>% 
-  autoplot(type = "heatmap")
+  autoplot(type = "heatmap") +
+  ggtitle("Random forest")
 
 ```
 
@@ -307,10 +310,11 @@ knn_results %>%
   metrics(truth = species,
           estimate = .pred_class)
 
-knn_results %>% conf_mat(.,
+knn_p <- knn_results %>% conf_mat(.,
          truth = species,
          estimate = .pred_class) %>% 
-  autoplot(type = "heatmap")
+  autoplot(type = "heatmap") +
+  ggtitle("k-nearest neighbors")
   
 ```
 
@@ -340,11 +344,16 @@ xg_results %>%
   metrics(truth = species,
           estimate = .pred_class)
 
-xg_results %>% conf_mat(.,
+xg_p <- xg_results %>% conf_mat(.,
          truth = species,
          estimate = .pred_class) %>% 
-  autoplot(type = "heatmap")
+  autoplot(type = "heatmap") +
+  ggtitle("XGBoost")
 ```
+```{r}
+(mn_p + rf_p) / (knn_p + xg_p)
+```
+
 
 #### Results table
 
@@ -392,11 +401,11 @@ metric_results %>%
 
 # penguin-prediction-tool
 
-This tool uses classifcation algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill (mm) depth. Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used). Accuracy of prediction for the four models on the test set were as follows:
+This tool uses classification algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill (mm) depth. Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used). Accuracy of prediction for the four models on the test set were as follows:
 
 <img width="492" alt="image" src="https://user-images.githubusercontent.com/45637747/125153890-b5727880-e10b-11eb-8baa-31c59ae57727.png">
 
-The script utilizes the argparser package in R for parsing command-line arguments. The following examples show the incantation for running the Rscript with the following arguments: model, bill length and bill depth. 
+The script utilizes the argparser package in R for parsing command-line arguments. The following examples show the incantation for running the Rscript in the command-line with the following arguments: model, bill length and bill depth. 
 
 Ex 1: Rscript penguin_sh_tool.R model=mn_mod_fit bill_length=39 bill_depth=18         <br>
 Ex 2: Rscript penguin_sh_tool.R knn_mod_fit 50 18                                    <br>

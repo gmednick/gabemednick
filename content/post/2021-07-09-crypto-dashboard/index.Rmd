@@ -18,7 +18,7 @@ projects: []
 runtime: 'cryptoDash'
 ---
 
-#### Welome to the Crypto Dash! This dashboard lets the user search the top 2000 cryptocurrencies by market cap and returns the coin's market cap, volume and an interactive price chart. It also allows the user to explore Twitter signals using NLP (This feature currently only works locally--I am waiting on a Twitter developer account so I can make it publicly available.) 
+#### Welome to the Crypto Dash! This dashboard lets you select from the top 2000 cryptocurrencies and returns market cap, volume and an interactive price chart. It also allows the user to explore Twitter signals using NLP (This feature currently only works locally--I am waiting on a Twitter developer account so I can make it publicly available.) 
 
 #### You can open the [Crypto Dash](https://biolight-informatics.shinyapps.io/bitcoin-dashboard/) in a new browser window or explore it here embedded in this post. Please give it a minute to load. The code is available on [Git<i class="fab fa-github"  style="color: #FFCC00"></i>hub](https://github.com/gmednick/crypto-dash/blob/master/app.R). 
 
