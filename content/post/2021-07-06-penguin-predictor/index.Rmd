@@ -29,13 +29,13 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 ## Introduction
 
-In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and body mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are compared: **multinomia lregression**, **random forest**, **k-nearest neighbors** and **xgboost**. 
+In this post, I use the Palmer penguins dataset from the `palmerpenguins` package to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and body mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are compared: **multinomia lregression**, **random forest**, **k-nearest neighbors** and **xgboost**. 
 
 After training these models and comparing the results, we will convert the script into a command line tool that lets the user select a model, bill length and bill depth, and returns the predicted penguin species. If you find yourself predicting penguins in the Palmer Archipelago, this tool was made for you :smile:!
 
 ```{r}
 library(tidyverse)
-library(palmerpenguins)
+library(palmerpenguins) # maintained by Allison Horst
 library(gt)
 library(patchwork)
 theme_set(theme_light())
