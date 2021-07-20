@@ -29,9 +29,9 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 ## Introduction
 
-In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and penguin mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are included: multinomial regression, random forest, k-nearest neighbors and xgboost. 
+In this post, I use the Palmer penguins dataset to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and body mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are compared: multinomial regression, random forest, k-nearest neighbors and xgboost. 
 
-After training the models, we will convert the script into a command line tool that lets the user select the model, bill length and depth, and returns the predicted penguin species. 
+After training these models and comparing the results, we will convert the script into a command line tool that lets the user select a model, bill length and depth, and returns the predicted penguin species. If you find yourself counting penguins in the Palmer Archipelago, this tool was made for you :smile:!
 
 ```{r}
 library(tidyverse)
@@ -350,6 +350,9 @@ xg_p <- xg_results %>% conf_mat(.,
   autoplot(type = "heatmap") +
   ggtitle("XGBoost")
 ```
+
+#### Confusion matrices
+
 ```{r}
 (mn_p + rf_p) / (knn_p + xg_p)
 ```
@@ -401,7 +404,7 @@ metric_results %>%
 
 # penguin-prediction-tool
 
-This tool uses classification algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill (mm) depth. Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used). Accuracy of prediction for the four models on the test set were as follows:
+This [tool](https://github.com/gmednick/penguin-prediction-tool/blob/main/penguin_sh_tool.R) uses classification algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill depth (mm). Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used). Accuracy of prediction for the four models on the test set were as follows:
 
 <img width="492" alt="image" src="https://user-images.githubusercontent.com/45637747/125153890-b5727880-e10b-11eb-8baa-31c59ae57727.png">
 
