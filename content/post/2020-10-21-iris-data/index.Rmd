@@ -33,7 +33,7 @@ theme_set(theme_light())
 
 ```
 
-# Iris data
+## Iris data
 The iris dataset is a classic, so much so that it's included in the datasets package that comes with every installation of R. You can use `data()` to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., `data(package = 'dplyr')`.
 
 Let's take a look at the data.
@@ -50,34 +50,69 @@ iris_df %>%  count(species)
 iris_df %>%  str()
 
 ```
-The data is clean but with only 150 observations, it's worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species. 
+The dataset contains three unique species of iris and four variables or features (sepal length and width, and petal length and width). The data is clean but with only 150 observations it's a wee bit small for training a model. To compensate for this, we will use bootstrap resampling.
 
-**Let's use the data to create a classification model that predicts the species of iris based on a flower's measurements.** 
+#### Outline
+
+**Train a classification model to predict flower species based on the four available features** 
+
+The model formula will have the form `species ~ .` where `.` represents all explanatory variables in the data. 
 
 # Visualize relationships
 Before we do any kind of machine learning, it's helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data. 
 
 ```{r}
+library(ggforce)
+
 sepal <- iris_df %>% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
-  geom_point(size = 1) + facet_wrap(~species) +
+  geom_point(size = 1) + 
+  facet_wrap(~species) +
   labs(x = 'sepal length',
        y = 'sepal width') +
   theme(legend.position = 'none') 
 
 petal <- iris_df %>% 
   ggplot(aes(petal_length, petal_width, color = species)) +
-  geom_point(size =1) + facet_wrap(~species) +
+  geom_point(size =1) + 
+  facet_wrap(~species) +
   labs(x = 'petal length',
        y = 'petal width') +
   theme(legend.position = 'none') 
 
-(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there's a better way..
+(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked 
+
+sl_sw <- iris_df %>% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point(size = 1) +
+  labs(x = 'sepal length',
+       y = 'sepal width') +
+  theme(legend.position = 'none')
+
+sl_sw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = "Comparing sepal length vs sepal width across species")
+
+pl_pw <- iris_df %>% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point(size =1) + 
+  labs(x = 'petal length',
+       y = 'petal width') +
+  theme(legend.position = 'none') 
+
+pl_pw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = "Comparing petal length vs petal width across species")
+
+
 ```
 
-# Tidy the dataset
 
-Let's change the shape of our data by combining the four iris features into a single column (named `metric`) and the associated values will populate a new column (named `value`). This transformation into a longer dataset can be achieved with the function `pivot_longer()`. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.
+Let's change the shape of our data by combining the four iris features into a single column (`metric`) and the associated values will populate a new column (`value`). This transformation into a longer dataset can be achieved with the function `pivot_longer()`.
 
 
 ```{r}
@@ -85,21 +120,16 @@ iris_df_long <- iris_df %>%
   pivot_longer(cols = sepal_length:petal_width,
                names_to = 'metric',
                values_to ='value') 
-# A boxplot is a great way to see the median values of our features by species.
-iris_df_long %>% 
-  ggplot(aes(metric, value, color = species)) +
-  geom_boxplot() 
-# A nice alternative is to facet by the metric to convey the same information but with added clarity. 
+
+
+# A boxplot is a great way to compare the distribution of each features by species.
 iris_df_long %>%
-  ggplot(aes(species, value, color = species)) +
+  ggplot(aes(species, value, fill = species)) +
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = "free_y")
-# The same information can be displayed by comparing the distributions in histogram.
-iris_df_long %>%
-  ggplot(aes(value, fill = species)) +
-  geom_histogram(bins = 20, alpha = 0.7) +
-  facet_wrap(~ metric, scales = "free_x")
-# geom_denisty is a nice alternative to geom_histogram.
+
+# Looking at the data in a different way, geom_density is a nice alternative to geom_histogram.
+
 iris_df_long %>% 
   ggplot(aes(value, fill = species)) +
   geom_density(alpha = .5) +
@@ -107,8 +137,10 @@ iris_df_long %>%
 
 ```
 
-# Get modelling
-Before we get to modeling, we need to split the data. By default, `initial split()` provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function `bootstraps()` will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times. 
+## Splitting the data into training and test sets
+
+By default, `initial split()` provides a 75:25 split for our train and test sets respectively. Since our dataset is small to begin with, we are going to  make bootstrap resamples from the training data. The function `bootstraps()` will split the data into training and test sets, then repeat this process with replacement a specified number of times (25 is the default). 
+
 ```{r}
 set.seed(123)
 tidy_split <- initial_split(iris_df)
@@ -120,12 +152,12 @@ iris_boots <- bootstraps(iris_train, times = 30)
 iris_boots
 ```
 
-# Recipes 
+## Recipes 
 Recipes is a powerful tool with functions for a wide range of feature engineering tasks designed to prepare data for modeling. Typing `recipes::` into the Rstudio console is a great way to browse the available functions in the package. 
 
 ![](recipes_functions.jpg)
 
-Let's create a recipe to demonstrate how easy it is to apply feature engineering. There is really no need for feature engineering with this dataset, so we won't actually use this recipe in the final workflow. 
+Let's create a simple recipe to demonstrate optional feature engineering steps for our numeric data.
 
 ```{r}
 
@@ -138,8 +170,9 @@ prep <-  prep(iris_rec)
 kable(head(iris_juice <- juice(prep)))
 ```
 
-# Creating models with **Parsnip** 
+## Creating models with **Parsnip** 
 Let's set up two different models: first, a **generalized linear model** or **glmnet**. In this step we will create the model, workflow and fit the bootstraps. Let's take a look at the output from each step.
+
 ```{r}
 # set seed
 set.seed(1234)
@@ -168,7 +201,9 @@ glmnet_results
 # look at the model metrics
 collect_metrics(glmnet_results)
 ```
-Now for a **random forest** model. We only need to tweak a few things and walah! 
+
+Now for a **random forest** model. We only need to change a few things and walah! 
+
 ```{r}
 set.seed(1234)
 rf_mod <- rand_forest() %>%
@@ -190,6 +225,7 @@ collect_metrics(rf_results)
 ```
 
 Here's a look at the confusion matrix summaries for both models. The confusion matrix let's us see the correct and incorrect predictions of our models in a single table.
+
 ```{r}
 glmnet_results %>%
   conf_mat_resampled() 
@@ -199,13 +235,13 @@ rf_results %>%
 ```
 
 The ROC curve helps us visually interpret our model performance at every threshold.
+
 ```{r}
 glmnet_results %>%
   collect_predictions() %>%
   group_by(id) %>%
   roc_curve(species, .pred_setosa:.pred_virginica) %>%
   autoplot()
-  
 ```
 ```{r}
 rf_results %>%
@@ -217,9 +253,10 @@ rf_results %>%
 
 ```
 
-# Final fit
+## Final fit
 
-This is it! By using the `last_fit(tidy_split)`, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.
+By using the `last_fit(tidy_split)`, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.
+
 ```{r}
 final_glmnet <- glmnet_wf %>%
     add_model(glmnet_mod) %>%
@@ -233,8 +270,8 @@ final_rf <- rf_wf %>%
 
 final_rf
 ```
-# Confusion Matrices
-Finally, let's generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.
+## Confusion Matrices
+Finally, let's generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and the predictions are assigned to the rows. 
 
 ```{r}
 collect_metrics(final_glmnet)
@@ -254,7 +291,7 @@ collect_predictions(final_rf) %>%
 ```
 
 
-# Final thoughts
-Do the model results make sense? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the explanatory features provide a clean separation of species.
+## Final thoughts
+Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the combination of explanatory features provide for a clean separation of species. So yes, our toy model is that good!
 
 I would like to thank the unsung heroes of the tidyverse and tidymodels: **Julia Silge**, **David Robinson** and **Andrew Couch** for creating and sharing amazing, open source learning resources. 
