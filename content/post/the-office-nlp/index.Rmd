@@ -50,7 +50,7 @@ office_df %>%
 office_df %>% 
   group_by(season) %>% 
   mutate(avgIMDB = mean(imdb_rating)) %>% 
-  ggplot(aes(season, imdb_rating, group = season, color = factor(season))) +
+  ggplot(aes(season, imdb_rating, group = season, fill = factor(season))) +
   geom_boxplot() +
   theme(legend.position = 'none') +
   labs(title = "Average IMDB rading by season",
