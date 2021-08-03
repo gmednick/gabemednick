@@ -31,7 +31,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 In this post, I use the Palmer penguins dataset from the `palmerpenguins` package to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and body mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are compared: **multinomia lregression**, **random forest**, **k-nearest neighbors** and **xgboost**. 
 
-After training these models and comparing the results, we will convert the script into a command line tool that lets the user select a model, bill length and bill depth, and returns the predicted penguin species. If you find yourself predicting penguins in the Palmer Archipelago, this tool was made for you :smile:!
+After training these models and comparing the results, we will convert the R script into a command line tool that lets the user select a model and bill length and bill depth, and returns the predicted penguin species. If you find yourself predicting penguins in the Palmer Archipelago, this tool was made for you :smile:!
 
 ```{r}
 library(tidyverse)
@@ -89,14 +89,15 @@ palmer_df %>%
       ),
     locations = cells_body(
     )    
-  )#since chinstrap and gentoo inhabit Dream and Biscoe repectively, it would not be a fair predictor variable
+  ) #since chinstrap and gentoo inhabit Dream and Biscoe repectively, it would not be a fair predictor variable
 
 palmer_df %>% 
   summarize(min_year = min(year),
             max_year = max(year),
             observations = n(),
             missing_obs = sum(is.na(.))) %>% 
-  gt() %>%   tab_style(     style = list(       cell_fill(color = "#2D6A65")       ),     locations = cells_body(     )       ) %>%
+  gt() %>%   
+  tab_style(style = list(cell_fill(color = "#2D6A65")), locations = cells_body()) %>%
   tab_style(
     style = list(
       cell_fill(color = "#2D6A65"),
