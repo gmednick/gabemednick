@@ -1,0 +1,283 @@
+---
+title: "K-mer counting tool"
+author: "Gabe Mednick"
+date: '2021-08-05'
+slug: kmer-counter
+categories: []
+tags: []
+subtitle: ''
+summary: "k-mers are substrings of length k contained in longer sequences, such as proteins or DNA/RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the balance of k-mer sequence counts are compared."
+authors: []
+lastmod: ''
+featured: no
+image: 
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, fig.align="center",  fig.align="center")
+# options(width = 60)
+# matrix(runif(100), ncol = 20)
+```
+
+This post contains a short analysis of 4 FASTA files each containing a single nucleotide sequence. The goal of the analysis is to determine if the sequences have a balanced number of k-mer (4-mer) counts. The post also includes instructions on how to use the [kmer_counting_tool.R script](https://github.com/gmednick/kmer-counting-tool/blob/main/kmer_counting_tool.R) as a command line tool that lets the user select an input FASTA file and a k-mer length, and returns a file with kmer counts.
+
+## Import the FASTA files with the Biostrings package
+
+The nucleotide sequence will be imported as a DNAStringSet object but I will convert it into a data frame and slice it into k-mers.
+
+```{r}
+#101010 black
+#FDF7F7 white
+library("Biostrings")
+library(tidyverse)
+library(gt)
+library(patchwork)
+theme_set(theme_light())
+```
+
+```{r}
+exp1 = readDNAStringSet('takehome/challenge1/experiment1.fasta')
+exp1
+exp2 = readDNAStringSet('takehome/challenge1/experiment2.fasta')
+exp3 = readDNAStringSet('takehome/challenge1/experiment3.fasta')
+exp4 = readDNAStringSet('takehome/challenge1/experiment4.fasta')
+#exp5 = readDNAStringSet("nonstandard_nucs.fasta")
+
+fasta_files = list(exp1, exp2, exp3, exp4)
+
+#Function:
+#convert_to_tibble()
+convert_to_tibble <- function(s) {
+seq_name = names(s)
+sequence = paste(s)
+df <- tibble(seq_name, sequence)
+}
+
+fasta_df <- map_df(fasta_files, convert_to_tibble) 
+fasta_df$seq_name = c('exp1', 'exp2', 'exp3', 'exp4')
+
+# https://github.com/tidyverse/stringr/issues/292
+str_dice <- function(s, length) { # does not return list
+   L <- str_length(s)
+   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
+}
+
+#Function:
+#kmer_len()
+kmer_len <- function(tbl) {
+  tbl %>% 
+    str_dice(length = 4) %>% 
+    tibble() %>% 
+    rename(kmer = ".") %>%
+    count(kmer, sort = T, name = 'kmer_count') %>% 
+    mutate(kmer = fct_reorder(kmer, kmer_count)) %>%
+    mutate(standard_nucs = str_detect(kmer, "[non_stand_nucs]", negate = T))
+}
+
+```
+
+## Table of K-mer counts by Experiment
+
+This table is similar to the tab separated output file that is produced from the `kmer_counting_tool.R`.
+
+```{r}
+seq1 <- fasta_df$sequence[1] %>%
+   kmer_len() %>% 
+   mutate(experiment = 'Exp1_counts')
+ 
+ seq2 <- fasta_df$sequence[2] %>%
+  kmer_len() %>% 
+   mutate(experiment = 'Exp2_counts')
+ 
+ seq3 <- fasta_df$sequence[3] %>%
+  kmer_len() %>% 
+   mutate(experiment = 'Exp3_counts')
+ 
+ seq4 <- fasta_df$sequence[4] %>%
+  kmer_len() %>% 
+   mutate(experiment = 'Exp4_counts')
+
+sequences <- bind_rows(seq1, seq2, seq3, seq4) 
+
+sequences %>% 
+  pivot_wider(names_from = experiment, values_from = kmer_count) %>% 
+  gt() %>% 
+  tab_header(title = md("**Kmer counts by experiment**"))  %>% 
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = "#EFFBFC", 
+              table.width = "75%", 
+              column_labels.background.color = "black",
+              table.font.color = "black") %>% 
+  tab_style(style = list(cell_fill(color = "Grey")),
+            locations = cells_body())
+```
+
+It may be helpful to visualize the k-mer count distributions to look for similarities and differences between the experiments.
+
+## Bar plots of count distributions for each experiment
+
+```{r}
+#Function:
+#create bar plots with bar_plot()
+bar_plot <- function(tbl) { 
+  tbl %>%
+    ggplot(aes(kmer_count, kmer, fill = kmer_count)) +
+    geom_col() +
+    scale_fill_viridis_c() +
+    theme(legend.position = 'none') +
+    theme(axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()) +
+    labs(x = "K-mer counts")
+}
+
+p1 <- fasta_df$sequence[1] %>% 
+  kmer_len() %>% 
+  bar_plot() +
+  labs(title = 'Ex1 kmer counts')
+  
+  
+p2 <- fasta_df$sequence[2] %>% 
+  kmer_len() %>% 
+  bar_plot() +
+  labs(title = 'Ex2 kmer counts') 
+
+p3 <- fasta_df$sequence[3] %>% 
+  kmer_len() %>% 
+  bar_plot() +
+  labs(title = 'Ex3 kmer counts') 
+
+p4 <- fasta_df$sequence[4] %>% 
+  kmer_len() %>% 
+  bar_plot() +
+  labs(title = 'Ex4 kmer counts') 
+
+(p1 + p2) / (p3 + p4)
+```
+
+Notably, experiments 1 and 2 are right skewed and experiments 3 and 4 are progressively less so.
+
+## Summary table
+
+The `max count` variation is worth exploring further.
+
+```{r}
+#create a summary table with the median, min and max
+sequences %>%
+  group_by(experiment) %>%
+  drop_na() %>%
+  summarize(`median count` = median(kmer_count),
+            `mean count` = round(mean(kmer_count)),
+            `sd count` = round(sd(kmer_count)),
+            `max count` = max(kmer_count)) %>%
+  gt() %>%
+  tab_header(title = md("**K-mer counts summary table**"),)  %>%
+  tab_options(
+              heading.background.color = "#EFFBFC",
+              table.width = "75%",
+              column_labels.background.color = "black",
+              table.font.color = "black") %>%
+  tab_style(style = list(cell_fill(color = "Grey")),
+            locations = cells_body())
+
+#this table isn't very helpful
+```
+
+## Density plots
+
+We can get a better feeling for the distributions with density plots.
+
+```{r, fig.align='center'}
+sequences %>% 
+  group_by(experiment) %>% 
+  ggplot(aes(kmer_count, fill = experiment)) +
+  geom_density() +
+  facet_wrap(~experiment) +
+  scale_fill_viridis_d() +
+  theme(legend.position = 'none') +
+  labs(title = "Density distributions of k-mers (4-mers) by count",
+       x = "Kmer count",
+       y = "Density")
+```
+
+## Binning the kmer counts for a more general pattern
+
+In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, it's better shown separately.
+
+```{r}
+sequences %>% 
+  mutate(kmer_count = as.numeric(kmer_count),
+         counts_bins40_200 = case_when(
+           kmer_count <= 10 ~ as.character('10 and under'),
+           between(kmer_count, 11, 20) ~ as.character('11-20'),
+           between(kmer_count, 21, 30) ~ as.character('21-30'),
+           between(kmer_count, 31, 40) ~ as.character('31-40'),
+           between(kmer_count, 51, 60) ~ as.character('41-50'),
+           between(kmer_count, 61, 70) ~ as.character('41-50'),
+           kmer_count >= 71 ~ as.character('71 and greater'),
+           TRUE ~ 'other'
+         )) %>% 
+  filter(counts_bins40_200 == "10 and under", counts_bins40_200 != '11-20') %>% 
+  group_by(counts_bins40_200) %>% 
+  ggplot(aes(counts_bins40_200, fill = experiment)) +
+  stat_count() +
+  scale_fill_viridis_d() +
+  labs(title = "Count of binned k-mers",
+       subtitle = "The distribution of k-mer counts between 0-10",
+       x = "K-mer count",
+       y = "Density")
+```
+
+```{r, fig.align='center'}
+sequences %>% 
+  mutate(kmer_count = as.numeric(kmer_count),
+         counts_bins40_200 = case_when(
+           kmer_count <= 20 ~ as.character('10 and under'),
+           between(kmer_count, 11, 20) ~ as.character('11-20'),
+           between(kmer_count, 21, 30) ~ as.character('21-30'),
+           between(kmer_count, 31, 40) ~ as.character('31-40'),
+           between(kmer_count, 51, 60) ~ as.character('41-50'),
+           between(kmer_count, 61, 70) ~ as.character('41-50'),
+           kmer_count >= 71 ~ as.character('71 and greater'),
+           TRUE ~ 'other'
+         )) %>% 
+  filter(counts_bins40_200 != "10 and under", counts_bins40_200 != 'other') %>% 
+  group_by(counts_bins40_200) %>% 
+  ggplot(aes(counts_bins40_200, fill = experiment)) +
+  stat_count() +
+  scale_fill_viridis_d() +
+  labs(title = "Count of binned k-mers",
+       subtitle = "The distribution of kmer counts between 10-80",
+       x = "K-mer count",
+       y = "Density")
+```
+
+We see that experiment 2 dominates k-mer counts in the 30-40 range and experiment 1 dominates in the greater than 40 range.
+
+I hope these plots help you narrow down the culprit behind your experimental variation. Good luck and let me know if you have any questions regarding the command line k-mer counting script.
+
+## Instructions: k-mer counting script for the command line
+
+To help you check for imbalanced k-mer distributions in future experiments, I designed a k-mer counting analysis script that works from the command line. The k-mer counter let's you input a FASTA file and k-mer length, and returns a tab separated file of k-mer counts ordered by frequency. The program also returns messages about the analysis including:\
+- Input sequence length\
+- K-mer length\
+- Which nonstandard nucleotides the program can identify\
+- Whether the k-mer length is acceptable for the sequence range\
+- The top 10 k-mers by count\
+- Whether the given sequence contains standard or nonstandard nucleotides. The nonstandard nucleotide warning can be tested with the following file: takehome/challenge1/nonstandard_nucs.fasta
+
+To use the k-mer counting tool:\
+1. Download the directory I sent you and open it in the command line\
+2. Change the permissions for kmer_counter_tool.R script to make it executable on your machine (chmod +x kmer_counter_tool.R)\
+3. Then run the following incantation in your command line (with custom input and output file names):\
+Rscript kmer_counter_tool.R 'input_file' kmer-length --output_file 'output_file'\
+e.g., ![](imgs/kmer-count-input.png)\
+4. See the image below for the expected output in the command line (Note: I am working on a mac).\
+When running the script, a new output file (tab separated format) with k-mers ordered by frequency is generated.\
+
+![](imgs/kmer-tool-output.png)
