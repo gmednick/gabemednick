@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, fig.align="center
 # matrix(runif(100), ncol = 20)
 ```
 
-This post contains a short analysis of 4 FASTA files each containing a single nucleotide sequence. The goal of the analysis is to determine if the sequences have a balanced number of k-mer (4-mer) counts. The post also includes instructions on how to use the [kmer_counting_tool.R script](https://github.com/gmednick/kmer-counting-tool/blob/main/kmer_counting_tool.R) as a command line tool that lets the user select an input FASTA file and a k-mer length, and returns a file with kmer counts.
+This post contains a short analysis of 4 FASTA files each containing a single nucleotide sequence. The goal of the analysis is to determine if the sequences have a balanced number of k-mer (4-mer) counts. The post also includes instructions on how to use the [kmer_counting_tool.R](https://github.com/gmednick/kmer-counting-tool/blob/main/kmer_counting_tool.R) script as a command line tool that lets the user select an input FASTA file and a k-mer length, and returns a file counts for each kmer sequence.
 
 ## Import the FASTA files with the Biostrings package
 
