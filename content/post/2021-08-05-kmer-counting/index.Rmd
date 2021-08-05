@@ -2,19 +2,22 @@
 title: "K-mer counting tool"
 author: "Gabe Mednick"
 date: '2021-08-05'
-slug: kmer-counter
+output:
+  html_document:
+    df_print: paged
 categories: []
 tags: []
 subtitle: ''
-summary: "k-mers are substrings of length k contained in longer sequences, such as proteins or DNA/RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the balance of k-mer sequence counts are compared."
+summary: "k-mers are substrings of length k contained in longer strings, such as proteins or DNA/RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the distribution of k-mer sequence counts are compared." 
 authors: []
 lastmod: ''
 featured: no
-image: 
+image:
   caption: ''
   focal_point: ''
   preview_only: no
 projects: []
+slug: launchpads
 ---
 
 ```{r setup, include=FALSE}
@@ -164,7 +167,7 @@ Notably, experiments 1 and 2 are right skewed and experiments 3 and 4 are progre
 
 ## Summary table
 
-The `max count` variation is worth exploring further.
+The `max count` and `sd count` variation are worth exploring further.
 
 ```{r}
 #create a summary table with the median, min and max
@@ -185,7 +188,6 @@ sequences %>%
   tab_style(style = list(cell_fill(color = "Grey")),
             locations = cells_body())
 
-#this table isn't very helpful
 ```
 
 ## Density plots
