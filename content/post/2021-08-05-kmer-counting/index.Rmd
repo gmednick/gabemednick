@@ -30,7 +30,7 @@ This post contains a short analysis of 4 FASTA files each containing a single nu
 
 ## Import the FASTA files with the Biostrings package
 
-The nucleotide sequence will be imported as a DNAStringSet object but I will convert it into a data frame and slice it into k-mers.
+The nucleotide sequences are imported into R as DNAStringSet objects but I will convert them into a data frame and then slice the sequences into k-mers.
 
 ```{r}
 #101010 black
@@ -85,7 +85,7 @@ kmer_len <- function(tbl) {
 
 ## Table of K-mer counts by Experiment
 
-This table is similar to the tab separated output file that is produced from the `kmer_counting_tool.R`.
+This table is similar to the tab separated output file that is produced from the `kmer_counting_tool.R` where Exp1 = sequence 1 counts, etc. 
 
 ```{r}
 seq1 <- fasta_df$sequence[1] %>%
@@ -120,7 +120,7 @@ sequences %>%
             locations = cells_body())
 ```
 
-It may be helpful to visualize the k-mer count distributions to look for similarities and differences between the experiments.
+It may be helpful to visualize the k-mer count distributions to get a better feel for the similarities and differences between the sequences.
 
 ## Bar plots of count distributions for each experiment
 
@@ -192,7 +192,7 @@ sequences %>%
 
 ## Density plots
 
-We can get a better feeling for the distributions with density plots.
+We can get a better feeling for the count distributions with density plots.
 
 ```{r, fig.align='center'}
 sequences %>% 
@@ -209,7 +209,7 @@ sequences %>%
 
 ## Binning the kmer counts for a more general pattern
 
-In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, it's better shown separately.
+In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, the '10 and under' category is shown separately.
 
 ```{r}
 sequences %>% 
@@ -259,9 +259,7 @@ sequences %>%
        y = "Density")
 ```
 
-We see that experiment 2 dominates k-mer counts in the 30-40 range and experiment 1 dominates in the greater than 40 range.
-
-I hope these plots help you narrow down the culprit behind your experimental variation. Good luck and let me know if you have any questions regarding the command line k-mer counting script.
+We see that experiment 2 dominates k-mer counts in the 30-40 range and experiment 1 dominates in the greater than 40 range. 
 
 ## Instructions: k-mer counting script for the command line
 

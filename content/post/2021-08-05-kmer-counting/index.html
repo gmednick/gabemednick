@@ -26,7 +26,7 @@ slug: kmer-counter
 <p>This post contains a short analysis of 4 FASTA files each containing a single nucleotide sequence. The goal of the analysis is to determine if the sequences have a balanced number of k-mer (4-mer) counts. The post also includes instructions on how to use the <a href="https://github.com/gmednick/kmer-counting-tool/blob/main/kmer_counting_tool.R">kmer_counting_tool.R script</a> as a command line tool that lets the user select an input FASTA file and a k-mer length, and returns a file with kmer counts.</p>
 <div id="import-the-fasta-files-with-the-biostrings-package" class="section level2">
 <h2>Import the FASTA files with the Biostrings package</h2>
-<p>The nucleotide sequence will be imported as a DNAStringSet object but I will convert it into a data frame and slice it into k-mers.</p>
+<p>The nucleotide sequences are imported into R as DNAStringSet objects but I will convert them into a data frame and then slice the sequences into k-mers.</p>
 <pre class="r"><code>#101010 black
 #FDF7F7 white
 library(&quot;Biostrings&quot;)
@@ -77,7 +77,7 @@ kmer_len &lt;- function(tbl) {
 </div>
 <div id="table-of-k-mer-counts-by-experiment" class="section level2">
 <h2>Table of K-mer counts by Experiment</h2>
-<p>This table is similar to the tab separated output file that is produced from the <code>kmer_counting_tool.R</code>.</p>
+<p>This table is similar to the tab separated output file that is produced from the <code>kmer_counting_tool.R</code> where Exp1 = sequence 1 counts, etc.</p>
 <pre class="r"><code>seq1 &lt;- fasta_df$sequence[1] %&gt;%
    kmer_len() %&gt;% 
    mutate(experiment = &#39;Exp1_counts&#39;)
@@ -108,12 +108,12 @@ sequences %&gt;%
               table.font.color = &quot;black&quot;) %&gt;% 
   tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
             locations = cells_body())</code></pre>
-<div id="jqjjesyndr" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<div id="ujebawfukf" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#jqjjesyndr .gt_table {
+#ujebawfukf .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -138,7 +138,7 @@ sequences %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_heading {
+#ujebawfukf .gt_heading {
   background-color: #EFFBFC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -150,7 +150,7 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_title {
+#ujebawfukf .gt_title {
   color: black;
   font-size: 125%;
   font-weight: initial;
@@ -160,7 +160,7 @@ sequences %&gt;%
   border-bottom-width: 0;
 }
 
-#jqjjesyndr .gt_subtitle {
+#ujebawfukf .gt_subtitle {
   color: black;
   font-size: 85%;
   font-weight: initial;
@@ -170,13 +170,13 @@ sequences %&gt;%
   border-top-width: 0;
 }
 
-#jqjjesyndr .gt_bottom_border {
+#ujebawfukf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_col_headings {
+#ujebawfukf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -191,7 +191,7 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_col_heading {
+#ujebawfukf .gt_col_heading {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -211,7 +211,7 @@ sequences %&gt;%
   overflow-x: hidden;
 }
 
-#jqjjesyndr .gt_column_spanner_outer {
+#ujebawfukf .gt_column_spanner_outer {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -223,15 +223,15 @@ sequences %&gt;%
   padding-right: 4px;
 }
 
-#jqjjesyndr .gt_column_spanner_outer:first-child {
+#ujebawfukf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jqjjesyndr .gt_column_spanner_outer:last-child {
+#ujebawfukf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jqjjesyndr .gt_column_spanner {
+#ujebawfukf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -243,7 +243,7 @@ sequences %&gt;%
   width: 100%;
 }
 
-#jqjjesyndr .gt_group_heading {
+#ujebawfukf .gt_group_heading {
   padding: 8px;
   color: black;
   background-color: #FFFFFF;
@@ -265,7 +265,7 @@ sequences %&gt;%
   vertical-align: middle;
 }
 
-#jqjjesyndr .gt_empty_group_heading {
+#ujebawfukf .gt_empty_group_heading {
   padding: 0.5px;
   color: black;
   background-color: #FFFFFF;
@@ -280,15 +280,15 @@ sequences %&gt;%
   vertical-align: middle;
 }
 
-#jqjjesyndr .gt_from_md > :first-child {
+#ujebawfukf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jqjjesyndr .gt_from_md > :last-child {
+#ujebawfukf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jqjjesyndr .gt_row {
+#ujebawfukf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -307,7 +307,7 @@ sequences %&gt;%
   overflow-x: hidden;
 }
 
-#jqjjesyndr .gt_stub {
+#ujebawfukf .gt_stub {
   color: black;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -319,7 +319,7 @@ sequences %&gt;%
   padding-left: 12px;
 }
 
-#jqjjesyndr .gt_summary_row {
+#ujebawfukf .gt_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -329,7 +329,7 @@ sequences %&gt;%
   padding-right: 5px;
 }
 
-#jqjjesyndr .gt_first_summary_row {
+#ujebawfukf .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -339,7 +339,7 @@ sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_grand_summary_row {
+#ujebawfukf .gt_grand_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -349,7 +349,7 @@ sequences %&gt;%
   padding-right: 5px;
 }
 
-#jqjjesyndr .gt_first_grand_summary_row {
+#ujebawfukf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -359,11 +359,11 @@ sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_striped {
+#ujebawfukf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jqjjesyndr .gt_table_body {
+#ujebawfukf .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -372,7 +372,7 @@ sequences %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_footnotes {
+#ujebawfukf .gt_footnotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -386,13 +386,13 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_footnote {
+#ujebawfukf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#jqjjesyndr .gt_sourcenotes {
+#ujebawfukf .gt_sourcenotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -406,41 +406,41 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#jqjjesyndr .gt_sourcenote {
+#ujebawfukf .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#jqjjesyndr .gt_left {
+#ujebawfukf .gt_left {
   text-align: left;
 }
 
-#jqjjesyndr .gt_center {
+#ujebawfukf .gt_center {
   text-align: center;
 }
 
-#jqjjesyndr .gt_right {
+#ujebawfukf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jqjjesyndr .gt_font_normal {
+#ujebawfukf .gt_font_normal {
   font-weight: normal;
 }
 
-#jqjjesyndr .gt_font_bold {
+#ujebawfukf .gt_font_bold {
   font-weight: bold;
 }
 
-#jqjjesyndr .gt_font_italic {
+#ujebawfukf .gt_font_italic {
   font-style: italic;
 }
 
-#jqjjesyndr .gt_super {
+#ujebawfukf .gt_super {
   font-size: 65%;
 }
 
-#jqjjesyndr .gt_footnote_marks {
+#ujebawfukf .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -2005,7 +2005,7 @@ sequences %&gt;%
   
 </table>
 </div>
-<p>It may be helpful to visualize the k-mer count distributions to look for similarities and differences between the experiments.</p>
+<p>It may be helpful to visualize the k-mer count distributions to get a better feel for the similarities and differences between the sequences.</p>
 </div>
 <div id="bar-plots-of-count-distributions-for-each-experiment" class="section level2">
 <h2>Bar plots of count distributions for each experiment</h2>
@@ -2068,12 +2068,12 @@ sequences %&gt;%
               table.font.color = &quot;black&quot;) %&gt;%
   tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
             locations = cells_body())</code></pre>
-<div id="grvpybngoq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="inbxtptukq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#grvpybngoq .gt_table {
+#inbxtptukq .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2098,7 +2098,7 @@ sequences %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_heading {
+#inbxtptukq .gt_heading {
   background-color: #EFFBFC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2110,7 +2110,7 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_title {
+#inbxtptukq .gt_title {
   color: black;
   font-size: 125%;
   font-weight: initial;
@@ -2120,7 +2120,7 @@ sequences %&gt;%
   border-bottom-width: 0;
 }
 
-#grvpybngoq .gt_subtitle {
+#inbxtptukq .gt_subtitle {
   color: black;
   font-size: 85%;
   font-weight: initial;
@@ -2130,13 +2130,13 @@ sequences %&gt;%
   border-top-width: 0;
 }
 
-#grvpybngoq .gt_bottom_border {
+#inbxtptukq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_col_headings {
+#inbxtptukq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2151,7 +2151,7 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_col_heading {
+#inbxtptukq .gt_col_heading {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -2171,7 +2171,7 @@ sequences %&gt;%
   overflow-x: hidden;
 }
 
-#grvpybngoq .gt_column_spanner_outer {
+#inbxtptukq .gt_column_spanner_outer {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -2183,15 +2183,15 @@ sequences %&gt;%
   padding-right: 4px;
 }
 
-#grvpybngoq .gt_column_spanner_outer:first-child {
+#inbxtptukq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#grvpybngoq .gt_column_spanner_outer:last-child {
+#inbxtptukq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#grvpybngoq .gt_column_spanner {
+#inbxtptukq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2203,7 +2203,7 @@ sequences %&gt;%
   width: 100%;
 }
 
-#grvpybngoq .gt_group_heading {
+#inbxtptukq .gt_group_heading {
   padding: 8px;
   color: black;
   background-color: #FFFFFF;
@@ -2225,7 +2225,7 @@ sequences %&gt;%
   vertical-align: middle;
 }
 
-#grvpybngoq .gt_empty_group_heading {
+#inbxtptukq .gt_empty_group_heading {
   padding: 0.5px;
   color: black;
   background-color: #FFFFFF;
@@ -2240,15 +2240,15 @@ sequences %&gt;%
   vertical-align: middle;
 }
 
-#grvpybngoq .gt_from_md > :first-child {
+#inbxtptukq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#grvpybngoq .gt_from_md > :last-child {
+#inbxtptukq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#grvpybngoq .gt_row {
+#inbxtptukq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2267,7 +2267,7 @@ sequences %&gt;%
   overflow-x: hidden;
 }
 
-#grvpybngoq .gt_stub {
+#inbxtptukq .gt_stub {
   color: black;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2279,7 +2279,7 @@ sequences %&gt;%
   padding-left: 12px;
 }
 
-#grvpybngoq .gt_summary_row {
+#inbxtptukq .gt_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2289,7 +2289,7 @@ sequences %&gt;%
   padding-right: 5px;
 }
 
-#grvpybngoq .gt_first_summary_row {
+#inbxtptukq .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2299,7 +2299,7 @@ sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_grand_summary_row {
+#inbxtptukq .gt_grand_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2309,7 +2309,7 @@ sequences %&gt;%
   padding-right: 5px;
 }
 
-#grvpybngoq .gt_first_grand_summary_row {
+#inbxtptukq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2319,11 +2319,11 @@ sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_striped {
+#inbxtptukq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#grvpybngoq .gt_table_body {
+#inbxtptukq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2332,7 +2332,7 @@ sequences %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_footnotes {
+#inbxtptukq .gt_footnotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2346,13 +2346,13 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_footnote {
+#inbxtptukq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#grvpybngoq .gt_sourcenotes {
+#inbxtptukq .gt_sourcenotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2366,41 +2366,41 @@ sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#grvpybngoq .gt_sourcenote {
+#inbxtptukq .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#grvpybngoq .gt_left {
+#inbxtptukq .gt_left {
   text-align: left;
 }
 
-#grvpybngoq .gt_center {
+#inbxtptukq .gt_center {
   text-align: center;
 }
 
-#grvpybngoq .gt_right {
+#inbxtptukq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#grvpybngoq .gt_font_normal {
+#inbxtptukq .gt_font_normal {
   font-weight: normal;
 }
 
-#grvpybngoq .gt_font_bold {
+#inbxtptukq .gt_font_bold {
   font-weight: bold;
 }
 
-#grvpybngoq .gt_font_italic {
+#inbxtptukq .gt_font_italic {
   font-style: italic;
 }
 
-#grvpybngoq .gt_super {
+#inbxtptukq .gt_super {
   font-size: 65%;
 }
 
-#grvpybngoq .gt_footnote_marks {
+#inbxtptukq .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -2451,7 +2451,7 @@ sequences %&gt;%
 </div>
 <div id="density-plots" class="section level2">
 <h2>Density plots</h2>
-<p>We can get a better feeling for the distributions with density plots.</p>
+<p>We can get a better feeling for the count distributions with density plots.</p>
 <pre class="r"><code>sequences %&gt;% 
   group_by(experiment) %&gt;% 
   ggplot(aes(kmer_count, fill = experiment)) +
@@ -2466,7 +2466,7 @@ sequences %&gt;%
 </div>
 <div id="binning-the-kmer-counts-for-a-more-general-pattern" class="section level2">
 <h2>Binning the kmer counts for a more general pattern</h2>
-<p>In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, it’s better shown separately.</p>
+<p>In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, the ‘10 and under’ category is shown separately.</p>
 <pre class="r"><code>sequences %&gt;% 
   mutate(kmer_count = as.numeric(kmer_count),
          counts_bins40_200 = case_when(
@@ -2512,7 +2512,6 @@ sequences %&gt;%
        y = &quot;Density&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>We see that experiment 2 dominates k-mer counts in the 30-40 range and experiment 1 dominates in the greater than 40 range.</p>
-<p>I hope these plots help you narrow down the culprit behind your experimental variation. Good luck and let me know if you have any questions regarding the command line k-mer counting script.</p>
 </div>
 <div id="instructions-k-mer-counting-script-for-the-command-line" class="section level2">
 <h2>Instructions: k-mer counting script for the command line</h2>
