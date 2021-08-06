@@ -43,11 +43,11 @@ theme_set(theme_light())
 ```
 
 ```{r}
-exp1 = readDNAStringSet('takehome/challenge1/experiment1.fasta')
+exp1 <- readDNAStringSet('takehome/challenge1/experiment1.fasta')
 exp1
-exp2 = readDNAStringSet('takehome/challenge1/experiment2.fasta')
-exp3 = readDNAStringSet('takehome/challenge1/experiment3.fasta')
-exp4 = readDNAStringSet('takehome/challenge1/experiment4.fasta')
+exp2 <- readDNAStringSet('takehome/challenge1/experiment2.fasta')
+exp3 <- readDNAStringSet('takehome/challenge1/experiment3.fasta')
+exp4 <- readDNAStringSet('takehome/challenge1/experiment4.fasta')
 #exp5 = readDNAStringSet("nonstandard_nucs.fasta")
 
 fasta_files = list(exp1, exp2, exp3, exp4)
@@ -55,8 +55,8 @@ fasta_files = list(exp1, exp2, exp3, exp4)
 #Function:
 #convert_to_tibble()
 convert_to_tibble <- function(s) {
-seq_name = names(s)
-sequence = paste(s)
+seq_name <- names(s)
+sequence <- paste(s)
 df <- tibble(seq_name, sequence)
 }
 

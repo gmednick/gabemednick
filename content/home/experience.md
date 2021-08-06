@@ -34,7 +34,7 @@ date_format = "Jan 2006"
   * IP development
   """
 [[experience]]
-  title = "Computational biologist intern"
+  title = "Computational biologist"
   company = "Claret Biosciences"
   company_url = ""
   location = "California"
