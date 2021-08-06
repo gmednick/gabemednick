@@ -142,28 +142,28 @@ bar_plot <- function(tbl) {
 p1 <- fasta_df$sequence[1] %>% 
   kmer_len() %>% 
   bar_plot() +
-  labs(title = 'Ex1 kmer counts')
+  labs(title = 'Exp1 kmer counts')
   
   
 p2 <- fasta_df$sequence[2] %>% 
   kmer_len() %>% 
   bar_plot() +
-  labs(title = 'Ex2 kmer counts') 
+  labs(title = 'Exp2 kmer counts') 
 
 p3 <- fasta_df$sequence[3] %>% 
   kmer_len() %>% 
   bar_plot() +
-  labs(title = 'Ex3 kmer counts') 
+  labs(title = 'Exp3 kmer counts') 
 
 p4 <- fasta_df$sequence[4] %>% 
   kmer_len() %>% 
   bar_plot() +
-  labs(title = 'Ex4 kmer counts') 
+  labs(title = 'Exp4 kmer counts') 
 
 (p1 + p2) / (p3 + p4)
 ```
 
-Notably, experiments 1 and 2 are right skewed and experiments 3 and 4 are progressively less so.
+Notably, the count distributions are progressively less varied.
 
 ## Summary table
 
