@@ -1,0 +1,1221 @@
+---
+title: "Fun with Python and R"
+author: "Gabe Mednick"
+date: '2021-08-09'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: 'This post explores how we can use Python and R together to solve simple bioinformatics problems. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.' 
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: Python-R
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In R and Python nucleotide molecules are represented as strings and manipulated accordingly. There are fantastic packages, such as <code>Biostrings</code> in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post attempts to take a step back from packages and solve these problems from scratch using R and Python. Several of the Python examples are sourced from <a href="https://www.youtube.com/watch?v=uWWoRa8thN0">Martin Schweitzer’s fantastic talk at PyCon 2016</a>.</p>
+<p>In this post, I attempt to answer the age-old question, ‘R or Python?’ with the following retort, ‘Why not both?’. The R package, <code>Reticulate</code>, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.</p>
+<div id="problem-1" class="section level3">
+<h3>Problem 1</h3>
+<p>Oh no, a tiny startup spent half its budget buying second hand oligos that are contaminated with the following IUPAC wobble bases R, Y, S, and W in the last two positions of each oligomer. The wobble bases can result in the following:<br />
+R = A or G<br />
+Y = C or T<br />
+S = G or C<br />
+W = A or T<br />
+</p>
+<p>In a last ditch effort to save the doomed startup, you are tasked with the job of finding all possible sequences that could have resulted in the sequence in your FASTA file. For instance, the sequence, ATTGCGGTGC, could be derived from the following four sequences: ATTGCGGTRY, ATTGCGGTSY, ATTGCGGTRS and ATTGCGGTSS. Find the all potential sequences using the FASTA file of sequence products.</p>
+<pre class="r"><code>library(tidyverse)
+library(Biostrings)
+library(reticulate)
+library(gt)</code></pre>
+<pre class="r"><code>oligos &lt;- readDNAStringSet(&#39;sequences.fasta&#39;) 
+seq_name &lt;- names(oligos)
+sequence &lt;- paste(oligos)
+df &lt;- tibble(seq_name, sequence)</code></pre>
+<pre class="r"><code>ends_seq &lt;- df %&gt;%  
+  mutate(ends9 = str_sub(sequence, start = 9, end = 9),
+         ends10 = str_sub(sequence, start = 10, end = 10),
+         sequence_start = str_sub(sequence, start = 1, end = 8))
+
+og_sequences &lt;- ends_seq %&gt;%  #could also use str_replace() or recode() maybe
+  mutate(options9a = case_when(ends9 == &quot;A&quot; ~ &quot;R&quot;,
+                             ends9 == &quot;T&quot; ~ &quot;Y&quot;,
+                             ends9 == &quot;C&quot; ~ &quot;Y&quot;,
+                             ends9 == &quot;G&quot; ~ &quot;R&quot;),
+         options9b = case_when(ends9 == &quot;A&quot; ~ &quot;W&quot;,
+                             ends9 == &quot;T&quot; ~ &quot;W&quot;,
+                             ends9 == &quot;C&quot; ~ &quot;S&quot;,
+                             ends9 == &quot;G&quot; ~ &quot;S&quot;),
+         options10a = case_when(ends10 == &quot;A&quot; ~ &quot;R&quot;,
+                             ends10 == &quot;T&quot; ~ &quot;Y&quot;,
+                             ends10 == &quot;C&quot; ~ &quot;Y&quot;,
+                             ends10 == &quot;G&quot; ~ &quot;R&quot;),
+         options10b = case_when(ends10 == &quot;A&quot; ~ &quot;W&quot;,
+                             ends10 == &quot;T&quot; ~ &quot;W&quot;,
+                             ends10 == &quot;C&quot; ~ &quot;S&quot;,
+                             ends10 == &quot;G&quot; ~ &quot;S&quot;))
+
+
+og_sequences %&gt;% 
+  mutate(option1 = str_c(sequence_start, options9a, options10a),
+         option2 = str_c(sequence_start, options9b, options10a),
+         option3 = str_c(sequence_start, options9a, options10b),
+         option4 = str_c(sequence_start, options9b, options10b)) %&gt;% 
+  select(seq_name, sequence, option1:option4) %&gt;% 
+  gt() %&gt;% 
+  tab_header(title = md(&quot;**Sequence and all wobble pairs**&quot;))  %&gt;% 
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = &quot;#EFFBFC&quot;, 
+              table.width = &quot;75%&quot;, 
+              column_labels.background.color = &quot;black&quot;,
+              table.font.color = &quot;black&quot;) %&gt;% 
+  tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
+            locations = cells_body())</code></pre>
+<div id="ijffzcpzbc" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ijffzcpzbc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_heading {
+  background-color: #EFFBFC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ijffzcpzbc .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ijffzcpzbc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_col_heading {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ijffzcpzbc .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ijffzcpzbc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ijffzcpzbc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ijffzcpzbc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ijffzcpzbc .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ijffzcpzbc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ijffzcpzbc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ijffzcpzbc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ijffzcpzbc .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ijffzcpzbc .gt_stub {
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ijffzcpzbc .gt_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijffzcpzbc .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_grand_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijffzcpzbc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ijffzcpzbc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_footnotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ijffzcpzbc .gt_sourcenotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijffzcpzbc .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ijffzcpzbc .gt_left {
+  text-align: left;
+}
+
+#ijffzcpzbc .gt_center {
+  text-align: center;
+}
+
+#ijffzcpzbc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ijffzcpzbc .gt_font_normal {
+  font-weight: normal;
+}
+
+#ijffzcpzbc .gt_font_bold {
+  font-weight: bold;
+}
+
+#ijffzcpzbc .gt_font_italic {
+  font-style: italic;
+}
+
+#ijffzcpzbc .gt_super {
+  font-size: 65%;
+}
+
+#ijffzcpzbc .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>Sequence and all wobble pairs</strong></th>
+    </tr>
+    
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">seq_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">sequence</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">option1</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">option2</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">option3</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">option4</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 1</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTGCGGTGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTGCGGTRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTGCGGTSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTGCGGTRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTGCGGTSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 2</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTTAGCTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTTAGCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTTAGCWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTTAGCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTTAGCWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 3</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCATGAGTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCATGAGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCATGAGWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCATGAGYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCATGAGWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 4</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGGACCATTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGGACCATYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGGACCATWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGGACCATYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGGACCATWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 5</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAAGCGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAAGCRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAAGCSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAAGCRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAAGCSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 6</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGAACCATA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGAACCAYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGAACCAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGAACCAYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGAACCAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 7</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAAGACGATA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAAGACGAYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAAGACGAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAAGACGAYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAAGACGAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 8</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGGGGTTCC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGGGGTTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGGGGTTSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGGGGTTYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGGGGTTSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 9</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GATGGCGGTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GATGGCGGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GATGGCGGWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GATGGCGGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GATGGCGGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 10</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTGCATAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTGCATRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTGCATWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTGCATRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GACTGCATWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 11</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCTAGCCCC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCTAGCCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCTAGCCSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCTAGCCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCTAGCCSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 12</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGGACTAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGGACTRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGGACTWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGGACTRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGGACTWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 13</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTACGGAAG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTACGGARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTACGGAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTACGGARS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATTACGGAWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 14</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGTACTTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGTACTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGTACTWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGTACTYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGTACTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 15</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGACTTTAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGACTTTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGACTTTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGACTTTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGACTTTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 16</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCGCTTGGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCGCTTGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCGCTTGSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCGCTTGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCGCTTGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 17</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCTCGCGTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCTCGCGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCTCGCGWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCTCGCGYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCTCGCGWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 18</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGTGTGCT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGTGTGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGTGTGSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGTGTGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGGTGTGSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 19</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAAGCGCTAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAAGCGCTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAAGCGCTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAAGCGCTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAAGCGCTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 20</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTCTTGTTGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTCTTGTTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTCTTGTTSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTCTTGTTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTCTTGTTSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 21</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAAGGATTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAAGGATYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAAGGATWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAAGGATYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAAGGATWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 22</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCCCGTAAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCCCGTARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCCCGTAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCCCGTARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCCCGTAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 23</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGAGTGGAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGAGTGGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGAGTGGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGAGTGGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGAGTGGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 24</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CAGCTTTAAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CAGCTTTARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CAGCTTTAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CAGCTTTARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CAGCTTTAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 25</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCCTACGATT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCCTACGAYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCCTACGAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCCTACGAYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCCTACGAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 26</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACCCTTGGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACCCTTGRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACCCTTGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACCCTTGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACCCTTGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 27</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATAATGCCTC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATAATGCCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATAATGCCWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATAATGCCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATAATGCCWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 28</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGCTCCGGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGCTCCGRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGCTCCGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGCTCCGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AAGCTCCGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 29</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTACAACCA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTACAACYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTACAACSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTACAACYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTACAACSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 30</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTGATCTCCA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTGATCTCYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTGATCTCSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTGATCTCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTGATCTCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 31</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAGAGGCGGT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAGAGGCGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAGAGGCGSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAGAGGCGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TAGAGGCGSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 32</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCAGTAGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCAGTARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCAGTASY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCAGTARS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCAGTASS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 33</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACACTTCGTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACACTTCGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACACTTCGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACACTTCGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACACTTCGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 34</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTACAGTTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTACAGTYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTACAGTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTACAGTYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTACAGTWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 35</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGTTCCTCA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGTTCCTYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGTTCCTSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGTTCCTYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCGTTCCTSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 36</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGAGTTTTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGAGTTTYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGAGTTTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGAGTTTYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGGAGTTTWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 37</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTACCTATCG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTACCTATYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTACCTATSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTACCTATYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTACCTATSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 38</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTTTCTGAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTTTCTGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTTTCTGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTTTCTGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTTTCTGWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 39</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTGTTGCGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTGTTGCRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTGTTGCSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTGTTGCRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTGTTGCSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 40</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCTCCTCTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCTCCTCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCTCCTCWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCTCCTCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCTCCTCWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 41</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACAGGTAGT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACAGGTARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACAGGTASY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACAGGTARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACAGGTASW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 42</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTTGCTCCA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTTGCTCYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTTGCTCSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTTGCTCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTTGCTCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 43</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGTCGCTTC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGTCGCTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGTCGCTWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGTCGCTYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGTCGCTWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 44</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGGTTGAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGGTTGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGGTTGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGGTTGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGGTTGWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 45</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTCATCCTC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTCATCCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTCATCCWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTCATCCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTCATCCWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 46</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTGCAAAAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTGCAAARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTGCAAAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTGCAAARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACTGCAAAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 47</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAGGCCT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAGGCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAGGCSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAGGCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCTAGGCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 48</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAAACACAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAAACACRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAAACACWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAAACACRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAAACACWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 49</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTCATCGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTCATCRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTCATCSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTCATCRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTCATCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 50</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TATCCTCCTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TATCCTCCYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TATCCTCCWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TATCCTCCYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TATCCTCCWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 51</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTACAGTCC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTACAGTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTACAGTSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTACAGTYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTTACAGTSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 52</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCCCAGGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCCCAGRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCCCAGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCCCAGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCCCAGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 53</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCATGCTTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCATGCTYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCATGCTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCATGCTYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCATGCTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 54</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGTCCCC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGTCCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGTCCSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGTCCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGTCCSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 55</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAGGCAGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAGGCARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAGGCASY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAGGCARS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAGGCASS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 56</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACAGAAAGTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACAGAAAGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACAGAAAGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACAGAAAGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACAGAAAGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 57</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCAGTTAAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCAGTTARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCAGTTAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCAGTTARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGCAGTTAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 58</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATGCCATCT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATGCCATYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATGCCATSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATGCCATYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATGCCATSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 59</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGTATGGT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGTATGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGTATGSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGTATGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CTGGTATGSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 60</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGAGTTGAAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGAGTTGARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGAGTTGAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGAGTTGARS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGAGTTGAWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 61</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAAACAAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAAACARY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAAACAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAAACARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AATAAACAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 62</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGCAGAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGCAGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGCAGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGCAGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTGCAGWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 63</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTTAAAGTGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTTAAAGTRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTTAAAGTSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTTAAAGTRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTTAAAGTSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 64</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTGTAGAAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTGTAGARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTGTAGAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTGTAGARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGTGTAGAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 65</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTTAACGGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTTAACGRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTTAACGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTTAACGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTTAACGSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 66</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTCAAAGCG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTCAAAGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTCAAAGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTCAAAGYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTTCAAAGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 67</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGAGGCCCTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGAGGCCCYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGAGGCCCWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGAGGCCCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGAGGCCCWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 68</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACCTATCGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACCTATCRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACCTATCSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACCTATCRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TACCTATCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 69</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCCGCGAAGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCCGCGAARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCCGCGAASR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCCGCGAARW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCCGCGAASW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 70</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCCAGTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCCAGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCCAGWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCCAGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCCAGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 71</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCGCCTAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCGCCTRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCGCCTWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCGCCTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGCCGCCTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 72</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATGGCTAATG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATGGCTAAYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATGGCTAAWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATGGCTAAYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATGGCTAAWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 73</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGTGTATGC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGTGTATRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGTGTATSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGTGTATRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGGTGTATSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 74</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCCGAATTC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCCGAATYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCCGAATWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCCGAATYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCCGAATWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 75</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTATTTGGCG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTATTTGGYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTATTTGGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTATTTGGYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TTATTTGGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 76</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCTGTATC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCTGTAYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCTGTAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCTGTAYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TGTCTGTAWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 77</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCCTGTGGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCCTGTGRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCCTGTGSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCCTGTGRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ACCCTGTGSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 78</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCAAGCTGAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCAAGCTGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCAAGCTGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCAAGCTGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCAAGCTGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 79</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGACCACTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGACCACYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGACCACWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGACCACYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCGACCACWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 80</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCGGGTTAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCGGGTTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCGGGTTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCGGGTTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGCGGGTTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 81</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACATCTCTC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACATCTCYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACATCTCWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACATCTCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CACATCTCWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 82</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGACGCTCT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGACGCTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGACGCTSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGACGCTYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GGGACGCTSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 83</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCGCCATCA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCGCCATYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCGCCATSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCGCCATYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GTCGCCATSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 84</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCAACGACAG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCAACGACRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCAACGACWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCAACGACRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCAACGACWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 85</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTATTGCT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTATTGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTATTGSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTATTGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">ATCTATTGSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 86</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTGTGTTAA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTGTGTTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTGTGTTWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTGTGTTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">TCTGTGTTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 87</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATTTACTGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATTTACTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATTTACTSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATTTACTRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CATTTACTSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 88</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTTGGCTG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTTGGCYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTTGGCWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTTGGCYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GAGTTGGCWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 89</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCTAATAGTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCTAATAGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCTAATAGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCTAATAGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">GCTAATAGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 90</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCGATCG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCGATYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCGATSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCGATYS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCACCGATSS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 91</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCCCGGGATT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCCCGGGAYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCCCGGGAWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCCCGGGAYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCCCGGGAWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 92</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTTTTCTGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTTTTCTRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTTTTCTSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTTTTCTRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGTTTTCTSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 93</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTGCACGAT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTGCACGRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTGCACGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTGCACGRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTGCACGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 94</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTAGAGTTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTAGAGTYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTAGAGTWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTAGAGTYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGTAGAGTWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 95</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCCTGCCGT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCCTGCCRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCCTGCCSY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCCTGCCRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCCTGCCSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 96</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGCTACGA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGCTACRR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGCTACSR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGCTACRW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CGCGCTACSW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 97</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAATTCAGG</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAATTCARR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAATTCASR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAATTCARS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGAATTCASS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 98</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGACATACAC</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGACATACRY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGACATACWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGACATACRS</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">AGACATACWS</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 99</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCATCAAGTT</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCATCAAGYY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCATCAAGWY</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCATCAAGYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCATCAAGWW</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">sequence 100</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAGTAATTA</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAGTAATYR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAGTAATWR</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAGTAATYW</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">CCAGTAATWW</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="problem-2-r" class="section level3">
+<h3>Problem 2 (R)</h3>
+<p>Create a random sequence containing ACTG that is 10000 bps in length. Set a seed so that the sequence is the same each time you run the sample() function. Then calculate the count and percentage of each nucleotide in the sequence.</p>
+<pre class="r"><code>set.seed(1)
+#Create a random 10000 bp sequence of ATCG 
+dna &lt;- paste(sample(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;), 10000, replace = T), collapse = &quot;&quot;)
+
+#show the first 30 bases
+dna %&gt;% 
+  substr(1,30)</code></pre>
+<pre><code>## [1] &quot;AGCATACCTTCCAAATTTTCACAAAATAAT&quot;</code></pre>
+<pre class="r"><code>#create a table of counts
+table(strsplit(dna, NULL)[[1]])</code></pre>
+<pre><code>## 
+##    A    C    G    T 
+## 2539 2445 2520 2496</code></pre>
+<pre class="r"><code>#calculate percentages
+percent_nucs &lt;- tibble(total_A = str_count(dna, &quot;A&quot;) / str_count(dna), 
+                       total_C = str_count(dna, &quot;C&quot;) / str_count(dna), 
+                       total_G = str_count(dna, &quot;G&quot;) / str_count(dna),
+                       total_T = str_count(dna, &quot;T&quot;) / str_count(dna))
+percent_nucs</code></pre>
+<pre><code>## # A tibble: 1 × 4
+##   total_A total_C total_G total_T
+##     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1   0.254   0.244   0.252   0.250</code></pre>
+</div>
+<div id="problem-3-r-and-python" class="section level3">
+<h3>Problem 3 (R and Python)</h3>
+<p>Calculate the count of each nucleotide and the GC percentages for each of the following sequences.</p>
+<pre class="r"><code>seqA = &quot;CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG&quot;
+seqB = &quot;CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCTATATCCATTTGTCAGCAGACACGC&quot;
+seqC = &quot;CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGACTGGGAACCTGCGGGCAGTAGGTGGAAT&quot;
+
+#generate a tibble
+df &lt;- tibble(
+  seqA,
+  seqB,
+  seqC) %&gt;% 
+  gather(key, value)
+
+#calculate nucleotide counts for each sequence
+summary &lt;- df %&gt;%
+  group_by(key) %&gt;% 
+  summarize(counts_A = str_count(value, &quot;A&quot;),
+            counts_C = str_count(value, &quot;C&quot;),
+            counts_G = str_count(value, &quot;G&quot;),
+            counts_T = str_count(value, &quot;T&quot;))
+summary</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   key   counts_A counts_C counts_G counts_T
+##   &lt;chr&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
+## 1 seqA        18       25       18       19
+## 2 seqB        19       28       17       20
+## 3 seqC        20       24       29       14</code></pre>
+<pre class="r"><code>#calculate GC percentage for each sequence
+summary %&gt;% 
+  group_by(key) %&gt;% 
+  summarize(pct_GC = sum(counts_C + counts_G)/ sum(counts_A + counts_C + counts_G + counts_T))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   key   pct_GC
+##   &lt;chr&gt;  &lt;dbl&gt;
+## 1 seqA   0.538
+## 2 seqB   0.536
+## 3 seqC   0.609</code></pre>
+<p>Calculating GC percentages with Python</p>
+<pre class="python"><code>#Convert the DNA object from R (problem 2) to Python and slice the first 30 nucleotides
+thirtymer = r.dna[0:30]
+
+#method 1
+def cg_content(dna):
+    cg = [base for base in dna if base in &#39;CG&#39;]
+    return float(len(cg))/len(dna)
+
+cg_content(thirtymer)
+
+#method 2</code></pre>
+<pre><code>## 0.26666666666666666</code></pre>
+<pre class="python"><code>def cg_content2(dna):
+    return float(dna.count(&#39;G&#39;) + dna.count(&#39;C&#39;))/len(dna)
+cg_content2(thirtymer)</code></pre>
+<pre><code>## 0.26666666666666666</code></pre>
+</div>
+<div id="problem-4-r-and-python" class="section level3">
+<h3>Problem 4 (R and Python)</h3>
+<p>Convert the following oligo to an RNA molecule without transcribing it.<br />
+Solution with R:</p>
+<pre class="r"><code># Convert DNA to RNA (not transcription)
+dna_30mer &lt;- dna %&gt;% 
+  substr(1,30)
+
+dna_to_rna &lt;- dna_30mer %&gt;% 
+  str_replace_all(&quot;T&quot;, &quot;U&quot;)
+dna_to_rna</code></pre>
+<pre><code>## [1] &quot;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&quot;</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code>thirtymer = r.dna[0:30]
+
+def convert_DNA_to_RNA(string):
+    return string.replace(&#39;T&#39;, &#39;U&#39;)
+ 
+convert_DNA_to_RNA(thirtymer)</code></pre>
+<pre><code>## &#39;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&#39;</code></pre>
+</div>
+<div id="problem-5-r-and-python" class="section level3">
+<h3>Problem 5 (R and Python)</h3>
+<p>Find the reverse complement for a sequence.<br />
+Solution with R:</p>
+<pre class="r"><code># Reverse complement (DNA)
+seq &lt;- &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; # rev_comp = &quot;ACCGGGTTTT&quot;
+
+df = tibble(seq)
+
+#create a slicing function
+str_dice &lt;- function(s, length) {
+   L &lt;- str_length(s)
+   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
+}
+
+#reverse sequence
+df_rev_comp &lt;- df %&gt;% 
+  mutate(seq = stringi::stri_reverse(seq))
+         
+df_rev_comp$seq %&gt;% str_dice(1) %&gt;% 
+  str_replace(&quot;A&quot;, &quot;S&quot;) %&gt;% 
+  str_replace(&quot;C&quot;, &quot;B&quot;)  %&gt;% 
+  str_replace(&quot;T&quot;, &quot;A&quot;) %&gt;% 
+  str_replace(&quot;G&quot;, &quot;C&quot;) %&gt;% 
+  str_replace(&quot;S&quot;, &quot;T&quot;) %&gt;% 
+  str_replace(&quot;B&quot;, &quot;G&quot;) %&gt;% 
+  paste0(collapse = &quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;TGGCACCGGTTGTAGTCACCGGGTTTT&quot;</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code># Reverse complement (DNA)
+seq = &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; 
+
+#solution 1
+def reverse_complement(seq):
+    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
+    rc = &#39;&#39;
+    for base in seq:
+        rc += complement[base]
+    return &quot;&quot;.join(reversed(rc))
+
+#solution 2
+def reverse_complement2(seq):
+    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
+    return &quot;&quot;.join([complement[base] for base in seq[::-1]])</code></pre>
+</div>
+<div id="problem-6-r-and-python" class="section level3">
+<h3>Problem 6 (R and Python)</h3>
+<p>Finding the hamming distances between two sequences.<br />
+Solution with R:</p>
+<pre class="r"><code>#Hamming distance with R
+seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
+seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
+
+seq_1a &lt;- str_extract_all(seq1, boundary(&quot;character&quot;))  %&gt;% unlist()
+seq_2a &lt;- str_extract_all(seq2, boundary(&quot;character&quot;)) %&gt;% unlist()
+sum(seq_1a != seq_2a)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code>#Hamming distance with Python
+seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
+seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
+
+def hamming_dis(seq1, seq2):
+    return len([(x,y) for x,y in zip(seq1, seq2) if x != y])
+
+print(hamming_dis(seq1, seq2))</code></pre>
+<pre><code>## 3</code></pre>
+</div>
+</div>

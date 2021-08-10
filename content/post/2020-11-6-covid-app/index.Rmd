@@ -1,14 +1,14 @@
 ---
 title: COVID Shiny App
 author: Gabe Mednick
-date: '2020-12-18'
+date: '2021-07-08'
 slug: covid-shiny-app
 categories: []
 tags: []
 subtitle: ''
 summary: 'Covid cases and deaths in the United States'
 authors: []
-lastmod: '2020-11-06T13:38:49-08:00'
+lastmod: ''
 featured: no
 image:
   caption: '[COVID-19](covid-image.jpg)'
