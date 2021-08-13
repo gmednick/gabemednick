@@ -85,7 +85,7 @@ ggplot(ames_train, aes(x = gr_liv_area, y = sale_price)) +
   step_interact( ~ gr_liv_area:starts_with(&quot;bldg_type_&quot;)) #will create new columns based on interactions between the specified features
 
 ames_rec %&gt;%  prep() %&gt;% juice() #view the transformed data</code></pre>
-<pre><code>## # A tibble: 2,342 x 20
+<pre><code>## # A tibble: 2,342 × 20
 ##    gr_liv_area year_built sale_price overall_cond_Poor overall_cond_Fair
 ##          &lt;dbl&gt;      &lt;int&gt;      &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;
 ##  1        2.95       1961       5.02                 0                 0
@@ -104,9 +104,7 @@ ames_rec %&gt;%  prep() %&gt;% juice() #view the transformed data</code></pre>
 ## #   overall_cond_Very_Good &lt;dbl&gt;, overall_cond_Excellent &lt;dbl&gt;,
 ## #   overall_cond_Very_Excellent &lt;dbl&gt;, bldg_type_TwoFmCon &lt;dbl&gt;,
 ## #   bldg_type_Duplex &lt;dbl&gt;, bldg_type_Twnhs &lt;dbl&gt;, bldg_type_TwnhsE &lt;dbl&gt;,
-## #   gr_liv_area_x_bldg_type_TwoFmCon &lt;dbl&gt;,
-## #   gr_liv_area_x_bldg_type_Duplex &lt;dbl&gt;, gr_liv_area_x_bldg_type_Twnhs &lt;dbl&gt;,
-## #   gr_liv_area_x_bldg_type_TwnhsE &lt;dbl&gt;</code></pre>
+## #   gr_liv_area_x_bldg_type_TwoFmCon &lt;dbl&gt;, …</code></pre>
 </div>
 <div id="model-evaluation" class="section level2">
 <h2>Model evaluation</h2>
@@ -145,7 +143,7 @@ ames_model_train %&gt;%
   filter(.metric == &quot;rmse&quot;) %&gt;% 
   select(rmse = .estimate) %&gt;% 
   head(1)</code></pre>
-<pre><code>## # A tibble: 1 x 1
+<pre><code>## # A tibble: 1 × 1
 ##     rmse
 ##    &lt;dbl&gt;
 ## 1 0.0776</code></pre>
@@ -174,7 +172,7 @@ glmnet_tunegrid &lt;- ames_glmnet_wkflow %&gt;%
             control = control_grid(save_pred = TRUE))
 
 glmnet_tunegrid %&gt;% collect_metrics()</code></pre>
-<pre><code>## # A tibble: 7 x 8
+<pre><code>## # A tibble: 7 × 8
 ##    penalty mixture .metric .estimator   mean     n std_err .config             
 ##      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 8.45e- 2   0.295 rmse    standard   0.111     10 0.00223 Preprocessor1_Model1
@@ -199,7 +197,7 @@ final_glmnet %&gt;%
 
 final_glmnet_res %&gt;% 
   collect_metrics() # rmse: .0769</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric .estimator .estimate .config             
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard      0.0822 Preprocessor1_Model1
@@ -220,13 +218,13 @@ ames_decision_train &lt;- decision_tree_wkflow %&gt;%
                 metrics = metric_set(rmse))
 
 show_best(ames_decision_train)</code></pre>
-<pre><code>## # A tibble: 1 x 6
+<pre><code>## # A tibble: 1 × 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard   0.107    10 0.00299 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>ames_decision_train %&gt;% 
   collect_metrics()</code></pre>
-<pre><code>## # A tibble: 1 x 6
+<pre><code>## # A tibble: 1 × 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard   0.107    10 0.00299 Preprocessor1_Model1</code></pre>
@@ -237,7 +235,7 @@ final_dec_tree &lt;- finalize_workflow(decision_tree_wkflow, best_dec_tree)
 final_dec_results &lt;- last_fit(final_dec_tree, ames_split)
 
 final_dec_results %&gt;% collect_metrics() # rmse: .09885</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric .estimator .estimate .config             
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard       0.100 Preprocessor1_Model1
@@ -259,13 +257,13 @@ ames_rf_train &lt;- rf_wkflow %&gt;%
                 metrics = metric_set(rmse))
 
 show_best(ames_rf_train) # rmse = .0825</code></pre>
-<pre><code>## # A tibble: 1 x 6
+<pre><code>## # A tibble: 1 × 6
 ##   .metric .estimator   mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard   0.0880    10 0.00214 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>ames_rf_train %&gt;% 
   collect_metrics()</code></pre>
-<pre><code>## # A tibble: 1 x 6
+<pre><code>## # A tibble: 1 × 6
 ##   .metric .estimator   mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard   0.0880    10 0.00214 Preprocessor1_Model1</code></pre>
@@ -301,7 +299,7 @@ rf_tunegrid &lt;- rf_wkflow %&gt;%
 
 rf_tunegrid %&gt;% 
   collect_metrics() </code></pre>
-<pre><code>## # A tibble: 10 x 8
+<pre><code>## # A tibble: 10 × 8
 ##     mtry min_n .metric .estimator   mean     n std_err .config              
 ##    &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
 ##  1    14    32 rmse    standard   0.0799    10 0.00222 Preprocessor1_Model01
@@ -316,7 +314,7 @@ rf_tunegrid %&gt;%
 ## 10    17     4 rmse    standard   0.0820    10 0.00208 Preprocessor1_Model10</code></pre>
 <pre class="r"><code>rf_tunegrid %&gt;% 
   collect_predictions()</code></pre>
-<pre><code>## # A tibble: 23,420 x 7
+<pre><code>## # A tibble: 23,420 × 7
 ##    id     .pred  .row  mtry min_n sale_price .config              
 ##    &lt;chr&gt;  &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;                
 ##  1 Fold01  5.09     1    14    32       5.02 Preprocessor1_Model01
@@ -346,7 +344,7 @@ train_xgboost &lt;- workflow() %&gt;%
 
 train_xgboost %&gt;% 
   collect_metrics()</code></pre>
-<pre><code>## # A tibble: 1 x 6
+<pre><code>## # A tibble: 1 × 6
 ##   .metric .estimator   mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 rmse    standard   0.0846    10 0.00191 Preprocessor1_Model1</code></pre>
@@ -379,7 +377,7 @@ ames_tune &lt;- boost_wkflow %&gt;%
 
 ames_tune %&gt;% 
   collect_metrics()</code></pre>
-<pre><code>## # A tibble: 10 x 9
+<pre><code>## # A tibble: 10 × 9
 ##    tree_depth learn_rate sample_size .metric .estimator   mean     n std_err
 ##         &lt;int&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
 ##  1          6   2.05e-10       0.765 rmse    standard   4.72      10 0.00185
@@ -394,7 +392,7 @@ ames_tune %&gt;%
 ## 10          3   3.03e- 4       0.424 rmse    standard   4.06      10 0.00188
 ## # … with 1 more variable: .config &lt;chr&gt;</code></pre>
 <pre class="r"><code>show_best(ames_tune)</code></pre>
-<pre><code>## # A tibble: 5 x 9
+<pre><code>## # A tibble: 5 × 9
 ##   tree_depth learn_rate sample_size .metric .estimator   mean     n std_err
 ##        &lt;int&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
 ## 1          7  0.0369          0.603 rmse    standard   0.0799    10 0.00184

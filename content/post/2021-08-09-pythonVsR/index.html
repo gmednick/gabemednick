@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: 'This post explores how we can use Python and R together to solve simple bioinformatics problems. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.' 
+summary: 'This post explores how we can use Python and R together to solve simple bioinformatics Examples. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.' 
 authors: []
 lastmod: ''
 featured: no
@@ -25,10 +25,186 @@ slug: Python-R
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>In R and Python nucleotide molecules are represented as strings and manipulated accordingly. There are fantastic packages, such as <code>Biostrings</code> in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post attempts to take a step back from packages and solve these problems from scratch using R and Python. Several of the Python examples are sourced from <a href="https://www.youtube.com/watch?v=uWWoRa8thN0">Martin Schweitzer’s fantastic talk at PyCon 2016</a>.</p>
-<p>In this post, I attempt to answer the age-old question, ‘R or Python?’ with the following retort, ‘Why not both?’. The R package, <code>Reticulate</code>, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.</p>
-<div id="problem-1" class="section level3">
-<h3>Problem 1</h3>
+<p>There are fantastic packages, such as <code>Biostrings</code> in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post uses R and, in some examples, Python to solve some of these ‘character string’ manipulations from scratch. Several of the Python examples are sourced from <a href="https://www.youtube.com/watch?v=uWWoRa8thN0">Martin Schweitzer’s fantastic talk at PyCon 2016</a>.</p>
+<p>In this post, I answer the age-old question, ‘Python or R?’ with the following retort, ‘Why not both?’. The R package, <code>Reticulate</code>, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.</p>
+<div id="example-1" class="section level3">
+<h3>Example 1</h3>
+<p>Create a random sequence containing ACTG that is 10000 bps in length. Set a seed so that the sequence is the same each time you run the sample() function. Then calculate the count and percentage of each nucleotide in the sequence.</p>
+<pre class="r"><code>library(tidyverse)
+library(Biostrings)
+library(reticulate)
+library(gt)</code></pre>
+<pre class="r"><code>set.seed(1)
+#Create a random 10000 bp sequence of ATCG 
+dna &lt;- paste(sample(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;), 10000, replace = T), collapse = &quot;&quot;)
+
+#show the first 30 bases
+dna %&gt;% 
+  substr(1,30)</code></pre>
+<pre><code>## [1] &quot;AGCATACCTTCCAAATTTTCACAAAATAAT&quot;</code></pre>
+<pre class="r"><code>#create a table of counts
+table(strsplit(dna, NULL)[[1]])</code></pre>
+<pre><code>## 
+##    A    C    G    T 
+## 2539 2445 2520 2496</code></pre>
+<pre class="r"><code>#calculate percentages
+percent_nucs &lt;- tibble(total_A = str_count(dna, &quot;A&quot;) / str_count(dna), 
+                       total_C = str_count(dna, &quot;C&quot;) / str_count(dna), 
+                       total_G = str_count(dna, &quot;G&quot;) / str_count(dna),
+                       total_T = str_count(dna, &quot;T&quot;) / str_count(dna))
+percent_nucs</code></pre>
+<pre><code>## # A tibble: 1 × 4
+##   total_A total_C total_G total_T
+##     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1   0.254   0.244   0.252   0.250</code></pre>
+</div>
+<div id="example-2" class="section level3">
+<h3>Example 2</h3>
+<p>Calculate the count of each nucleotide and the GC percentages for each of the following sequences.</p>
+<pre class="r"><code>seqA = &quot;CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG&quot;
+seqB = &quot;CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCTATATCCATTTGTCAGCAGACACGC&quot;
+seqC = &quot;CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGACTGGGAACCTGCGGGCAGTAGGTGGAAT&quot;
+
+#generate a tibble
+df &lt;- tibble(
+  seqA,
+  seqB,
+  seqC) %&gt;% 
+  gather(key, value)
+
+#calculate nucleotide counts for each sequence
+summary &lt;- df %&gt;%
+  group_by(key) %&gt;% 
+  summarize(counts_A = str_count(value, &quot;A&quot;),
+            counts_C = str_count(value, &quot;C&quot;),
+            counts_G = str_count(value, &quot;G&quot;),
+            counts_T = str_count(value, &quot;T&quot;))
+summary</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   key   counts_A counts_C counts_G counts_T
+##   &lt;chr&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
+## 1 seqA        18       25       18       19
+## 2 seqB        19       28       17       20
+## 3 seqC        20       24       29       14</code></pre>
+<pre class="r"><code>#calculate GC percentage for each sequence
+summary %&gt;% 
+  group_by(key) %&gt;% 
+  summarize(pct_GC = sum(counts_C + counts_G)/ sum(counts_A + counts_C + counts_G + counts_T))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   key   pct_GC
+##   &lt;chr&gt;  &lt;dbl&gt;
+## 1 seqA   0.538
+## 2 seqB   0.536
+## 3 seqC   0.609</code></pre>
+<p>Calculating GC percentages with Python</p>
+<pre class="python"><code>#Convert the DNA object from R (Example 2) to Python and slice the first 30 nucleotides
+thirtymer = r.dna[0:30]
+
+#method 1
+def cg_content(dna):
+    cg = [base for base in dna if base in &#39;CG&#39;]
+    return float(len(cg))/len(dna)
+
+cg_content(thirtymer)
+
+#method 2</code></pre>
+<pre><code>## 0.26666666666666666</code></pre>
+<pre class="python"><code>def cg_content2(dna):
+    return float(dna.count(&#39;G&#39;) + dna.count(&#39;C&#39;))/len(dna)
+cg_content2(thirtymer)</code></pre>
+<pre><code>## 0.26666666666666666</code></pre>
+</div>
+<div id="example-3" class="section level3">
+<h3>Example 3</h3>
+<p>Convert the following oligo to an RNA molecule without transcribing it.<br />
+Solution with R:</p>
+<pre class="r"><code># Convert DNA to RNA (not transcription)
+dna_30mer &lt;- dna %&gt;% 
+  substr(1,30)
+
+dna_to_rna &lt;- dna_30mer %&gt;% 
+  str_replace_all(&quot;T&quot;, &quot;U&quot;)
+dna_to_rna</code></pre>
+<pre><code>## [1] &quot;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&quot;</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code>thirtymer = r.dna[0:30]
+
+def convert_DNA_to_RNA(string):
+    return string.replace(&#39;T&#39;, &#39;U&#39;)
+ 
+convert_DNA_to_RNA(thirtymer)</code></pre>
+<pre><code>## &#39;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&#39;</code></pre>
+</div>
+<div id="example-4" class="section level3">
+<h3>Example 4</h3>
+<p>Find the reverse complement for a sequence.<br />
+Solution with R:</p>
+<pre class="r"><code># Reverse complement (DNA)
+seq &lt;- &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; # rev_comp = &quot;ACCGGGTTTT&quot;
+
+df = tibble(seq)
+
+#create a slicing function
+str_dice &lt;- function(s, length) {
+   L &lt;- str_length(s)
+   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
+}
+
+#reverse sequence
+df_rev_comp &lt;- df %&gt;% 
+  mutate(seq = stringi::stri_reverse(seq))
+         
+df_rev_comp$seq %&gt;% str_dice(1) %&gt;% 
+  str_replace(&quot;A&quot;, &quot;S&quot;) %&gt;% 
+  str_replace(&quot;C&quot;, &quot;B&quot;)  %&gt;% 
+  str_replace(&quot;T&quot;, &quot;A&quot;) %&gt;% 
+  str_replace(&quot;G&quot;, &quot;C&quot;) %&gt;% 
+  str_replace(&quot;S&quot;, &quot;T&quot;) %&gt;% 
+  str_replace(&quot;B&quot;, &quot;G&quot;) %&gt;% 
+  paste0(collapse = &quot;&quot;)</code></pre>
+<pre><code>## [1] &quot;TGGCACCGGTTGTAGTCACCGGGTTTT&quot;</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code># Reverse complement (DNA)
+seq = &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; 
+
+#solution 1
+def reverse_complement(seq):
+    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
+    rc = &#39;&#39;
+    for base in seq:
+        rc += complement[base]
+    return &quot;&quot;.join(reversed(rc))
+
+#solution 2
+def reverse_complement2(seq):
+    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
+    return &quot;&quot;.join([complement[base] for base in seq[::-1]])</code></pre>
+</div>
+<div id="example-5" class="section level3">
+<h3>Example 5</h3>
+<p>Finding the hamming distances between two sequences.<br />
+Solution with R:</p>
+<pre class="r"><code>#Hamming distance with R
+seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
+seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
+
+seq_1a &lt;- str_extract_all(seq1, boundary(&quot;character&quot;))  %&gt;% unlist()
+seq_2a &lt;- str_extract_all(seq2, boundary(&quot;character&quot;)) %&gt;% unlist()
+sum(seq_1a != seq_2a)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>Solution with Python:</p>
+<pre class="python"><code>#Hamming distance with Python
+seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
+seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
+
+def hamming_dis(seq1, seq2):
+    return len([(x,y) for x,y in zip(seq1, seq2) if x != y])
+
+print(hamming_dis(seq1, seq2))</code></pre>
+<pre><code>## 3</code></pre>
+</div>
+<div id="example-6" class="section level3">
+<h3>Example 6</h3>
 <p>Oh no, a tiny startup spent half its budget buying second hand oligos that are contaminated with the following IUPAC wobble bases R, Y, S, and W in the last two positions of each oligomer. The wobble bases can result in the following:<br />
 R = A or G<br />
 Y = C or T<br />
@@ -36,10 +212,6 @@ S = G or C<br />
 W = A or T<br />
 </p>
 <p>In a last ditch effort to save the doomed startup, you are tasked with the job of finding all possible sequences that could have resulted in the sequence in your FASTA file. For instance, the sequence, ATTGCGGTGC, could be derived from the following four sequences: ATTGCGGTRY, ATTGCGGTSY, ATTGCGGTRS and ATTGCGGTSS. Find the all potential sequences using the FASTA file of sequence products.</p>
-<pre class="r"><code>library(tidyverse)
-library(Biostrings)
-library(reticulate)
-library(gt)</code></pre>
 <pre class="r"><code>oligos &lt;- readDNAStringSet(&#39;sequences.fasta&#39;) 
 seq_name &lt;- names(oligos)
 sequence &lt;- paste(oligos)
@@ -84,12 +256,12 @@ og_sequences %&gt;%
               table.font.color = &quot;black&quot;) %&gt;% 
   tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
             locations = cells_body())</code></pre>
-<div id="ijffzcpzbc" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<div id="qwbrdgyltf" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ijffzcpzbc .gt_table {
+#qwbrdgyltf .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -114,7 +286,7 @@ og_sequences %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_heading {
+#qwbrdgyltf .gt_heading {
   background-color: #EFFBFC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -126,7 +298,7 @@ og_sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_title {
+#qwbrdgyltf .gt_title {
   color: black;
   font-size: 125%;
   font-weight: initial;
@@ -136,7 +308,7 @@ og_sequences %&gt;%
   border-bottom-width: 0;
 }
 
-#ijffzcpzbc .gt_subtitle {
+#qwbrdgyltf .gt_subtitle {
   color: black;
   font-size: 85%;
   font-weight: initial;
@@ -146,13 +318,13 @@ og_sequences %&gt;%
   border-top-width: 0;
 }
 
-#ijffzcpzbc .gt_bottom_border {
+#qwbrdgyltf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_col_headings {
+#qwbrdgyltf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -167,7 +339,7 @@ og_sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_col_heading {
+#qwbrdgyltf .gt_col_heading {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -187,7 +359,7 @@ og_sequences %&gt;%
   overflow-x: hidden;
 }
 
-#ijffzcpzbc .gt_column_spanner_outer {
+#qwbrdgyltf .gt_column_spanner_outer {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -199,15 +371,15 @@ og_sequences %&gt;%
   padding-right: 4px;
 }
 
-#ijffzcpzbc .gt_column_spanner_outer:first-child {
+#qwbrdgyltf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ijffzcpzbc .gt_column_spanner_outer:last-child {
+#qwbrdgyltf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ijffzcpzbc .gt_column_spanner {
+#qwbrdgyltf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -219,7 +391,7 @@ og_sequences %&gt;%
   width: 100%;
 }
 
-#ijffzcpzbc .gt_group_heading {
+#qwbrdgyltf .gt_group_heading {
   padding: 8px;
   color: black;
   background-color: #FFFFFF;
@@ -241,7 +413,7 @@ og_sequences %&gt;%
   vertical-align: middle;
 }
 
-#ijffzcpzbc .gt_empty_group_heading {
+#qwbrdgyltf .gt_empty_group_heading {
   padding: 0.5px;
   color: black;
   background-color: #FFFFFF;
@@ -256,15 +428,15 @@ og_sequences %&gt;%
   vertical-align: middle;
 }
 
-#ijffzcpzbc .gt_from_md > :first-child {
+#qwbrdgyltf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ijffzcpzbc .gt_from_md > :last-child {
+#qwbrdgyltf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ijffzcpzbc .gt_row {
+#qwbrdgyltf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -283,7 +455,7 @@ og_sequences %&gt;%
   overflow-x: hidden;
 }
 
-#ijffzcpzbc .gt_stub {
+#qwbrdgyltf .gt_stub {
   color: black;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -295,7 +467,7 @@ og_sequences %&gt;%
   padding-left: 12px;
 }
 
-#ijffzcpzbc .gt_summary_row {
+#qwbrdgyltf .gt_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -305,7 +477,7 @@ og_sequences %&gt;%
   padding-right: 5px;
 }
 
-#ijffzcpzbc .gt_first_summary_row {
+#qwbrdgyltf .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -315,7 +487,7 @@ og_sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_grand_summary_row {
+#qwbrdgyltf .gt_grand_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -325,7 +497,7 @@ og_sequences %&gt;%
   padding-right: 5px;
 }
 
-#ijffzcpzbc .gt_first_grand_summary_row {
+#qwbrdgyltf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -335,11 +507,11 @@ og_sequences %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_striped {
+#qwbrdgyltf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ijffzcpzbc .gt_table_body {
+#qwbrdgyltf .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -348,7 +520,7 @@ og_sequences %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_footnotes {
+#qwbrdgyltf .gt_footnotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -362,13 +534,13 @@ og_sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_footnote {
+#qwbrdgyltf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ijffzcpzbc .gt_sourcenotes {
+#qwbrdgyltf .gt_sourcenotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -382,41 +554,41 @@ og_sequences %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#ijffzcpzbc .gt_sourcenote {
+#qwbrdgyltf .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ijffzcpzbc .gt_left {
+#qwbrdgyltf .gt_left {
   text-align: left;
 }
 
-#ijffzcpzbc .gt_center {
+#qwbrdgyltf .gt_center {
   text-align: center;
 }
 
-#ijffzcpzbc .gt_right {
+#qwbrdgyltf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ijffzcpzbc .gt_font_normal {
+#qwbrdgyltf .gt_font_normal {
   font-weight: normal;
 }
 
-#ijffzcpzbc .gt_font_bold {
+#qwbrdgyltf .gt_font_bold {
   font-weight: bold;
 }
 
-#ijffzcpzbc .gt_font_italic {
+#qwbrdgyltf .gt_font_italic {
   font-style: italic;
 }
 
-#ijffzcpzbc .gt_super {
+#qwbrdgyltf .gt_super {
   font-size: 65%;
 }
 
-#ijffzcpzbc .gt_footnote_marks {
+#qwbrdgyltf .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1045,177 +1217,5 @@ og_sequences %&gt;%
   
 </table>
 </div>
-</div>
-<div id="problem-2-r" class="section level3">
-<h3>Problem 2 (R)</h3>
-<p>Create a random sequence containing ACTG that is 10000 bps in length. Set a seed so that the sequence is the same each time you run the sample() function. Then calculate the count and percentage of each nucleotide in the sequence.</p>
-<pre class="r"><code>set.seed(1)
-#Create a random 10000 bp sequence of ATCG 
-dna &lt;- paste(sample(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;), 10000, replace = T), collapse = &quot;&quot;)
-
-#show the first 30 bases
-dna %&gt;% 
-  substr(1,30)</code></pre>
-<pre><code>## [1] &quot;AGCATACCTTCCAAATTTTCACAAAATAAT&quot;</code></pre>
-<pre class="r"><code>#create a table of counts
-table(strsplit(dna, NULL)[[1]])</code></pre>
-<pre><code>## 
-##    A    C    G    T 
-## 2539 2445 2520 2496</code></pre>
-<pre class="r"><code>#calculate percentages
-percent_nucs &lt;- tibble(total_A = str_count(dna, &quot;A&quot;) / str_count(dna), 
-                       total_C = str_count(dna, &quot;C&quot;) / str_count(dna), 
-                       total_G = str_count(dna, &quot;G&quot;) / str_count(dna),
-                       total_T = str_count(dna, &quot;T&quot;) / str_count(dna))
-percent_nucs</code></pre>
-<pre><code>## # A tibble: 1 × 4
-##   total_A total_C total_G total_T
-##     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-## 1   0.254   0.244   0.252   0.250</code></pre>
-</div>
-<div id="problem-3-r-and-python" class="section level3">
-<h3>Problem 3 (R and Python)</h3>
-<p>Calculate the count of each nucleotide and the GC percentages for each of the following sequences.</p>
-<pre class="r"><code>seqA = &quot;CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG&quot;
-seqB = &quot;CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCTATATCCATTTGTCAGCAGACACGC&quot;
-seqC = &quot;CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGACTGGGAACCTGCGGGCAGTAGGTGGAAT&quot;
-
-#generate a tibble
-df &lt;- tibble(
-  seqA,
-  seqB,
-  seqC) %&gt;% 
-  gather(key, value)
-
-#calculate nucleotide counts for each sequence
-summary &lt;- df %&gt;%
-  group_by(key) %&gt;% 
-  summarize(counts_A = str_count(value, &quot;A&quot;),
-            counts_C = str_count(value, &quot;C&quot;),
-            counts_G = str_count(value, &quot;G&quot;),
-            counts_T = str_count(value, &quot;T&quot;))
-summary</code></pre>
-<pre><code>## # A tibble: 3 × 5
-##   key   counts_A counts_C counts_G counts_T
-##   &lt;chr&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
-## 1 seqA        18       25       18       19
-## 2 seqB        19       28       17       20
-## 3 seqC        20       24       29       14</code></pre>
-<pre class="r"><code>#calculate GC percentage for each sequence
-summary %&gt;% 
-  group_by(key) %&gt;% 
-  summarize(pct_GC = sum(counts_C + counts_G)/ sum(counts_A + counts_C + counts_G + counts_T))</code></pre>
-<pre><code>## # A tibble: 3 × 2
-##   key   pct_GC
-##   &lt;chr&gt;  &lt;dbl&gt;
-## 1 seqA   0.538
-## 2 seqB   0.536
-## 3 seqC   0.609</code></pre>
-<p>Calculating GC percentages with Python</p>
-<pre class="python"><code>#Convert the DNA object from R (problem 2) to Python and slice the first 30 nucleotides
-thirtymer = r.dna[0:30]
-
-#method 1
-def cg_content(dna):
-    cg = [base for base in dna if base in &#39;CG&#39;]
-    return float(len(cg))/len(dna)
-
-cg_content(thirtymer)
-
-#method 2</code></pre>
-<pre><code>## 0.26666666666666666</code></pre>
-<pre class="python"><code>def cg_content2(dna):
-    return float(dna.count(&#39;G&#39;) + dna.count(&#39;C&#39;))/len(dna)
-cg_content2(thirtymer)</code></pre>
-<pre><code>## 0.26666666666666666</code></pre>
-</div>
-<div id="problem-4-r-and-python" class="section level3">
-<h3>Problem 4 (R and Python)</h3>
-<p>Convert the following oligo to an RNA molecule without transcribing it.<br />
-Solution with R:</p>
-<pre class="r"><code># Convert DNA to RNA (not transcription)
-dna_30mer &lt;- dna %&gt;% 
-  substr(1,30)
-
-dna_to_rna &lt;- dna_30mer %&gt;% 
-  str_replace_all(&quot;T&quot;, &quot;U&quot;)
-dna_to_rna</code></pre>
-<pre><code>## [1] &quot;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&quot;</code></pre>
-<p>Solution with Python:</p>
-<pre class="python"><code>thirtymer = r.dna[0:30]
-
-def convert_DNA_to_RNA(string):
-    return string.replace(&#39;T&#39;, &#39;U&#39;)
- 
-convert_DNA_to_RNA(thirtymer)</code></pre>
-<pre><code>## &#39;AGCAUACCUUCCAAAUUUUCACAAAAUAAU&#39;</code></pre>
-</div>
-<div id="problem-5-r-and-python" class="section level3">
-<h3>Problem 5 (R and Python)</h3>
-<p>Find the reverse complement for a sequence.<br />
-Solution with R:</p>
-<pre class="r"><code># Reverse complement (DNA)
-seq &lt;- &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; # rev_comp = &quot;ACCGGGTTTT&quot;
-
-df = tibble(seq)
-
-#create a slicing function
-str_dice &lt;- function(s, length) {
-   L &lt;- str_length(s)
-   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
-}
-
-#reverse sequence
-df_rev_comp &lt;- df %&gt;% 
-  mutate(seq = stringi::stri_reverse(seq))
-         
-df_rev_comp$seq %&gt;% str_dice(1) %&gt;% 
-  str_replace(&quot;A&quot;, &quot;S&quot;) %&gt;% 
-  str_replace(&quot;C&quot;, &quot;B&quot;)  %&gt;% 
-  str_replace(&quot;T&quot;, &quot;A&quot;) %&gt;% 
-  str_replace(&quot;G&quot;, &quot;C&quot;) %&gt;% 
-  str_replace(&quot;S&quot;, &quot;T&quot;) %&gt;% 
-  str_replace(&quot;B&quot;, &quot;G&quot;) %&gt;% 
-  paste0(collapse = &quot;&quot;)</code></pre>
-<pre><code>## [1] &quot;TGGCACCGGTTGTAGTCACCGGGTTTT&quot;</code></pre>
-<p>Solution with Python:</p>
-<pre class="python"><code># Reverse complement (DNA)
-seq = &quot;AAAACCCGGTGACTACAACCGGTGCCA&quot; 
-
-#solution 1
-def reverse_complement(seq):
-    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
-    rc = &#39;&#39;
-    for base in seq:
-        rc += complement[base]
-    return &quot;&quot;.join(reversed(rc))
-
-#solution 2
-def reverse_complement2(seq):
-    complement = {&#39;A&#39;:&#39;T&#39;, &#39;C&#39;:&#39;G&#39;, &#39;G&#39;:&#39;C&#39;, &#39;T&#39;:&#39;A&#39;}
-    return &quot;&quot;.join([complement[base] for base in seq[::-1]])</code></pre>
-</div>
-<div id="problem-6-r-and-python" class="section level3">
-<h3>Problem 6 (R and Python)</h3>
-<p>Finding the hamming distances between two sequences.<br />
-Solution with R:</p>
-<pre class="r"><code>#Hamming distance with R
-seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
-seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
-
-seq_1a &lt;- str_extract_all(seq1, boundary(&quot;character&quot;))  %&gt;% unlist()
-seq_2a &lt;- str_extract_all(seq2, boundary(&quot;character&quot;)) %&gt;% unlist()
-sum(seq_1a != seq_2a)</code></pre>
-<pre><code>## [1] 3</code></pre>
-<p>Solution with Python:</p>
-<pre class="python"><code>#Hamming distance with Python
-seq1 = &quot;AAGACCCGGTGACTACAACCGCTGCCA&quot;
-seq2 = &#39;AAAACCCGGTGAGTACAACCGGTGCCA&#39;
-
-def hamming_dis(seq1, seq2):
-    return len([(x,y) for x,y in zip(seq1, seq2) if x != y])
-
-print(hamming_dis(seq1, seq2))</code></pre>
-<pre><code>## 3</code></pre>
 </div>
 </div>

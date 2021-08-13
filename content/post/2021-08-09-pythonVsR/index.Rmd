@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: 'This post explores how we can use Python and R together to solve simple bioinformatics problems. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.' 
+summary: 'This post explores how we can use Python and R together to solve simple bioinformatics Examples. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.' 
 authors: []
 lastmod: ''
 featured: no
@@ -26,12 +26,190 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 # Introduction
 
-In R and Python nucleotide molecules are represented as strings and manipulated accordingly. There are fantastic packages, such as `Biostrings` in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post attempts to take a step back from packages and solve these problems from scratch using R and Python. Several of the Python examples are sourced from [Martin Schweitzer's fantastic talk at PyCon 2016](https://www.youtube.com/watch?v=uWWoRa8thN0).
+There are fantastic packages, such as `Biostrings` in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post uses R and, in some examples, Python to solve some of these 'character string' manipulations from scratch. Several of the Python examples are sourced from [Martin Schweitzer's fantastic talk at PyCon 2016](https://www.youtube.com/watch?v=uWWoRa8thN0).
 
-In this post, I attempt to answer the age-old question, 'R or Python?' with the following retort, 'Why not both?'. The R package, `Reticulate`, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.
+In this post, I answer the age-old question, 'Python or R?' with the following retort, 'Why not both?'. The R package, `Reticulate`, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.
 
-### Problem 1
+### Example 1
 
+Create a random sequence containing ACTG that is 10000 bps in length. Set a seed so that the sequence is the same each time you run the sample() function. Then calculate the count and percentage of each nucleotide in the sequence.
+```{r}
+library(tidyverse)
+library(Biostrings)
+library(reticulate)
+library(gt)
+```
+
+```{r}
+set.seed(1)
+#Create a random 10000 bp sequence of ATCG 
+dna <- paste(sample(c("A", "T", "C", "G"), 10000, replace = T), collapse = "")
+
+#show the first 30 bases
+dna %>% 
+  substr(1,30)
+```
+
+```{r}
+#create a table of counts
+table(strsplit(dna, NULL)[[1]])
+
+#calculate percentages
+percent_nucs <- tibble(total_A = str_count(dna, "A") / str_count(dna), 
+                       total_C = str_count(dna, "C") / str_count(dna), 
+                       total_G = str_count(dna, "G") / str_count(dna),
+                       total_T = str_count(dna, "T") / str_count(dna))
+percent_nucs
+```
+
+### Example 2
+
+Calculate the count of each nucleotide and the GC percentages for each of the following sequences.
+```{r}
+seqA = "CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG"
+seqB = "CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCTATATCCATTTGTCAGCAGACACGC"
+seqC = "CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGACTGGGAACCTGCGGGCAGTAGGTGGAAT"
+
+#generate a tibble
+df <- tibble(
+  seqA,
+  seqB,
+  seqC) %>% 
+  gather(key, value)
+
+#calculate nucleotide counts for each sequence
+summary <- df %>%
+  group_by(key) %>% 
+  summarize(counts_A = str_count(value, "A"),
+            counts_C = str_count(value, "C"),
+            counts_G = str_count(value, "G"),
+            counts_T = str_count(value, "T"))
+summary
+
+#calculate GC percentage for each sequence
+summary %>% 
+  group_by(key) %>% 
+  summarize(pct_GC = sum(counts_C + counts_G)/ sum(counts_A + counts_C + counts_G + counts_T))
+
+```
+Calculating GC percentages with Python
+```{python}
+#Convert the DNA object from R (Example 2) to Python and slice the first 30 nucleotides
+thirtymer = r.dna[0:30]
+
+#method 1
+def cg_content(dna):
+    cg = [base for base in dna if base in 'CG']
+    return float(len(cg))/len(dna)
+
+cg_content(thirtymer)
+
+#method 2
+def cg_content2(dna):
+    return float(dna.count('G') + dna.count('C'))/len(dna)
+cg_content2(thirtymer)
+```
+
+### Example 3
+
+Convert the following oligo to an RNA molecule without transcribing it.\
+Solution with R:
+```{r}
+# Convert DNA to RNA (not transcription)
+dna_30mer <- dna %>% 
+  substr(1,30)
+
+dna_to_rna <- dna_30mer %>% 
+  str_replace_all("T", "U")
+dna_to_rna
+```
+
+Solution with Python:
+```{python}
+thirtymer = r.dna[0:30]
+
+def convert_DNA_to_RNA(string):
+    return string.replace('T', 'U')
+ 
+convert_DNA_to_RNA(thirtymer)
+```
+
+### Example 4
+
+Find the reverse complement for a sequence.\
+Solution with R:
+```{r}
+# Reverse complement (DNA)
+seq <- "AAAACCCGGTGACTACAACCGGTGCCA" # rev_comp = "ACCGGGTTTT"
+
+df = tibble(seq)
+
+#create a slicing function
+str_dice <- function(s, length) {
+   L <- str_length(s)
+   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
+}
+
+#reverse sequence
+df_rev_comp <- df %>% 
+  mutate(seq = stringi::stri_reverse(seq))
+         
+df_rev_comp$seq %>% str_dice(1) %>% 
+  str_replace("A", "S") %>% 
+  str_replace("C", "B")  %>% 
+  str_replace("T", "A") %>% 
+  str_replace("G", "C") %>% 
+  str_replace("S", "T") %>% 
+  str_replace("B", "G") %>% 
+  paste0(collapse = "")
+```
+
+Solution with Python:
+```{python}
+# Reverse complement (DNA)
+seq = "AAAACCCGGTGACTACAACCGGTGCCA" 
+
+#solution 1
+def reverse_complement(seq):
+    complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A'}
+    rc = ''
+    for base in seq:
+        rc += complement[base]
+    return "".join(reversed(rc))
+
+#solution 2
+def reverse_complement2(seq):
+    complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A'}
+    return "".join([complement[base] for base in seq[::-1]])
+```
+
+### Example 5
+
+Finding the hamming distances between two sequences.\
+Solution with R:
+```{r}
+#Hamming distance with R
+seq1 = "AAGACCCGGTGACTACAACCGCTGCCA"
+seq2 = 'AAAACCCGGTGAGTACAACCGGTGCCA'
+
+seq_1a <- str_extract_all(seq1, boundary("character"))  %>% unlist()
+seq_2a <- str_extract_all(seq2, boundary("character")) %>% unlist()
+sum(seq_1a != seq_2a)
+```
+
+Solution with Python:
+```{python}
+#Hamming distance with Python
+seq1 = "AAGACCCGGTGACTACAACCGCTGCCA"
+seq2 = 'AAAACCCGGTGAGTACAACCGGTGCCA'
+
+def hamming_dis(seq1, seq2):
+    return len([(x,y) for x,y in zip(seq1, seq2) if x != y])
+
+print(hamming_dis(seq1, seq2))
+```
+
+### Example 6
 Oh no, a tiny startup spent half its budget buying second hand oligos that are contaminated with the following IUPAC wobble bases R, Y, S, and W in the last two positions of each oligomer. The wobble bases can result in the following: \
 R = A or G \
 Y = C or T \
@@ -39,13 +217,6 @@ S = G or C \
 W = A or T \
 
 In a last ditch effort to save the doomed startup, you are tasked with the job of finding all possible sequences that could have resulted in the sequence in your FASTA file. For instance, the sequence, ATTGCGGTGC, could be derived from the following four sequences: ATTGCGGTRY, ATTGCGGTSY, ATTGCGGTRS and ATTGCGGTSS. Find the all potential sequences using the FASTA file of sequence products.
-
-```{r}
-library(tidyverse)
-library(Biostrings)
-library(reticulate)
-library(gt)
-```
 
 ```{r}
 oligos <- readDNAStringSet('sequences.fasta') 
@@ -95,176 +266,4 @@ og_sequences %>%
               table.font.color = "black") %>% 
   tab_style(style = list(cell_fill(color = "Grey")),
             locations = cells_body())
-```
-
-### Problem 2 (R)
-
-Create a random sequence containing ACTG that is 10000 bps in length. Set a seed so that the sequence is the same each time you run the sample() function. Then calculate the count and percentage of each nucleotide in the sequence.
-```{r}
-set.seed(1)
-#Create a random 10000 bp sequence of ATCG 
-dna <- paste(sample(c("A", "T", "C", "G"), 10000, replace = T), collapse = "")
-
-#show the first 30 bases
-dna %>% 
-  substr(1,30)
-```
-
-```{r}
-#create a table of counts
-table(strsplit(dna, NULL)[[1]])
-
-#calculate percentages
-percent_nucs <- tibble(total_A = str_count(dna, "A") / str_count(dna), 
-                       total_C = str_count(dna, "C") / str_count(dna), 
-                       total_G = str_count(dna, "G") / str_count(dna),
-                       total_T = str_count(dna, "T") / str_count(dna))
-percent_nucs
-```
-
-### Problem 3 (R and Python)
-
-Calculate the count of each nucleotide and the GC percentages for each of the following sequences.
-```{r}
-seqA = "CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG"
-seqB = "CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCTATATCCATTTGTCAGCAGACACGC"
-seqC = "CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGACTGGGAACCTGCGGGCAGTAGGTGGAAT"
-
-#generate a tibble
-df <- tibble(
-  seqA,
-  seqB,
-  seqC) %>% 
-  gather(key, value)
-
-#calculate nucleotide counts for each sequence
-summary <- df %>%
-  group_by(key) %>% 
-  summarize(counts_A = str_count(value, "A"),
-            counts_C = str_count(value, "C"),
-            counts_G = str_count(value, "G"),
-            counts_T = str_count(value, "T"))
-summary
-
-#calculate GC percentage for each sequence
-summary %>% 
-  group_by(key) %>% 
-  summarize(pct_GC = sum(counts_C + counts_G)/ sum(counts_A + counts_C + counts_G + counts_T))
-
-```
-Calculating GC percentages with Python
-```{python}
-#Convert the DNA object from R (problem 2) to Python and slice the first 30 nucleotides
-thirtymer = r.dna[0:30]
-
-#method 1
-def cg_content(dna):
-    cg = [base for base in dna if base in 'CG']
-    return float(len(cg))/len(dna)
-
-cg_content(thirtymer)
-
-#method 2
-def cg_content2(dna):
-    return float(dna.count('G') + dna.count('C'))/len(dna)
-cg_content2(thirtymer)
-```
-
-### Problem 4 (R and Python)
-
-Convert the following oligo to an RNA molecule without transcribing it.\
-Solution with R:
-```{r}
-# Convert DNA to RNA (not transcription)
-dna_30mer <- dna %>% 
-  substr(1,30)
-
-dna_to_rna <- dna_30mer %>% 
-  str_replace_all("T", "U")
-dna_to_rna
-```
-
-Solution with Python:
-```{python}
-thirtymer = r.dna[0:30]
-
-def convert_DNA_to_RNA(string):
-    return string.replace('T', 'U')
- 
-convert_DNA_to_RNA(thirtymer)
-```
-
-### Problem 5 (R and Python)
-
-Find the reverse complement for a sequence.\
-Solution with R:
-```{r}
-# Reverse complement (DNA)
-seq <- "AAAACCCGGTGACTACAACCGGTGCCA" # rev_comp = "ACCGGGTTTT"
-
-df = tibble(seq)
-
-#create a slicing function
-str_dice <- function(s, length) {
-   L <- str_length(s)
-   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
-}
-
-#reverse sequence
-df_rev_comp <- df %>% 
-  mutate(seq = stringi::stri_reverse(seq))
-         
-df_rev_comp$seq %>% str_dice(1) %>% 
-  str_replace("A", "S") %>% 
-  str_replace("C", "B")  %>% 
-  str_replace("T", "A") %>% 
-  str_replace("G", "C") %>% 
-  str_replace("S", "T") %>% 
-  str_replace("B", "G") %>% 
-  paste0(collapse = "")
-```
-
-Solution with Python:
-```{python}
-# Reverse complement (DNA)
-seq = "AAAACCCGGTGACTACAACCGGTGCCA" 
-
-#solution 1
-def reverse_complement(seq):
-    complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A'}
-    rc = ''
-    for base in seq:
-        rc += complement[base]
-    return "".join(reversed(rc))
-
-#solution 2
-def reverse_complement2(seq):
-    complement = {'A':'T', 'C':'G', 'G':'C', 'T':'A'}
-    return "".join([complement[base] for base in seq[::-1]])
-```
-
-### Problem 6 (R and Python)
-
-Finding the hamming distances between two sequences.\
-Solution with R:
-```{r}
-#Hamming distance with R
-seq1 = "AAGACCCGGTGACTACAACCGCTGCCA"
-seq2 = 'AAAACCCGGTGAGTACAACCGGTGCCA'
-
-seq_1a <- str_extract_all(seq1, boundary("character"))  %>% unlist()
-seq_2a <- str_extract_all(seq2, boundary("character")) %>% unlist()
-sum(seq_1a != seq_2a)
-```
-
-Solution with Python:
-```{python}
-#Hamming distance with Python
-seq1 = "AAGACCCGGTGACTACAACCGCTGCCA"
-seq2 = 'AAAACCCGGTGAGTACAACCGGTGCCA'
-
-def hamming_dis(seq1, seq2):
-    return len([(x,y) for x,y in zip(seq1, seq2) if x != y])
-
-print(hamming_dis(seq1, seq2))
 ```
