@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Webscraping to generate custom data for crypto analysis
+summary: Web scraping to generate custom data for crypto analysis
 authors: []
 lastmod: ''
 featured: no
