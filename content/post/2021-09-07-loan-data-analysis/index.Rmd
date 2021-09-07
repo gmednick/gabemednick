@@ -1,0 +1,613 @@
+---
+title: "Loan data analysis"
+author: "Gabe Mednick"
+date: '2021-09-07'
+output:
+  bookdown::html_document2:
+  number_sections: TRUE
+  fig_caption: TRUE
+categories: []
+tags: []
+subtitle: ''
+summary: Predicting loan type, loan risk and loan payment status
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: loans
+---
+
+# Loan Data
+
+This dataset ([source](https://www.kaggle.com/itssuru/loan-data)) consists of data from almost 10,000 borrowers that took loans - with some paid back and others still in progress. It was extracted from lendingclub.com which is an organization that connects borrowers with investors. We've included a few suggested questions at the end of this template to help you get started.
+
+### Understand your data
+
+| Variable  | class     | description                    |
+|:----------|:----------|:-------------------------------|
+| credit_policy   | numeric | 1 if the customer meets the credit underwriting criteria; 0 otherwise. |
+| purpose      | character | The purpose of the loan. |
+| int_rate      | numeric   | The interest rate of the loan (more risky borrowers are assigned higher interest rates).  |
+| installment  | numeric   | The monthly installments owed by the borrower if the loan is funded. |
+| log_annual_inc | numeric   | The natural log of the self-reported annual income of the borrower. |
+| dti | numeric   | The debt-to-income ratio of the borrower (amount of debt divided by annual income). |
+| fico | numeric   | The FICO credit score of the borrower. |
+| days_with_cr_line | numeric   | The number of days the borrower has had a credit line. |
+| revol_bal | numeric   | The borrower's revolving balance (amount unpaid at the end of the credit card billing cycle). |
+| revol_util | numeric   | The borrower's revolving line utilization rate (the amount of the credit line used relative to total credit available). |
+| inq_last_6mths | numeric   | The borrower's number of inquiries by creditors in the last 6 months. |
+| delinq_2yrs | numeric   | The number of times the borrower had been 30+ days past due on a payment in the past 2 years. |
+| pub_rec | numeric   | The borrower's number of derogatory public records.
+| not_fully_paid | numeric   | 1 if the loan is not fully paid; 0 otherwise.  |
+
+
+### Load packages
+
+```{r setup, message=FALSE}
+# install.packages('ggridges')
+# install.packages('patchwork')
+# install.packages('gt')
+# install.packages('xgboost')
+# install.packages('ranger')
+# install.packages('vip')
+# install.packages('usemodels')
+# install.packages('GGally')
+# install.packages('doParallel')
+# install.packages('glmnet')
+library(skimr)
+library(tidyverse)
+library(tidymodels)
+library(scales)
+library(ggridges)
+library(patchwork)
+library(gt)
+library(xgboost)
+library(ranger)
+library(vip)
+library(usemodels)
+library(GGally)
+library(glmnet)
+doParallel::registerDoParallel()
+theme_set(theme_light())
+```
+
+### Load your Data
+
+```{r, message=FALSE}
+loans <- readr::read_csv('loans.csv.gz')
+```
+
+# Exploratory data analysis
+
+As a strong visual learner, it helps me to see the data in both table and plot formats. Let's get started by looking at a few the summary statistics generated from the `skimr::skim()` combined with `summary()`. I will also use `glimpse()` to get a concise view of the data names, type and first few entries.
+
+```{r}
+loans %>% 
+  skim() %>% 
+  select(-(numeric.p0:numeric.p100)) %>%
+  select(-(complete_rate)) %>% 
+  summary()
+
+loans %>% 
+  glimpse()
+```
+
+```{r caption ='Loan data from lendingclub.com'}
+loans %>% 
+  head() %>% 
+  gt() %>%
+  tab_header(title = md("**First 6 rows of loan data from lendingclub.com**"))  %>%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = "#21908CFF",
+              table.width = "75%",
+              column_labels.background.color = "black",
+              table.font.color = "black") %>%
+  tab_style(style = list(cell_fill(color = "#35B779FF")),
+            locations = cells_body())
+```
+
+The loan data consists of one character variable ('purpose' = loan type) and 13 numeric variables. Let's use `geom_col()` to plot the number of times each loan type is represented in the dataset.
+
+```{r fig.cap = "Counts of each loan type", message=FALSE}
+loans %>% 
+  count(purpose) %>% 
+  mutate(purpose = fct_reorder(purpose, n)) %>% 
+  ggplot(aes(n, purpose, fill = purpose)) +
+  geom_col() +
+  labs(title = 'Loan count by type',
+       x = 'Count',
+       y = '') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d()
+
+```
+
+Numeric variables can be viewed as count distributions using `geom_histogram()`. Here, I use the `gather()` function to reshape the data into a long format and then `facet_wrap()` can be used to display each histogram in a single figure.
+
+```{r fig.cap = "Histograms of all numeric variables", message=FALSE}
+loans[c(3:13)] %>% 
+  mutate(log_revol_bal = log(revol_bal)) %>%
+  select(-revol_bal) %>% 
+  gather() %>% 
+  ggplot(aes(value, fill = key)) +
+  geom_histogram(alpha = 0.7) +
+  facet_wrap(~key, scales = 'free') +
+  labs(title = 'Count distributions for numeric variables') +
+  theme(legend.position = 'none')
+```
+
+The `credit_policy` and `not_fully_paid` variables (not shown above) are better represented as factors. They can be converted using the `recode_factor()` function. Let's convert and explore these variables with boxplots.
+
+```{r, message=FALSE}
+loans <- loans %>%             
+  mutate(not_fully_paid = recode_factor(not_fully_paid, '1' = 'No', '0' = 'Yes'),
+         credit_policy = recode_factor(credit_policy, '1' = 'pass', '0' = 'fail'),
+         purpose = factor(purpose)) 
+```
+
+
+```{r fig.cap = "Boxplots comparing fully paid and not fully paid across numeric variables"}
+loans %>%
+  select(-c(12:13)) %>% 
+  pivot_longer(!c(credit_policy, purpose, not_fully_paid)) %>% 
+  #filter(name != 'revol_bal') %>% 
+  ggplot(aes(value, fill = not_fully_paid)) +
+  geom_boxplot()  +
+  facet_wrap(~name, scales = 'free') + 
+  labs(title = "Comparing loan payment status across other variables",
+       x = "") +
+  guides(fill = guide_legend(reverse=TRUE))
+
+```
+
+```{r fig.cap='Boxplots of numeric features across credit risk assessment'}
+loans %>%
+  select(c(1:10)) %>% 
+  pivot_longer(!c(purpose, credit_policy)) %>% 
+  filter(name != 'revol_bal') %>% 
+  ggplot(aes(value, fill = credit_policy)) +
+  geom_boxplot()  +
+  facet_wrap(~name, scales = 'free') + 
+  labs(title = "Comparing credit policy across other variables",
+       x = "") +
+  guides(fill = guide_legend(reverse=TRUE))
+```
+
+The loan type can also be viewed with `boxplot()` but the categories are a little scrunched. 
+
+```{r fig.cap='Boxplots of numeric features across loan types'}
+  
+loans %>%
+  select(-c(9, 11:13)) %>% 
+  pivot_longer(!c(credit_policy, purpose, not_fully_paid)) %>% 
+  #filter(name != 'revol_bal') %>% 
+  ggplot(aes(value, fill = purpose)) +
+  geom_boxplot()  +
+  facet_wrap(~name, scales = 'free') + 
+  labs(title = "Comparing loan payment status across other variables",
+       x = "") +
+  guides(fill = guide_legend(reverse=TRUE))
+
+```
+
+The `geom_density_ridges()` function from the ggridges package is an alternative way to view a numeric distribution across multiple categories.
+
+```{r fig.cap='Density plots of interest rate and debt-to-interest across loan types'}
+a <- loans %>% 
+  add_count(purpose) %>% 
+  mutate(purpose = fct_reorder(purpose, n)) %>%
+  group_by(purpose) %>% 
+  ggplot(aes(int_rate, purpose, fill = purpose)) +
+  geom_density_ridges() +
+  labs(title = 'Density of the interest rate by loan purpose',
+       x= 'Interest rate',
+       y= '') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d(alpha = 0.4) +
+  theme(panel.grid.minor = element_blank(), panel.border = element_blank())
+
+b <- loans %>% 
+  add_count(purpose) %>% 
+  mutate(purpose = fct_reorder(purpose, n)) %>%
+  group_by(purpose) %>% 
+  ggplot(aes(dti, purpose, fill = purpose)) +
+  geom_density_ridges() +
+  # scale_y_discrete(expand = c(0.01, 0)) +
+  # scale_x_continuous(expand = c(0.01, 0)) +
+  #theme_ridges() + 
+  labs(title = 'Density of the debt-to-income ratio by loan purpose',
+       x= 'dti',
+       y= '') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d(alpha = 0.4) +
+  theme(panel.grid.minor = element_blank(), panel.border = element_blank())
+
+(a  / b)
+```
+
+```{r fig.cap='Density plots of revolving line utilization rate and installment variables across loan types'}
+c <- loans %>% 
+  add_count(purpose) %>% 
+  mutate(purpose = fct_reorder(purpose, n)) %>%
+  group_by(purpose) %>% 
+  ggplot(aes(revol_util, purpose, fill = purpose)) +
+  geom_density_ridges() +
+  labs(title = 'Density of the revol_util by loan purpose',
+       x= 'revol_util',
+       y= '') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d(alpha = 0.4) +
+  theme(panel.grid.minor = element_blank(), panel.border = element_blank())
+
+d <- loans %>% 
+  add_count(purpose) %>% 
+  mutate(purpose = fct_reorder(purpose, n)) %>%
+  group_by(purpose) %>% 
+  ggplot(aes(installment, purpose, fill = purpose)) +
+  geom_density_ridges() +
+  labs(title = 'Density of the installment by loan purpose',
+       x= 'installment',
+       y= '') +
+  theme(legend.position = 'none') +
+  scale_fill_viridis_d(alpha = 0.4) +
+  theme(panel.grid.minor = element_blank(), panel.border = element_blank())
+
+(c / d)
+```
+
+The `ggpairs()` function from the GGally package is a great way to summarize correlations between our variables. 
+
+```{r fig.cap='Correlation values between numeric variables'}
+loans[c(3:8, 10)] %>% 
+  sample_n(size = 500) %>% 
+  ggpairs()
+
+```
+
+# Modeling challenges
+
+Now that we have a feel for our data, let's create some models!
+
+1.  Create a model that predicts the loan type (purpose)
+2.  Create model that predicts whether the loan has been payed back (not_fully_paid)
+3.  Create a model that predicts whether the loanee meets the accepted level of risk (credit_policy)
+
+## Splitting the data
+
+The data is split into training and test sets using the default (prop = 0.75) split. 5-fold cross validation is used to create resamples from the training set.
+
+```{r}
+split <- loans %>% initial_split()
+train <- training(split) %>% sample_n(size = 500)
+test <- testing(split)
+
+resamps <- vfold_cv(train, v = 5)
+```
+
+## Predicting loan type
+
+To predict the loan type we will need to build a multiclass classification model. I am going to try three different models and compare the results to determine which model has the best predictive power.
+
+### Model 1: Xgboost
+
+```{r}
+#usemodels::use_xgboost(purpose ~ ., data = train)
+xgboost_recipe <-
+  recipe(formula = purpose ~ ., data = train) %>%
+  step_novel(all_nominal(), -all_outcomes()) %>%
+  step_dummy(all_nominal(), -all_outcomes(), one_hot = TRUE) %>%
+  step_zv(all_predictors())
+
+xgboost_spec <-
+  boost_tree(
+    trees = 1000,
+    tree_depth = tune(),
+    min_n = tune(),
+    mtry = tune(),
+    sample_size = tune(),
+    learn_rate = tune()
+  ) %>%
+  set_engine("xgboost") %>%
+  set_mode("classification")
+
+xgboost_workflow <-
+  workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xgboost_spec)
+
+# xgboost_grid_1 <- grid_regular(
+#   parameters(xgboost_spec),
+#   levels = 3 )
+
+# xgboost_grid_2 <- grid_regular(
+#   tree_depth(c(5L, 10L)),
+#     min_n(c(10L, 40L)),
+#     mtry(c(5L, 10L)),
+#     learn_rate(c(-2, -1)),
+#   sample_size=20
+# )
+
+set.seed(8390)
+xgboost_tune <-
+  tune_grid(xgboost_workflow, resamples = resamps, grid = 20)
+
+xgboost_tune %>%
+  autoplot()
+
+xg_best_params <- xgboost_tune %>%
+  select_best(metric = 'accuracy')
+
+xg_best_spec <- xgboost_spec %>%
+  finalize_model(xg_best_params)
+
+xg_final_fit <- workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xg_best_spec) %>%
+  last_fit(split = split)
+
+xg_final_fit %>%
+  collect_metrics()
+```
+
+An accuracy of 44% does not seem great.
+
+### Model 2: Random forest
+
+```{r}
+# usemodels::use_ranger(purpose ~ ., data = train)
+
+ranger_recipe <-
+  recipe(formula = purpose ~ ., data = train)
+
+ranger_spec <-
+  rand_forest(mtry = tune(),
+              min_n = tune(),
+              trees = 1000) %>%
+  set_mode("classification") %>%
+  set_engine("ranger")
+
+rand_forest(mode = "classification") %>%
+  set_engine("ranger", importance = "impurity") %>%
+  fit(purpose ~ .,
+      data = train) %>%
+  vip::vip(geom = 'point',
+           aesthetics = list(color = 'midnightblue', size = 4)) +
+  labs(title = 'test')
+
+ranger_workflow <-
+  workflow() %>%
+  add_recipe(ranger_recipe) %>%
+  add_model(ranger_spec)
+
+# ranger_grid <- grid_regular(
+#   parameters(ranger_spec),
+#   mtry(range = c(10, 30)),
+#   min_n(range = c(2, 8)),
+#   levels = 3)
+
+set.seed(57341)
+ranger_tune <-
+  tune_grid(ranger_workflow,
+            resamples = resamps,
+            grid = 20)
+
+ranger_tune %>%
+  autoplot()
+
+rf_best_params <- ranger_tune %>%
+  select_best(metric = 'accuracy')
+
+rf_best_spec <- ranger_spec %>%
+  finalize_model(rf_best_params)
+
+rf_final_fit <- workflow() %>%
+  add_recipe(ranger_recipe) %>%
+  add_model(rf_best_spec) %>%
+  last_fit(split = split)
+
+rf_final_fit %>%
+  collect_metrics()
+```
+
+### Model 3: K-nearest neighbors
+
+```{r}
+#usemodels::use_kknn(purpose ~ ., data = train)
+
+kknn_recipe <-
+  recipe(formula = purpose ~ ., data = train) %>%
+  step_novel(all_nominal(), -all_outcomes()) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_predictors(), -all_nominal())
+
+kknn_spec <-
+  nearest_neighbor(neighbors = tune(), weight_func = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("kknn")
+
+kknn_workflow <-
+  workflow() %>%
+  add_recipe(kknn_recipe) %>%
+  add_model(kknn_spec)
+
+knn_grid <- grid_regular(
+  parameters(kknn_spec),
+  mtry(range = c(10, 30)),
+  levels = 5)
+
+set.seed(78590)
+kknn_tune <-
+  tune_grid(kknn_workflow,
+            resamples = resamps,
+            grid = knn_grid)
+
+kknn_tune %>%
+  autoplot()
+
+knn_best_params <- kknn_tune %>%
+  select_best(metric = 'accuracy')
+
+knn_best_spec <- kknn_spec %>%
+  finalize_model(knn_best_params)
+
+knn_final_fit <- workflow() %>%
+  add_recipe(kknn_recipe) %>%
+  add_model(knn_best_spec) %>%
+  last_fit(split = split)
+
+knn_final_fit %>%
+  collect_metrics()
+
+knn_final_fit %>%
+  collect_predictions()
+```
+
+```{r}
+models <- c('xgboost', 'xgboost', 'random forrest', 'random forrest', 'knn', 'knn')
+bind_rows(xg_final_fit %>% collect_metrics(), rf_final_fit %>% collect_metrics(), knn_final_fit %>%
+  collect_metrics()) %>% 
+  mutate(models = models) %>%
+  select(models, everything(), -.config) %>% 
+  gt() %>%
+  tab_header(title = 'Model Results')  %>%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = "#21908CFF",
+              table.width = "75%",
+              column_labels.background.color = "black",
+              table.font.color = "black") %>%
+  tab_style(style = list(cell_fill(color = "#35B779FF")),
+            locations = cells_body())
+```
+
+## Predicting loan risk status (credit policy)
+
+The following two predictive models use xgboost.
+
+```{r}
+# #usemodels::use_xgboost(credit_policy ~ ., data = train)
+
+xgboost_recipe <-
+  recipe(formula = credit_policy ~ ., data = train) %>%
+  step_novel(all_nominal(), -all_outcomes()) %>%
+  step_dummy(all_nominal(), -all_outcomes(), one_hot = TRUE) %>%
+  step_zv(all_predictors())
+
+xgboost_spec <-
+  boost_tree(trees = tune(), min_n = tune(), tree_depth = tune(), learn_rate = tune(),
+    loss_reduction = tune(), sample_size = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+
+xgboost_workflow <-
+  workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xgboost_spec)
+
+set.seed(10500)
+xgboost_tune <-
+  tune_grid(xgboost_workflow, resamples = resamps, grid = 10)
+
+xgboost_tune %>%
+  autoplot()
+
+xg_best_params <- xgboost_tune %>%
+  select_best(metric = 'accuracy')
+
+xg_best_spec <- xgboost_spec %>%
+  finalize_model(xg_best_params)
+
+xg_final_fit <- workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xg_best_spec) %>%
+  last_fit(split = split)
+
+xg_final_fit %>%
+  collect_metrics() %>% 
+  gt() %>%
+  tab_header(title = 'Loan risk prediction results')  %>%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = "#21908CFF",
+              table.width = "75%",
+              column_labels.background.color = "black",
+              table.font.color = "black") %>%
+  tab_style(style = list(cell_fill(color = "#35B779FF")),
+            locations = cells_body())
+```
+
+## Predicting loan payment status
+
+```{r}
+#usemodels::use_xgboost(not_fully_paid ~ ., data = train)
+
+xgboost_recipe <-
+  recipe(formula = not_fully_paid ~ ., data = train) %>%
+  step_string2factor(purpose, not_fully_paid) %>%
+  step_novel(all_nominal(), -all_outcomes()) %>%
+  step_dummy(all_nominal(), -all_outcomes(), one_hot = TRUE) %>%
+  step_zv(all_predictors())
+
+xgboost_spec <-
+  boost_tree(trees = tune(), learn_rate = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+
+boost_tree(mode = "classification") %>%
+  set_engine("xgboost", importance = "impurity") %>%
+  fit(purpose ~ .,
+      data = train) %>%
+  vip::vip(geom = 'point',
+           aesthetics = list(color = 'midnightblue', size = 4)) +
+  labs(title = 'test')
+
+xgboost_workflow <-
+  workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xgboost_spec)
+
+xgboost_grid <- grid_regular(
+  parameters(xgboost_spec),
+  levels = 3 )
+
+set.seed(0826)
+xgboost_tune <-
+  tune_grid(xgboost_workflow,
+            resamples = resamps,
+            control = control_grid(),
+            grid = xgboost_grid)
+
+xgboost_tune %>%
+  autoplot()
+
+xg_best_params <- xgboost_tune %>%
+  select_best(metric = 'accuracy')
+
+xg_best_spec <- xgboost_spec %>%
+  finalize_model(xg_best_params)
+
+xg_final_fit <- workflow() %>%
+  add_recipe(xgboost_recipe) %>%
+  add_model(xg_best_spec) %>%
+  last_fit(split = split)
+
+xg_final_fit %>%
+  collect_metrics() %>% 
+  gt() %>%
+  tab_header(title = 'Payment status prediction results')  %>%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = "#21908CFF",
+              table.width = "75%",
+              column_labels.background.color = "black",
+              table.font.color = "black") %>%
+  tab_style(style = list(cell_fill(color = "#35B779FF")),
+            locations = cells_body())
+```
+
