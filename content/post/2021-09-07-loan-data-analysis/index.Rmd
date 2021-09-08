@@ -23,27 +23,41 @@ slug: loans
 
 # Loan Data
 
-This dataset ([source](https://www.kaggle.com/itssuru/loan-data)) consists of data from almost 10,000 borrowers that took loans - with some paid back and others still in progress. It was extracted from lendingclub.com which is an organization that connects borrowers with investors. We've included a few suggested questions at the end of this template to help you get started.
+This [dataset](https://www.kaggle.com/itssuru/loan-data) consists of data from almost 10,000 borrowers that took loans with some paid back and others still in progress. It was extracted from lendingclub.com which is an organization that connects borrowers with investors.
 
 ### Understand your data
 
-| Variable  | class     | description                    |
-|:----------|:----------|:-------------------------------|
-| credit_policy   | numeric | 1 if the customer meets the credit underwriting criteria; 0 otherwise. |
-| purpose      | character | The purpose of the loan. |
-| int_rate      | numeric   | The interest rate of the loan (more risky borrowers are assigned higher interest rates).  |
-| installment  | numeric   | The monthly installments owed by the borrower if the loan is funded. |
-| log_annual_inc | numeric   | The natural log of the self-reported annual income of the borrower. |
-| dti | numeric   | The debt-to-income ratio of the borrower (amount of debt divided by annual income). |
-| fico | numeric   | The FICO credit score of the borrower. |
-| days_with_cr_line | numeric   | The number of days the borrower has had a credit line. |
-| revol_bal | numeric   | The borrower's revolving balance (amount unpaid at the end of the credit card billing cycle). |
-| revol_util | numeric   | The borrower's revolving line utilization rate (the amount of the credit line used relative to total credit available). |
-| inq_last_6mths | numeric   | The borrower's number of inquiries by creditors in the last 6 months. |
-| delinq_2yrs | numeric   | The number of times the borrower had been 30+ days past due on a payment in the past 2 years. |
-| pub_rec | numeric   | The borrower's number of derogatory public records.
-| not_fully_paid | numeric   | 1 if the loan is not fully paid; 0 otherwise.  |
-
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| Variable          | class       | description                                                                                                             |
++:==================+:============+:========================================================================================================================+
+| credit_policy     | numeric     | 1 if the customer meets the credit underwriting criteria; 0 otherwise.                                                  |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| purpose           | character   | The purpose of the loan.                                                                                                |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| int_rate          | numeric     | The interest rate of the loan (more risky borrowers are assigned higher interest rates).                                |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| installment       | numeric     | The monthly installments owed by the borrower if the loan is funded.                                                    |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| log_annual_inc    | numeric     | The natural log of the self-reported annual income of the borrower.                                                     |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| dti               | numeric     | The debt-to-income ratio of the borrower (amount of debt divided by annual income).                                     |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| fico              | numeric     | The FICO credit score of the borrower.                                                                                  |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| days_with_cr_line | numeric     | The number of days the borrower has had a credit line.                                                                  |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| revol_bal         | numeric     | The borrower's revolving balance (amount unpaid at the end of the credit card billing cycle).                           |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| revol_util        | numeric     | The borrower's revolving line utilization rate (the amount of the credit line used relative to total credit available). |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| inq_last_6mths    | numeric     | The borrower's number of inquiries by creditors in the last 6 months.                                                   |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| delinq_2yrs       | numeric     | The number of times the borrower had been 30+ days past due on a payment in the past 2 years.                           |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| pub_rec           | numeric     | The borrower's number of derogatory public records.                                                                     |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
+| not_fully_paid    | numeric     | 1 if the loan is not fully paid; 0 otherwise.                                                                           |
++-------------------+-------------+-------------------------------------------------------------------------------------------------------------------------+
 
 ### Load packages
 
@@ -75,7 +89,7 @@ doParallel::registerDoParallel()
 theme_set(theme_light())
 ```
 
-### Load your Data
+### Load the Data
 
 ```{r, message=FALSE}
 loans <- readr::read_csv('loans.csv.gz')
@@ -83,7 +97,7 @@ loans <- readr::read_csv('loans.csv.gz')
 
 # Exploratory data analysis
 
-As a strong visual learner, it helps me to see the data in both table and plot formats. Let's get started by looking at a few the summary statistics generated from the `skimr::skim()` combined with `summary()`. I will also use `glimpse()` to get a concise view of the data names, type and first few entries.
+As a strong visual learner, it helps me to see the data in both table and plot formats. Let's get started by looking at a few the summary statistics generated from the `skimr::skim()` combined with `summary()`. I will also use `glimpse()` to get a concise view of the data names, data types and the first few entries.
 
 ```{r}
 loans %>% 
@@ -111,7 +125,7 @@ loans %>%
             locations = cells_body())
 ```
 
-The loan data consists of one character variable ('purpose' = loan type) and 13 numeric variables. Let's use `geom_col()` to plot the number of times each loan type is represented in the dataset.
+The loan data consists of one character variable ('purpose' = loan type) and 13 numeric variables. Let's use `geom_col()` to plot the number of times each loan type is represented in the data.
 
 ```{r fig.cap = "Counts of each loan type", message=FALSE}
 loans %>% 
@@ -127,7 +141,7 @@ loans %>%
 
 ```
 
-Numeric variables can be viewed as count distributions using `geom_histogram()`. Here, I use the `gather()` function to reshape the data into a long format and then `facet_wrap()` can be used to display each histogram in a single figure.
+Numeric variables can be viewed as count distributions using `geom_histogram()`. Here, I use the `gather()` function to reshape the data into a long format and then `facet_wrap()` is used to display each histogram in a single figure.
 
 ```{r fig.cap = "Histograms of all numeric variables", message=FALSE}
 loans[c(3:13)] %>% 
@@ -141,7 +155,7 @@ loans[c(3:13)] %>%
   theme(legend.position = 'none')
 ```
 
-The `credit_policy` and `not_fully_paid` variables (not shown above) are better represented as factors. They can be converted using the `recode_factor()` function. Let's convert and explore these variables with boxplots.
+The `credit_policy` and `not_fully_paid` variables (not shown above) are better represented as factors. They can be converted using the `recode_factor()` function. Let's convert them to factors and explore their distributions with `geom_boxplot()`.
 
 ```{r, message=FALSE}
 loans <- loans %>%             
@@ -149,7 +163,6 @@ loans <- loans %>%
          credit_policy = recode_factor(credit_policy, '1' = 'pass', '0' = 'fail'),
          purpose = factor(purpose)) 
 ```
-
 
 ```{r fig.cap = "Boxplots comparing fully paid and not fully paid across numeric variables"}
 loans %>%
@@ -166,6 +179,7 @@ loans %>%
 ```
 
 ```{r fig.cap='Boxplots of numeric features across credit risk assessment'}
+library(ggpubr)
 loans %>%
   select(c(1:10)) %>% 
   pivot_longer(!c(purpose, credit_policy)) %>% 
@@ -178,7 +192,7 @@ loans %>%
   guides(fill = guide_legend(reverse=TRUE))
 ```
 
-The loan type can also be viewed with `boxplot()` but the categories are a little scrunched. 
+Loan type can also be viewed with `geom_boxplot()` but the categories get a little crowded.
 
 ```{r fig.cap='Boxplots of numeric features across loan types'}
   
@@ -260,7 +274,7 @@ d <- loans %>%
 (c / d)
 ```
 
-The `ggpairs()` function from the GGally package is a great way to summarize correlations between our variables. 
+The `ggpairs()` function from the GGally package allows us to summarize correlation values between our variables.
 
 ```{r fig.cap='Correlation values between numeric variables'}
 loans[c(3:8, 10)] %>% 
@@ -353,8 +367,6 @@ xg_final_fit <- workflow() %>%
 xg_final_fit %>%
   collect_metrics()
 ```
-
-An accuracy of 44% does not seem great.
 
 ### Model 2: Random forest
 
@@ -488,7 +500,7 @@ bind_rows(xg_final_fit %>% collect_metrics(), rf_final_fit %>% collect_metrics()
 
 ## Predicting loan risk status (credit policy)
 
-The following two predictive models use xgboost.
+For the next two models, I will use xgboost.
 
 ```{r}
 # #usemodels::use_xgboost(credit_policy ~ ., data = train)
@@ -610,4 +622,3 @@ xg_final_fit %>%
   tab_style(style = list(cell_fill(color = "#35B779FF")),
             locations = cells_body())
 ```
-

@@ -26,14 +26,14 @@ slug: loans
 
 <div id="loan-data" class="section level1">
 <h1>Loan Data</h1>
-<p>This dataset (<a href="https://www.kaggle.com/itssuru/loan-data">source</a>) consists of data from almost 10,000 borrowers that took loans - with some paid back and others still in progress. It was extracted from lendingclub.com which is an organization that connects borrowers with investors. We’ve included a few suggested questions at the end of this template to help you get started.</p>
+<p>This <a href="https://www.kaggle.com/itssuru/loan-data">dataset</a> consists of data from almost 10,000 borrowers that took loans with some paid back and others still in progress. It was extracted from lendingclub.com which is an organization that connects borrowers with investors.</p>
 <div id="understand-your-data" class="section level3">
 <h3>Understand your data</h3>
 <table>
 <colgroup>
-<col width="20%" />
-<col width="20%" />
-<col width="59%" />
+<col width="12%" />
+<col width="8%" />
+<col width="78%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -144,14 +144,14 @@ library(glmnet)
 doParallel::registerDoParallel()
 theme_set(theme_light())</code></pre>
 </div>
-<div id="load-your-data" class="section level3">
-<h3>Load your Data</h3>
+<div id="load-the-data" class="section level3">
+<h3>Load the Data</h3>
 <pre class="r"><code>loans &lt;- readr::read_csv(&#39;loans.csv.gz&#39;)</code></pre>
 </div>
 </div>
 <div id="exploratory-data-analysis" class="section level1">
 <h1>Exploratory data analysis</h1>
-<p>As a strong visual learner, it helps me to see the data in both table and plot formats. Let’s get started by looking at a few the summary statistics generated from the <code>skimr::skim()</code> combined with <code>summary()</code>. I will also use <code>glimpse()</code> to get a concise view of the data names, type and first few entries.</p>
+<p>As a strong visual learner, it helps me to see the data in both table and plot formats. Let’s get started by looking at a few the summary statistics generated from the <code>skimr::skim()</code> combined with <code>summary()</code>. I will also use <code>glimpse()</code> to get a concise view of the data names, data types and the first few entries.</p>
 <pre class="r"><code>loans %&gt;% 
   skim() %&gt;% 
   select(-(numeric.p0:numeric.p100)) %&gt;%
@@ -228,12 +228,12 @@ theme_set(theme_light())</code></pre>
               table.font.color = &quot;black&quot;) %&gt;%
   tab_style(style = list(cell_fill(color = &quot;#35B779FF&quot;)),
             locations = cells_body())</code></pre>
-<div id="npvtxfphva" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<div id="qnrfrbqxsd" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#npvtxfphva .gt_table {
+#qnrfrbqxsd .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -258,7 +258,7 @@ theme_set(theme_light())</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_heading {
+#qnrfrbqxsd .gt_heading {
   background-color: #21908CFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -270,7 +270,7 @@ theme_set(theme_light())</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_title {
+#qnrfrbqxsd .gt_title {
   color: #FFFFFF;
   font-size: 125%;
   font-weight: initial;
@@ -280,7 +280,7 @@ theme_set(theme_light())</code></pre>
   border-bottom-width: 0;
 }
 
-#npvtxfphva .gt_subtitle {
+#qnrfrbqxsd .gt_subtitle {
   color: #FFFFFF;
   font-size: 85%;
   font-weight: initial;
@@ -290,13 +290,13 @@ theme_set(theme_light())</code></pre>
   border-top-width: 0;
 }
 
-#npvtxfphva .gt_bottom_border {
+#qnrfrbqxsd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_col_headings {
+#qnrfrbqxsd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -311,7 +311,7 @@ theme_set(theme_light())</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_col_heading {
+#qnrfrbqxsd .gt_col_heading {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -331,7 +331,7 @@ theme_set(theme_light())</code></pre>
   overflow-x: hidden;
 }
 
-#npvtxfphva .gt_column_spanner_outer {
+#qnrfrbqxsd .gt_column_spanner_outer {
   color: #FFFFFF;
   background-color: black;
   font-size: 100%;
@@ -343,15 +343,15 @@ theme_set(theme_light())</code></pre>
   padding-right: 4px;
 }
 
-#npvtxfphva .gt_column_spanner_outer:first-child {
+#qnrfrbqxsd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#npvtxfphva .gt_column_spanner_outer:last-child {
+#qnrfrbqxsd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#npvtxfphva .gt_column_spanner {
+#qnrfrbqxsd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -363,7 +363,7 @@ theme_set(theme_light())</code></pre>
   width: 100%;
 }
 
-#npvtxfphva .gt_group_heading {
+#qnrfrbqxsd .gt_group_heading {
   padding: 8px;
   color: black;
   background-color: #FFFFFF;
@@ -385,7 +385,7 @@ theme_set(theme_light())</code></pre>
   vertical-align: middle;
 }
 
-#npvtxfphva .gt_empty_group_heading {
+#qnrfrbqxsd .gt_empty_group_heading {
   padding: 0.5px;
   color: black;
   background-color: #FFFFFF;
@@ -400,15 +400,15 @@ theme_set(theme_light())</code></pre>
   vertical-align: middle;
 }
 
-#npvtxfphva .gt_from_md > :first-child {
+#qnrfrbqxsd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#npvtxfphva .gt_from_md > :last-child {
+#qnrfrbqxsd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#npvtxfphva .gt_row {
+#qnrfrbqxsd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -427,7 +427,7 @@ theme_set(theme_light())</code></pre>
   overflow-x: hidden;
 }
 
-#npvtxfphva .gt_stub {
+#qnrfrbqxsd .gt_stub {
   color: black;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -439,7 +439,7 @@ theme_set(theme_light())</code></pre>
   padding-left: 12px;
 }
 
-#npvtxfphva .gt_summary_row {
+#qnrfrbqxsd .gt_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -449,7 +449,7 @@ theme_set(theme_light())</code></pre>
   padding-right: 5px;
 }
 
-#npvtxfphva .gt_first_summary_row {
+#qnrfrbqxsd .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -459,7 +459,7 @@ theme_set(theme_light())</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_grand_summary_row {
+#qnrfrbqxsd .gt_grand_summary_row {
   color: black;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -469,7 +469,7 @@ theme_set(theme_light())</code></pre>
   padding-right: 5px;
 }
 
-#npvtxfphva .gt_first_grand_summary_row {
+#qnrfrbqxsd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -479,11 +479,11 @@ theme_set(theme_light())</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_striped {
+#qnrfrbqxsd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#npvtxfphva .gt_table_body {
+#qnrfrbqxsd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -492,7 +492,7 @@ theme_set(theme_light())</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_footnotes {
+#qnrfrbqxsd .gt_footnotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -506,13 +506,13 @@ theme_set(theme_light())</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_footnote {
+#qnrfrbqxsd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#npvtxfphva .gt_sourcenotes {
+#qnrfrbqxsd .gt_sourcenotes {
   color: black;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -526,41 +526,41 @@ theme_set(theme_light())</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#npvtxfphva .gt_sourcenote {
+#qnrfrbqxsd .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#npvtxfphva .gt_left {
+#qnrfrbqxsd .gt_left {
   text-align: left;
 }
 
-#npvtxfphva .gt_center {
+#qnrfrbqxsd .gt_center {
   text-align: center;
 }
 
-#npvtxfphva .gt_right {
+#qnrfrbqxsd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#npvtxfphva .gt_font_normal {
+#qnrfrbqxsd .gt_font_normal {
   font-weight: normal;
 }
 
-#npvtxfphva .gt_font_bold {
+#qnrfrbqxsd .gt_font_bold {
   font-weight: bold;
 }
 
-#npvtxfphva .gt_font_italic {
+#qnrfrbqxsd .gt_font_italic {
   font-style: italic;
 }
 
-#npvtxfphva .gt_super {
+#qnrfrbqxsd .gt_super {
   font-size: 65%;
 }
 
-#npvtxfphva .gt_footnote_marks {
+#qnrfrbqxsd .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -681,7 +681,7 @@ theme_set(theme_light())</code></pre>
   
 </table>
 </div>
-<p>The loan data consists of one character variable (‘purpose’ = loan type) and 13 numeric variables. Let’s use <code>geom_col()</code> to plot the number of times each loan type is represented in the dataset.</p>
+<p>The loan data consists of one character variable (‘purpose’ = loan type) and 13 numeric variables. Let’s use <code>geom_col()</code> to plot the number of times each loan type is represented in the data.</p>
 <pre class="r"><code>loans %&gt;% 
   count(purpose) %&gt;% 
   mutate(purpose = fct_reorder(purpose, n)) %&gt;% 
@@ -698,7 +698,7 @@ theme_set(theme_light())</code></pre>
 Figure 1: Counts of each loan type
 </p>
 </div>
-<p>Numeric variables can be viewed as count distributions using <code>geom_histogram()</code>. Here, I use the <code>gather()</code> function to reshape the data into a long format and then <code>facet_wrap()</code> can be used to display each histogram in a single figure.</p>
+<p>Numeric variables can be viewed as count distributions using <code>geom_histogram()</code>. Here, I use the <code>gather()</code> function to reshape the data into a long format and then <code>facet_wrap()</code> is used to display each histogram in a single figure.</p>
 <pre class="r"><code>loans[c(3:13)] %&gt;% 
   mutate(log_revol_bal = log(revol_bal)) %&gt;%
   select(-revol_bal) %&gt;% 
@@ -715,7 +715,7 @@ Figure 1: Counts of each loan type
 Figure 2: Histograms of all numeric variables
 </p>
 </div>
-<p>The <code>credit_policy</code> and <code>not_fully_paid</code> variables (not shown above) are better represented as factors. They can be converted using the <code>recode_factor()</code> function. Let’s convert and explore these variables with boxplots.</p>
+<p>The <code>credit_policy</code> and <code>not_fully_paid</code> variables (not shown above) are better represented as factors. They can be converted using the <code>recode_factor()</code> function. Let’s convert them to factors and explore their distributions with <code>geom_boxplot()</code>.</p>
 <pre class="r"><code>loans &lt;- loans %&gt;%             
   mutate(not_fully_paid = recode_factor(not_fully_paid, &#39;1&#39; = &#39;No&#39;, &#39;0&#39; = &#39;Yes&#39;),
          credit_policy = recode_factor(credit_policy, &#39;1&#39; = &#39;pass&#39;, &#39;0&#39; = &#39;fail&#39;),
@@ -736,7 +736,8 @@ Figure 2: Histograms of all numeric variables
 Figure 3: Boxplots comparing fully paid and not fully paid across numeric variables
 </p>
 </div>
-<pre class="r"><code>loans %&gt;%
+<pre class="r"><code>library(ggpubr)
+loans %&gt;%
   select(c(1:10)) %&gt;% 
   pivot_longer(!c(purpose, credit_policy)) %&gt;% 
   filter(name != &#39;revol_bal&#39;) %&gt;% 
@@ -752,7 +753,7 @@ Figure 3: Boxplots comparing fully paid and not fully paid across numeric variab
 Figure 4: Boxplots of numeric features across credit risk assessment
 </p>
 </div>
-<p>The loan type can also be viewed with <code>boxplot()</code> but the categories are a little scrunched.</p>
+<p>Loan type can also be viewed with <code>geom_boxplot()</code> but the categories get a little crowded.</p>
 <pre class="r"><code>loans %&gt;%
   select(-c(9, 11:13)) %&gt;% 
   pivot_longer(!c(credit_policy, purpose, not_fully_paid)) %&gt;% 
@@ -843,7 +844,7 @@ d &lt;- loans %&gt;%
 Figure 7: Density plots of revolving line utilization rate and installment variables across loan types
 </p>
 </div>
-<p>The <code>ggpairs()</code> function from the GGally package is a great way to summarize correlations between our variables.</p>
+<p>The <code>ggpairs()</code> function from the GGally package allows us to summarize correlation values between our variables.</p>
 <pre class="r"><code>loans[c(3:8, 10)] %&gt;% 
   sample_n(size = 500) %&gt;% 
   ggpairs()</code></pre>
@@ -935,8 +936,8 @@ xg_final_fit %&gt;%
 <pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy multiclass     0.483 Preprocessor1_Model1
-## 2 roc_auc  hand_till      0.697 Preprocessor1_Model1</code></pre>
+## 1 accuracy multiclass     0.486 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.687 Preprocessor1_Model1</code></pre>
 <p>An accuracy of 44% does not seem great.</p>
 </div>
 <div id="model-2-random-forest" class="section level3">
@@ -997,8 +998,8 @@ rf_final_fit %&gt;%
 <pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy multiclass     0.479 Preprocessor1_Model1
-## 2 roc_auc  hand_till      0.682 Preprocessor1_Model1</code></pre>
+## 1 accuracy multiclass     0.489 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.692 Preprocessor1_Model1</code></pre>
 </div>
 <div id="model-3-k-nearest-neighbors" class="section level3">
 <h3>Model 3: K-nearest neighbors</h3>
@@ -1051,23 +1052,23 @@ knn_final_fit %&gt;%
 <pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy multiclass     0.438 Preprocessor1_Model1
-## 2 roc_auc  hand_till      0.613 Preprocessor1_Model1</code></pre>
+## 1 accuracy multiclass     0.436 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.603 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>knn_final_fit %&gt;%
   collect_predictions()</code></pre>
 <pre><code>## # A tibble: 2,395 × 12
 ##    id               .pred_all_other .pred_credit_ca… .pred_debt_cons… .pred_education…
 ##    &lt;chr&gt;                      &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
-##  1 train/test split          0.2              0.467             0.133           0     
-##  2 train/test split          0.133            0.4               0.333           0.0667
-##  3 train/test split          0.0667           0.267             0.667           0     
-##  4 train/test split          0.333            0.133             0.333           0     
-##  5 train/test split          0.4              0.2               0.333           0     
-##  6 train/test split          0                0.133             0.8             0     
-##  7 train/test split          0.467            0.333             0.2             0     
-##  8 train/test split          0.6              0.0667            0.2             0     
-##  9 train/test split          0.333            0.2               0.133           0.0667
-## 10 train/test split          0.4              0.4               0.133           0     
+##  1 train/test split          0.364            0.182            0.273            0     
+##  2 train/test split          0.182            0.364            0.455            0     
+##  3 train/test split          0.0909           0.273            0.364            0     
+##  4 train/test split          0.545            0.182            0                0.0909
+##  5 train/test split          0.364            0.0909           0.182            0     
+##  6 train/test split          0.636            0.0909           0.0909           0     
+##  7 train/test split          0.364            0.0909           0.273            0.0909
+##  8 train/test split          0.455            0.0909           0.273            0     
+##  9 train/test split          0.273            0.455            0.182            0     
+## 10 train/test split          0.0909           0.273            0.273            0     
 ## # … with 2,385 more rows, and 7 more variables: .pred_home_improvement &lt;dbl&gt;,
 ## #   .pred_major_purchase &lt;dbl&gt;, .pred_small_business &lt;dbl&gt;, .row &lt;int&gt;,
 ## #   .pred_class &lt;fct&gt;, purpose &lt;fct&gt;, .config &lt;chr&gt;</code></pre>
@@ -1443,27 +1444,27 @@ bind_rows(xg_final_fit %&gt;% collect_metrics(), rf_final_fit %&gt;% collect_met
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">multiclass</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.4830898</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.4864301</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">hand_till</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.6970466</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.6873534</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">random forrest</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">multiclass</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.4793319</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.4885177</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">random forrest</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">hand_till</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.6817425</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.6922070</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">knn</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">multiclass</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.4384134</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.4359081</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">knn</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">hand_till</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.6126532</td></tr>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.6029147</td></tr>
   </tbody>
   
   
@@ -1879,11 +1880,11 @@ xg_final_fit %&gt;%
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">binary</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.9824635</td>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.9874739</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">Preprocessor1_Model1</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">binary</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.9884306</td>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.9921131</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">Preprocessor1_Model1</td></tr>
   </tbody>
   
@@ -1914,7 +1915,7 @@ boost_tree(mode = &quot;classification&quot;) %&gt;%
   vip::vip(geom = &#39;point&#39;,
            aesthetics = list(color = &#39;midnightblue&#39;, size = 4)) +
   labs(title = &#39;test&#39;)</code></pre>
-<pre><code>## [13:15:04] WARNING: amalgamation/../src/learner.cc:573: 
+<pre><code>## [09:50:26] WARNING: amalgamation/../src/learner.cc:573: 
 ## Parameters: { &quot;importance&quot; } might not be used.
 ## 
 ##   This may not be accurate due to some parameters are only used in language bindings but
@@ -1922,7 +1923,7 @@ boost_tree(mode = &quot;classification&quot;) %&gt;%
 ##   verification. Please open an issue if you find above cases.
 ## 
 ## 
-## [13:15:04] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective &#39;multi:softprob&#39; was changed from &#39;merror&#39; to &#39;mlogloss&#39;. Explicitly set eval_metric if you&#39;d like to restore the old behavior.</code></pre>
+## [09:50:26] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective &#39;multi:softprob&#39; was changed from &#39;merror&#39; to &#39;mlogloss&#39;. Explicitly set eval_metric if you&#39;d like to restore the old behavior.</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre class="r"><code>xgboost_workflow &lt;-
   workflow() %&gt;%
@@ -2322,11 +2323,11 @@ xg_final_fit %&gt;%
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">binary</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.8308977</td>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.8338205</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">Preprocessor1_Model1</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #35B779;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">binary</td>
-<td class="gt_row gt_right" style="background-color: #35B779;">0.6414623</td>
+<td class="gt_row gt_right" style="background-color: #35B779;">0.6201954</td>
 <td class="gt_row gt_left" style="background-color: #35B779;">Preprocessor1_Model1</td></tr>
   </tbody>
   
