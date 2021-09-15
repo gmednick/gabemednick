@@ -144,7 +144,7 @@ iris_test &lt;- testing(tidy_split)
 iris_boots &lt;- bootstraps(iris_train, times = 30) 
 iris_boots</code></pre>
 <pre><code>## # Bootstrap sampling 
-## # A tibble: 30 x 2
+## # A tibble: 30 × 2
 ##    splits           id         
 ##    &lt;list&gt;           &lt;chr&gt;      
 ##  1 &lt;split [112/45]&gt; Bootstrap01
@@ -265,23 +265,23 @@ glmnet_results &lt;- glmnet_wf %&gt;%
 glmnet_results</code></pre>
 <pre><code>## # Resampling results
 ## # Bootstrap sampling 
-## # A tibble: 30 x 6
-##    splits       id        .metrics      .notes       .extracts    .predictions  
-##    &lt;list&gt;       &lt;chr&gt;     &lt;list&gt;        &lt;list&gt;       &lt;list&gt;       &lt;list&gt;        
-##  1 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [45 ×…
-##  2 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [43 ×…
-##  3 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
-##  4 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [40 ×…
-##  5 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
-##  6 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [41 ×…
-##  7 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [35 ×…
-##  8 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [37 ×…
-##  9 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [42 ×…
-## 10 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [37 ×…
+## # A tibble: 30 × 6
+##    splits           id          .metrics         .notes  .extracts  .predictions
+##    &lt;list&gt;           &lt;chr&gt;       &lt;list&gt;           &lt;list&gt;  &lt;list&gt;     &lt;list&gt;      
+##  1 &lt;split [112/45]&gt; Bootstrap01 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [45…
+##  2 &lt;split [112/43]&gt; Bootstrap02 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [43…
+##  3 &lt;split [112/39]&gt; Bootstrap03 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [39…
+##  4 &lt;split [112/40]&gt; Bootstrap04 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [40…
+##  5 &lt;split [112/39]&gt; Bootstrap05 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [39…
+##  6 &lt;split [112/41]&gt; Bootstrap06 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [41…
+##  7 &lt;split [112/35]&gt; Bootstrap07 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [35…
+##  8 &lt;split [112/37]&gt; Bootstrap08 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [37…
+##  9 &lt;split [112/42]&gt; Bootstrap09 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [42…
+## 10 &lt;split [112/37]&gt; Bootstrap10 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [37…
 ## # … with 20 more rows</code></pre>
 <pre class="r"><code># look at the model metrics
 collect_metrics(glmnet_results)</code></pre>
-<pre><code>## # A tibble: 2 x 6
+<pre><code>## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass 0.958    30 0.00507 Preprocessor1_Model1
@@ -304,15 +304,15 @@ rf_results &lt;- rf_wf %&gt;%
     control = control_resamples(save_pred = TRUE)
     )
 collect_metrics(rf_results)</code></pre>
-<pre><code>## # A tibble: 2 x 6
+<pre><code>## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n  std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy multiclass 0.950    30 0.00446  Preprocessor1_Model1
-## 2 roc_auc  hand_till  0.994    30 0.000982 Preprocessor1_Model1</code></pre>
+## 1 accuracy multiclass 0.953    30 0.00449  Preprocessor1_Model1
+## 2 roc_auc  hand_till  0.995    30 0.000800 Preprocessor1_Model1</code></pre>
 <p>Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   conf_mat_resampled() </code></pre>
-<pre><code>## # A tibble: 9 x 3
+<pre><code>## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &lt;fct&gt;      &lt;fct&gt;       &lt;dbl&gt;
 ## 1 setosa     setosa     14    
@@ -326,7 +326,7 @@ collect_metrics(rf_results)</code></pre>
 ## 9 virginica  virginica  14.2</code></pre>
 <pre class="r"><code>rf_results %&gt;%
   conf_mat_resampled() </code></pre>
-<pre><code>## # A tibble: 9 x 3
+<pre><code>## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &lt;fct&gt;      &lt;fct&gt;       &lt;dbl&gt;
 ## 1 setosa     setosa     14    
@@ -334,10 +334,10 @@ collect_metrics(rf_results)</code></pre>
 ## 3 setosa     virginica   0    
 ## 4 versicolor setosa      0    
 ## 5 versicolor versicolor 10.2  
-## 6 versicolor virginica   1.13 
+## 6 versicolor virginica   1.03 
 ## 7 virginica  setosa      0    
 ## 8 virginica  versicolor  0.867
-## 9 virginica  virginica  13.9</code></pre>
+## 9 virginica  virginica  14</code></pre>
 <p>The ROC curve helps us visually interpret our model performance at every threshold.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   collect_predictions() %&gt;%
@@ -363,10 +363,10 @@ collect_metrics(rf_results)</code></pre>
 final_glmnet</code></pre>
 <pre><code>## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
-## 1 &lt;split [112… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [38 × … &lt;workflo…</code></pre>
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &lt;list&gt;           &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;    &lt;list&gt;        &lt;list&gt;   
+## 1 &lt;split [112/38]&gt; train/test split &lt;tibble [… &lt;tibble … &lt;tibble [38 … &lt;workflo…</code></pre>
 <pre class="r"><code>final_rf &lt;- rf_wf %&gt;%
     add_model(rf_mod) %&gt;%
     last_fit(tidy_split)
@@ -374,16 +374,16 @@ final_glmnet</code></pre>
 final_rf</code></pre>
 <pre><code>## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
-## 1 &lt;split [112… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [38 × … &lt;workflo…</code></pre>
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &lt;list&gt;           &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;    &lt;list&gt;        &lt;list&gt;   
+## 1 &lt;split [112/38]&gt; train/test split &lt;tibble [… &lt;tibble … &lt;tibble [38 … &lt;workflo…</code></pre>
 </div>
 <div id="confusion-matrices" class="section level2">
 <h2>Confusion Matrices</h2>
 <p>Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and the predictions are assigned to the rows.</p>
 <pre class="r"><code>collect_metrics(final_glmnet)</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -393,7 +393,7 @@ final_rf</code></pre>
   autoplot(type = &#39;heatmap&#39;) </code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <pre class="r"><code>collect_metrics(final_rf)</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -406,6 +406,6 @@ final_rf</code></pre>
 <div id="final-thoughts" class="section level2">
 <h2>Final thoughts</h2>
 <p>Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the combination of explanatory features provide for a clean separation of species. So yes, our toy model is that good!</p>
-<p>I would like to thank the unsung heroes of the tidyverse and tidymodels: <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing amazing, open source learning resources.</p>
+<p>Special thanks to <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing many amazing learning resources for mastering the tidyverse and tidymodels data science packages.</p>
 </div>
 </div>

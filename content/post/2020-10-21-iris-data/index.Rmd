@@ -294,4 +294,4 @@ collect_predictions(final_rf) %>%
 ## Final thoughts
 Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the combination of explanatory features provide for a clean separation of species. So yes, our toy model is that good!
 
-I would like to thank the unsung heroes of the tidyverse and tidymodels: **Julia Silge**, **David Robinson** and **Andrew Couch** for creating and sharing amazing, open source learning resources. 
+Special thanks to **Julia Silge**, **David Robinson** and **Andrew Couch** for creating and sharing many amazing learning resources for mastering the tidyverse and tidymodels data science packages.

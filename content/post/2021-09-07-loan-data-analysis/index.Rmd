@@ -222,7 +222,7 @@ a <- loans %>%
        x= 'Interest rate',
        y= '') +
   theme(legend.position = 'none') +
-  scale_fill_viridis_d(alpha = 0.4) +
+  scale_fill_viridis_d(alpha = 0.8) +
   theme(panel.grid.minor = element_blank(), panel.border = element_blank())
 
 b <- loans %>% 
@@ -238,7 +238,7 @@ b <- loans %>%
        x= 'dti',
        y= '') +
   theme(legend.position = 'none') +
-  scale_fill_viridis_d(alpha = 0.4) +
+  scale_fill_viridis_d(alpha = 0.8) +
   theme(panel.grid.minor = element_blank(), panel.border = element_blank())
 
 (a  / b)
@@ -255,7 +255,7 @@ c <- loans %>%
        x= 'revol_util',
        y= '') +
   theme(legend.position = 'none') +
-  scale_fill_viridis_d(alpha = 0.4) +
+  scale_fill_viridis_d(alpha = 0.8) +
   theme(panel.grid.minor = element_blank(), panel.border = element_blank())
 
 d <- loans %>% 
@@ -268,7 +268,7 @@ d <- loans %>%
        x= 'installment',
        y= '') +
   theme(legend.position = 'none') +
-  scale_fill_viridis_d(alpha = 0.4) +
+  scale_fill_viridis_d(alpha = 0.8) +
   theme(panel.grid.minor = element_blank(), panel.border = element_blank())
 
 (c / d)
@@ -307,7 +307,7 @@ resamps <- vfold_cv(train, v = 5)
 
 To predict the loan type we will need to build a multiclass classification model. I am going to try three different models and compare the results to determine which model has the best predictive power.
 
-### Model 1: Xgboost
+### Model 1: XGboost
 
 ```{r}
 #usemodels::use_xgboost(purpose ~ ., data = train)
@@ -542,6 +542,7 @@ xg_final_fit <- workflow() %>%
 
 xg_final_fit %>%
   collect_metrics() %>% 
+  select(models, everything(), -.config) %>% 
   gt() %>%
   tab_header(title = 'Loan risk prediction results')  %>%
   tab_options(container.height = 400,
@@ -610,7 +611,8 @@ xg_final_fit <- workflow() %>%
   last_fit(split = split)
 
 xg_final_fit %>%
-  collect_metrics() %>% 
+  collect_metrics() %>%
+  select(models, everything(), -.config) %>% 
   gt() %>%
   tab_header(title = 'Payment status prediction results')  %>%
   tab_options(container.height = 400,

@@ -1,0 +1,711 @@
+---
+title: Home run analysis
+author: 'Gabe Mednick'
+date: '2021-09-13'
+slug: baseball
+categories: []
+tags:
+  - machine learning
+  - tidymodels
+subtitle: ''
+summary: 'Do you have what it takes to predict a home run?'
+authors: []
+lastmod: ''
+featured: no
+disable_jquery: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: false
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this post, I’m going to explore a baseball dataset that was recently used in the Sliced machine learning competition on Kaggle. The goal was to build a model to predict home runs. In the competition, log loss was used to evaluate model performance. We will build and tune several models to compare with each other and the Sliced competition <a href="https://www.kaggle.com/c/sliced-s01e09-playoffs-1/leaderboard">leaderboard</a>.</p>
+<p>During the Sliced competition, Jesse Mostipak and David Robinson used the <code>meme</code> package to woo the online audience and win the popular vote. Who knew that cat memes and machine learning went so well together? So, of course, I knew I had to give the package a whirl in my next post. In addition to creating memes, the package can also be used to add an image to the background of plots made with the <code>ggplot2</code> package.</p>
+<p>Before we get started, I would like to add the following disclaimer: I am utterly ignorant about the rules and lingo of baseball but I will try my best to not offend any diehard fans. With that said, let’s start by exploring the variables we have to build our <strong>home run</strong> prediction model.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(patchwork)
+theme_set(theme_light())
+library(grid)
+library(meme)
+library(ggimage)
+library(gt)
+doParallel::registerDoParallel()</code></pre>
+<pre class="r"><code>#u &lt;- system.file(&quot;memes/safe.png&quot;, package=&quot;meme&quot;)
+u &lt;- &quot;memes/safe.png&quot;
+x = meme(u, &quot;Safe!&quot;, &quot;Physics vs. The matrix.&quot;)
+x</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>baseball &lt;- read_csv(&#39;train.csv&#39;)</code></pre>
+</div>
+<div id="data-viz" class="section level2">
+<h2>Data Viz</h2>
+<p>The baseball dataset has the following features: is_batter_lefty, is_pitcher_lefty, bb_type, bearing, pitch_name, park, inning, outs_when_up, balls, strikes, plate_x, plate_z, pitch_mph, launch_speed, launch_angle. Visualizing our data can help us get a sense of what variables are important for predicting home runs. Let’s first look at the number of home runs by pitch type.</p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(pitch_name != &#39;Forkball&#39;) %&gt;% 
+  mutate(pitch_name = fct_reorder(pitch_name, is_home_run, sum)) %&gt;% 
+  ggplot(aes(is_home_run, pitch_name, fill = pitch_name)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d(option=&quot;plasma&quot;, alpha = .9) +
+  labs(x=&#39;Home runs&#39;,
+       y=&#39;&#39;,
+       title=&#39;Number of home runs by pitch type&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>A 4-seem fastball pitch has resulted in the most home runs by far. Next, let’s see what types of batting hits result in a home run.</p>
+<pre class="r"><code>color2 &lt;- c(&quot;#FEBC2AFF&quot;, &quot;#F48849FF&quot;)
+baseball %&gt;% 
+  filter(bb_type == &quot;line_drive&quot; | bb_type == &quot;fly_ball&quot;) %&gt;% 
+  filter(is_home_run == 1) %&gt;% 
+  #mutate(pitch_name = fct_reorder(bb_type, is_home_run, sum)) %&gt;% 
+  ggplot(aes(bb_type, is_home_run, fill = bb_type)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  #scale_fill_manual(values = color2) +
+  labs(x=&#39;&#39;,
+       y=&#39;&#39;,
+       title=&#39;Number of home runs for line drive and fly ball hits&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Only the fly ball and line drive result in a home run. The next two plots use the hit trajectory and coordinates relative to home plate to see where home runs occur. For enhanced satisfaction, I’ve added a baseball field to the first plot. This is more of a qualitative image since the position of the field is based on an image and not actual coordinates.</p>
+<pre class="r"><code>s &lt;- &quot;memes/bb_field.png&quot;
+v = meme(s)
+
+baseball %&gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview= v + aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, alpha = .4) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &quot;Hex plot using color to represent homerun percentage based on the\
+       ball&#39;s trajectory coordinates&quot;, x = &#39;Ball position relative to home plate&#39;, y = &#39;Ball height above ground&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>baseball %&gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, alpha = .8) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &quot;Hex plot using color to represent homerun percentage based on the\
+       ball&#39;s trajectory coordinates&quot;, x = &#39;Ball position relative to home plate&#39;, y = &#39;Ball height above ground&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The following two plots also use the hex style fill and consider home runs based on the hit’s launch angle and launch speed.</p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(launch_angle &gt;= 10 &amp; launch_angle &lt;= 55, launch_speed &gt;= 85) %&gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview=v+aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, , alpha = .5) +
+  labs(title = &quot;Hex plot using color to represent homerun\
+       percentage based on the ball&#39;s launch\
+       angle and speed.&quot;, x = &#39;Ball launch angle&#39;, y = &#39;Ball launch speed&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(launch_angle &gt;= 10 &amp; launch_angle &lt;= 55, launch_speed &gt;= 85) %&gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, , alpha = .8) +
+  labs(title = &quot;Hex plot using color to represent homerun\
+       percentage based on the ball&#39;s launch\
+       angle and speed.&quot;, x = &#39;Ball launch angle&#39;, y = &#39;Ball launch speed&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>In the next plot, I create three categories for speed and count the number of home runs for each category.</p>
+<pre class="r"><code>baseball %&gt;% 
+  mutate(speed_cat = case_when((pitch_mph &gt; 90) ~ &quot;Pitch speed &gt; 80 mph&quot;,
+                                 (pitch_mph &gt; 80) &amp; (pitch_mph &lt;=  90) ~ &quot;70-80 mph&quot;,
+                                  (pitch_mph &gt; 70) &amp; (pitch_mph &lt;=  80) ~ &quot;60-70 mph&quot;,
+                                 TRUE ~ &quot;Pitch speed &lt; 70 mph&quot;)) %&gt;% 
+  group_by(speed_cat) %&gt;% 
+  filter(is_home_run == 1, speed_cat != &#39;Pitch speed &lt; 70 mph&#39;) %&gt;%
+  ggplot(aes(is_home_run, speed_cat, fill = speed_cat)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d() +
+  labs(title = &quot;home runs based on Pitch speed&quot;,
+       x = &#39;Home runs&#39;,
+       y = &quot;&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="machine-learning" class="section level2">
+<h2>Machine learning</h2>
+<p>The first step is to clean the data and generate resamples using <code>vfold_cv()</code>. The training set is used for the resamples so as to prevent any data linkage.</p>
+<pre class="r"><code># Create splits and resamples
+baseball_clean &lt;- baseball %&gt;% 
+  drop_na() %&gt;% 
+  mutate(is_home_run = case_when(is_home_run == 1 ~ &#39;yes&#39;,
+                                 TRUE ~ &#39;no&#39;),
+         is_home_run = factor(is_home_run))
+split &lt;- initial_split(baseball_clean)
+
+home_runs_train &lt;- training(split) 
+home_runs_test &lt;- testing(split)
+
+folds &lt;- home_runs_train %&gt;% 
+  vfold_cv(v=5)</code></pre>
+<div id="logistic-regression" class="section level3">
+<h3>Logistic regression</h3>
+<p>I’m going to use a logistic regression as the first model for comparison. For each model, I will use the log loss and accuracy for evaluation metrics.</p>
+<pre class="r"><code>glm_recipe &lt;-
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&gt;% 
+  step_zv(all_predictors())
+
+glm_spec &lt;- logistic_reg() %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;glm&quot;)
+
+glm_workflow &lt;-
+  workflow(glm_recipe, glm_spec)
+
+set.seed(1013)
+glm_fit_resamps &lt;- fit_resamples(
+  glm_workflow,
+  resamples = folds,
+  metrics = metric_set(accuracy, mn_log_loss),
+  control = control_resamples(save_pred = TRUE))
+
+glm_fit_resamps %&gt;% collect_metrics() %&gt;%             
+  select(.metric, .estimator, .estimate = mean) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   .metric     .estimator .estimate
+##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy    binary         0.953
+## 2 mn_log_loss binary         0.115</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**Logistic regression results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body()) </code></pre>
+</div>
+<div id="random-forest-model" class="section level3">
+<h3>Random forest model</h3>
+<p>In the code chunk I will tune a random forrest model, select the best hyperparameters and then use the <code>last_fit()</code> function to train the model on the training data and predict on the testset.</p>
+<pre class="r"><code>ranger_recipe &lt;-
+  recipe(formula = is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph +
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean)
+
+ranger_spec &lt;-
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&gt;%
+  set_mode(&quot;classification&quot;) %&gt;%
+  set_engine(&quot;ranger&quot;)
+
+ranger_workflow &lt;-
+  workflow() %&gt;%
+  add_recipe(ranger_recipe) %&gt;%
+  add_model(ranger_spec)
+
+set.seed(90431)
+ranger_tune &lt;-
+  tune_grid(ranger_workflow, 
+            resamples = folds, 
+            grid = 20,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE)
+            )
+
+ranger_tune %&gt;% autoplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>best_params &lt;- ranger_tune %&gt;%
+  select_best()
+
+final_wkflow &lt;- finalize_workflow(ranger_workflow, best_params)
+
+final_fit &lt;- last_fit(final_wkflow, split)
+
+final_fit %&gt;% 
+  collect_metrics() %&gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
+## 1 accuracy binary       0.971
+## 2 roc_auc  binary       0.985</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**Random forrest results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body())</code></pre>
+</div>
+<div id="xgboost-model" class="section level3">
+<h3>XGboost model</h3>
+<p>No modeling post is complete without an XGboost model. We will follow the similar tuning procedure as was done for the random forest model.</p>
+<pre class="r"><code>xgboost_recipe &lt;- 
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&gt;% 
+  #step_string2factor(one_of(is_home_run)) %&gt;% 
+  step_zv(all_predictors()) 
+
+xgboost_spec &lt;- 
+  boost_tree(trees = 1000, 
+             min_n = tune(), 
+             tree_depth = tune(), 
+             learn_rate = tune(), 
+    loss_reduction = tune(), 
+    sample_size = tune()) %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;xgboost&quot;) 
+
+xgboost_workflow &lt;- 
+  workflow() %&gt;% 
+  add_recipe(xgboost_recipe) %&gt;% 
+  add_model(xgboost_spec) 
+
+set.seed(99176)
+xgboost_tune &lt;-
+  tune_grid(xgboost_workflow, 
+            resamples = folds, 
+            grid = 5,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE))
+
+xgboost_tune %&gt;% autoplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>xg_best_params &lt;- xgboost_tune %&gt;%
+  select_best()
+
+xg_final_wkflow &lt;- finalize_workflow(xgboost_workflow, xg_best_params)
+
+xg_final_fit &lt;- last_fit(xg_final_wkflow, split)
+
+xg_final_fit %&gt;% 
+  collect_metrics() %&gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
+## 1 accuracy binary       0.972
+## 2 roc_auc  binary       0.977</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**XGboost results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body())</code></pre>
+</div>
+</div>
+<div id="summary-results" class="section level2">
+<h2>Summary Results</h2>
+<pre class="r"><code>model = c(&quot;glm&quot;, &quot;glm&quot;, &quot;random forest&quot;, &quot;random forest&quot;, &quot;xgboost&quot;, &quot;xgboost&quot;)
+bind_rows(glm_fit_resamps %&gt;%
+            collect_metrics() %&gt;% 
+            select(.metric, .estimator, .estimate = mean), 
+          final_fit %&gt;% 
+  collect_metrics(), 
+  xg_final_fit %&gt;% 
+  collect_metrics()) %&gt;% 
+  bind_cols(tibble(model)) %&gt;% 
+  select(-.config, model,  Metric = .metric, Estimate = .estimate, Estimator = .estimator) %&gt;% 
+  select(model, everything()) %&gt;% 
+  gt() %&gt;%
+  tab_header(title = md(&quot;**Model summary results**&quot;))  %&gt;%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = &quot;#21908CFF&quot;,
+              table.width = &quot;75%&quot;,
+              column_labels.background.color = &quot;black&quot;,
+              table.font.color = &quot;black&quot;) %&gt;%
+  tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+            locations = cells_body())</code></pre>
+<div id="hlljgevasf" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#hlljgevasf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_heading {
+  background-color: #21908C;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_title {
+  color: #FFFFFF;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hlljgevasf .gt_subtitle {
+  color: #FFFFFF;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hlljgevasf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hlljgevasf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hlljgevasf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hlljgevasf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hlljgevasf .gt_group_heading {
+  padding: 8px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hlljgevasf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hlljgevasf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_stub {
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hlljgevasf .gt_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_grand_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hlljgevasf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_sourcenotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_left {
+  text-align: left;
+}
+
+#hlljgevasf .gt_center {
+  text-align: center;
+}
+
+#hlljgevasf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hlljgevasf .gt_font_normal {
+  font-weight: normal;
+}
+
+#hlljgevasf .gt_font_bold {
+  font-weight: bold;
+}
+
+#hlljgevasf .gt_font_italic {
+  font-style: italic;
+}
+
+#hlljgevasf .gt_super {
+  font-size: 65%;
+}
+
+#hlljgevasf .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>Model summary results</strong></th>
+    </tr>
+    
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">model</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Metric</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Estimate</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9531863</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">mn_log_loss</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1147455</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9713888</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9848934</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9715435</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9772085</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>The accuracy turned out to be slightly better for the random forest and xgboost models but there was no standout winner. The models appear to have worked really well. I would still like to compare them to the Sliced leaderboard but, for some reason, the log loss was not computed for the latter two models. One question that I plan to follow up on is whether I should down sample the data. I assume there is an overrepresentation of hits that are not home runs. Although we would lose a lot of data, it could result in a much more accurate model.</p>
+</div>
