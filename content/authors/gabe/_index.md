@@ -16,14 +16,13 @@ education:
     year: 2008
 email: ""
 interests:
-- Working with data in R 
-- Data visualization and machine learning 
-- Creating Dashboards
-- Workflow management
-- Version control
-- Bioinformatics
-- Command line tools and bash scripting
 - R, SQL and Python
+- Data visualization
+- Machine learning 
+- Creating Dashboards
+- Bioinformatics
+- Version control
+
 
 name: Gabe Mednick
 organizations: 

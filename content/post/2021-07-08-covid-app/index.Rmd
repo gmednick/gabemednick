@@ -8,7 +8,7 @@ tags: []
 subtitle: ''
 summary: 'Covid cases and deaths in the United States'
 authors: []
-lastmod: ''
+lastmod: '2021-07-08'
 featured: no
 image:
   caption: '[COVID-19](covid-image.jpg)'
@@ -252,7 +252,7 @@ ggplotly(county_map,
 
 ```
 
-#### Let's take a closer look at California. 
+#### Let's zoom in on California. 
 
 ```{r}
 ca_map <- plot_usmap(

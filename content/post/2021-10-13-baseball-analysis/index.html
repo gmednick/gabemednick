@@ -173,8 +173,8 @@ glm_fit_resamps %&gt;% collect_metrics() %&gt;%
 <pre><code>## # A tibble: 2 × 3
 ##   .metric     .estimator .estimate
 ##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
-## 1 accuracy    binary         0.953
-## 2 mn_log_loss binary         0.115</code></pre>
+## 1 accuracy    binary         0.952
+## 2 mn_log_loss binary         0.116</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**Logistic regression results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -227,8 +227,8 @@ final_fit %&gt;%
 <pre><code>## # A tibble: 2 × 3
 ##   Metric   Estimator Estimate
 ##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
-## 1 accuracy binary       0.971
-## 2 roc_auc  binary       0.985</code></pre>
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.988</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**Random forrest results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -287,8 +287,8 @@ xg_final_fit %&gt;%
 <pre><code>## # A tibble: 2 × 3
 ##   Metric   Estimator Estimate
 ##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
-## 1 accuracy binary       0.972
-## 2 roc_auc  binary       0.977</code></pre>
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.979</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**XGboost results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -681,31 +681,31 @@ bind_rows(glm_fit_resamps %&gt;%
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9531863</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9520522</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">mn_log_loss</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1147455</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1164299</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9713888</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9744819</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9848934</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9875531</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9715435</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9738633</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9772085</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9787581</td></tr>
   </tbody>
   
   
 </table>
 </div>
-<p>The accuracy turned out to be slightly better for the random forest and xgboost models but there was no standout winner. The models appear to have worked really well. I would still like to compare them to the Sliced leaderboard but, for some reason, the log loss was not computed for the latter two models. One question that I plan to follow up on is whether I should down sample the data. I assume there is an overrepresentation of hits that are not home runs. Although we would lose a lot of data, it could result in a much more accurate model.</p>
+<p>The accuracy turned out to be slightly better for the random forest and xgboost models but there was no standout winner. The models appear to have worked really well..I would like to go beyond the test data and see how they perform. I would also still like to compare them to the Sliced leaderboard but, for some reason, the log loss metric was not computed for the latter two models. One question that I plan to follow up on is whether I should down sample the data. I assume there is an overrepresentation of hits that are not home runs. Although we would lose a lot of data, it could result in a much more accurate model.</p>
 </div>

@@ -10,7 +10,7 @@ tags: []
 subtitle: ''
 summary: Natural language processing using the tidytext and schrute packages
 authors: []
-lastmod: '2021-06-05T11:33:04-08:00'
+lastmod: ''
 featured: no
 image:
   caption: ''
