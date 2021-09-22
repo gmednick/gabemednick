@@ -47,7 +47,7 @@ doParallel::registerDoParallel()
 ```{r}
 #u <- system.file("memes/safe.png", package="meme")
 u <- "memes/safe.png"
-x = meme(u, "Safe!", "Physics vs. The matrix.")
+x = meme(u, "Safe!", "Models be like")
 x
 
 ```
