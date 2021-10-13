@@ -1,0 +1,378 @@
+---
+title: "Exploring the yeast genome with Bioconductor"
+author: "Gabe Mednick"
+date: '2021-10-12'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: Accessing and exploring the yeast genome with packages with key packages from Bioconductor
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: yeast
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+```
+
+```{r}
+# load packages
+library(tidyverse)
+library(ggridges)
+library(BSgenome)
+library(glue)
+library(AnnotationHub)
+library(org.Sc.sgd.db)
+library(plyranges)
+library(GenomicFeatures)
+theme_set(theme_light())
+library(Gviz)
+library(ggbio)
+library(BiocPkgTools)
+```
+
+## Intro
+
+This post provides a friendly introduction to working with packages from the Bioconductor repository and the Tidyverse for bioinformatics. Bioconductor is a repository which contains over 5000 peer reviewed packages for bioinformatics. We can explore the Bioconductor repository using the `BiocPkgTools` package. Here, I visualize the top 30 downloaded packages, the count of packages by category and the number of packages added in each category by year.
+
+```{r}
+#library(BiocPkgTools)
+pkgs <- biocDownloadStats()
+
+pkgs %>% 
+  distinct(Package) %>% 
+  dplyr::count() 
+
+pkgs %>% 
+  group_by(Package) %>% 
+  summarize(tot_downloads = sum(Nb_of_downloads)) %>% 
+  slice_max(n = 30, tot_downloads) %>% 
+  mutate(Package = fct_reorder(Package, tot_downloads)) %>%
+  ggplot(aes(tot_downloads, Package, fill = tot_downloads)) +
+  geom_col() +
+  theme(legend.position = "none") +
+  labs(title = "Most downloaded Bioconductor packages",
+       x = "Total downloads",
+       y = "") 
+
+pkgs %>% firstInBioc() %>% 
+  group_by(repo) %>%
+  dplyr::count() %>% 
+  ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
+  geom_col() +
+  labs(title = "Abundance of Bioconductor packages by category",
+       x = "Package count",
+       y = "")
+ 
+pkgs %>% firstInBioc() %>% 
+  filter(Year >= 2011) %>% 
+  group_by(Date, repo) %>% 
+  add_count() %>% 
+  ggplot(aes(Date, n, color = repo)) +
+  geom_line() +
+  labs(title = "Bioconductor package count over time",
+       x = "Year",
+       y = "Count")
+
+```
+
+## Diving into the yeast genome
+
+It is surprising to see the number of annotation packages that are available. One reason for this is that each available genome is wrapped into it's own package. In this post, we will use at least three different annotation packages for the yeast genome: one to access the full genome (BSgenome.Scerevisiae.UCSC.sacCer3), one to access important ranges (TxDb.Scerevisiae.UCSC.sacCer3.sgdGene) such as genes, transcripts, promoters, etc., and one to access the various annotation sources (org.Sc.sgd.db), such as common names and descriptions for each gene.
+
+We can access the genome of *Saccharomyces cerevisiae* with the `BSgenome.Scerevisiae.UCSC.sacCer3` package. The function, `available.genomes()`, provides a complete list of all available genomes. We will use the yeast reference genome ("sacCer3") from UCSC. Sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package which is automatically installed as a dependency.
+
+```{r}
+library(BSgenome.Scerevisiae.UCSC.sacCer3)
+library(Biostrings)
+# See a complete list of >100 available genomes from UCSC
+available.genomes() %>% head()
+# Access the yeast genome
+yeast <- BSgenome.Scerevisiae.UCSC.sacCer3
+yeast
+
+class(yeast$chrI)
+
+# provides a short description of the object
+seqinfo(yeast)
+
+#The availabe BSgenome accessors are:
+print(.S4methods(class = "BSgenome"))
+
+# chromosome names
+yeast %>% seqnames()
+
+# Select chromosome sequence by name, one or many. And select start, end and or width:
+getSeq(yeast, "chrM", end = 50)
+
+# alternative function to get specific sequence ranges
+subseq(yeast$chrI, 1,100)
+```
+
+## Creating a custom summary function
+
+Let's create a summary function that returns chromosome names, the length of each chromosome and the GC percentage for each.
+
+```{r}
+# Yeast genome summary function: summarize_yeast_genome()
+summarize_yeast_genome <- function() {
+
+# Chromosome names and sequence lengths
+#can also use org.Sc.sgdCHRLENGTHS from package: org.Sc.sgd.db
+print("The length of each chromosome is as follows: ")
+print(seqlengths(yeast))
+
+#calculate GC percentage across chromosomes
+print("We can use bsapply to calculate GC percent across all chromosomes: ")
+param <- new("BSParams", X = Scerevisiae, FUN = letterFrequency)
+#bsapply(param, "GC")
+sum(unlist(bsapply(param, "GC")))/sum(seqlengths(yeast))
+unlist(bsapply(param, "GC", as.prob = TRUE))
+
+}
+
+summarize_yeast_genome()
+```
+
+
+## Extracting the imp3 gene
+
+
+```{r}
+# imp3 yeast gene on chrVIII
+imp3_start <- "ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGTTATTGAAAAAAGTAGA"
+
+imp3_end <- "CTAAGATCAAGAAAACCTTGTTGAGATACAGAAACCAAATCGACGATTTTGATTTTTCATAA"
+
+# count occurrences of imp3_start to ensure there is only one match
+chr8_imp3 <- countPattern(pattern=imp3_start,
+                            subject=yeast[['chrVIII']],
+                            max.mismatch = 2,
+                            min.mismatch = 0)
+
+# Calculate imp3_start and and imp3_end positions
+imp3_start <- matchPattern(pattern=imp3_start,
+             subject=yeast[['chrVIII']],
+             max.mismatch = 2,
+             min.mismatch = 0)
+
+imp3_end <- matchPattern(pattern=imp3_end,
+             subject=yeast[['chrVIII']],
+             max.mismatch = 2,
+             min.mismatch = 0)
+
+# Create a GRanges object with coordinates of imp3
+imp3_range <- GRanges(seqnames="chrVIII",
+                        ranges=IRanges(start=393534,
+                                       end=394085),
+                        strand="+")
+#GRanges("chrVIII", start = 393534, end = 394085)
+
+# Extract imp3 sequence
+Imp3_seq <- getSeq(yeast, names=imp3_range)
+Imp3_seq
+
+imp3_protein <- translate(Imp3_seq)
+imp3_protein
+
+# A blast search confirms its sequence and length:
+#https://www.ncbi.nlm.nih.gov/protein/AJU22745.1?report=genbank&log$=protalign&blast_rank=3&RID=NWXDKM0T01N
+
+# alternative way to get imp3 using a BSgenome ranges and a txdb object (needs work)
+# this will extract all gene sequences
+# extractTranscriptSeqs(yeast,
+#                      transcripts=yeast_genes)
+
+```
+
+
+## Working with TxDb objects
+
+The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts for various organisms. TxDb objects are essentially a database containing information we would store in GTF/GFF files. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
+
+```{r}
+#BiocManager::install("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
+# .S4methods(class = 'GenomicRanges') find available methods
+library(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
+#GenomicFeatures is loaded with the TxDb package 
+
+yeast_genome <- TxDb.Scerevisiae.UCSC.sacCer3.sgdGene
+seqlevels(yeast_genome)
+
+yeast_genes <- genes(yeast_genome) 
+
+# This is my first attempt at using ggbio 
+autoplot(yeast_genes, layout = 'karyogram', color = 'lightblue', coverage.col = "gray50") + 
+  labs(title = "Karyogram layout displaying gene distribution") 
+
+# Let's extract all transcript sequences
+yeastGeneSeqs <- getSeq(yeast, names=yeast_genes)
+yeastGeneSeqs
+
+# We can then create a fasta file if desired
+# writeXStringSet(yeastGeneSeqs,"yeastGeneSeqs.fa")
+```
+
+# Incorporating ggplot2
+
+In order to use ggplot2, we need to extract a GRanges object from the TxDb object and then convert it into a tibble. 
+
+```{r}
+yeast_genes_df <- yeast_genes %>%
+  as_tibble()
+
+tot_yeast_genes <- yeast_genes_df %>%
+  summarize(n=n())
+
+# plotting gene count by chromosome
+yeast_genes_df %>%
+  group_by(seqnames) %>%
+  add_count(seqnames) %>%
+  mutate(chromosome_gene = glue("{seqnames} ({n} genes)")) %>%
+  group_by(chromosome_gene) %>%
+  ggplot(aes(n, fct_reorder(chromosome_gene, n), fill = n)) +
+  geom_col() +
+  theme(legend.position = 'none') +
+  labs(title = expression(paste("Gene count by chromosome for ", italic("S. cerevisiae"))),
+       subtitle = "Total genes = 6534",
+       x = 'Gene count',
+       y = "")
+```
+
+Since we also have data on gene widths, we can plot the average gene width for each chromosome. In the first example, I use `geom_density()` and `facet_wrap()` but I prefer the second method of comparison using `geom_density_ridges()` from the `GGridges` package.
+
+```{r}
+yeast_genes_df %>%
+  group_by(seqnames) %>%
+  mutate(avg_width = mean(width)) %>%
+  add_count(seqnames) %>%
+  ggplot(aes(width, fill = avg_width)) +
+  geom_density() +
+  facet_wrap(~seqnames, scales = "free_y") +
+  scale_fill_viridis_c(alpha = 0.8) +
+  labs(title = 'Distribution of gene width for each chromsome',
+      x="Gene width density (log)",
+      y = "",
+      fill = "Avg width") +
+  scale_x_log10()
+
+
+yeast_genes_df %>%
+  group_by(seqnames) %>%
+  mutate(avg_width = mean(width)) %>%
+  add_count(seqnames) %>%
+  ggplot(aes(width, seqnames, fill = avg_width), group = seqnames) +
+  geom_density_ridges() +
+  scale_fill_viridis_c(alpha = 0.8) +
+  labs(title = 'Density distribution of gene length by chromsome',
+      x="Gene length",
+      y = "") +
+  theme(legend.position = "none")
+```
+
+## Annotation
+
+We can annotate our GRanges object using the `org.Sc.sgd.db` package which includes various annotation sources such as GEO and ENCODE. Here, I'm going to add the common name and description for each gene. We will then use the `tidytext` package to explore the most common words associated with each chromosome.
+
+```{r}
+#columns(org.Sc.sgd.db::org.Sc.sgd.db) to look at annotation options
+# that can be provided to the column argument
+yeast_genes_df <- yeast_genes_df %>% 
+  mutate(common_name = AnnotationDbi::mapIds(org.Sc.sgd.db::org.Sc.sgd.db,
+                                        keys = gene_id,
+                                        keytype = "ENSEMBL",
+                                        column = "COMMON",
+                                        multiVals = "first")) %>% 
+  mutate(description = AnnotationDbi::mapIds(org.Sc.sgd.db::org.Sc.sgd.db,
+                                        keys = gene_id,
+                                        keytype = "ENSEMBL",
+                                        column = "DESCRIPTION",
+                                        multiVals = "first"))
+
+yeast_genes_df %>% filter(common_name == "IMP3")
+```
+
+Let's use this information to isolate genes that include the word 'kinase' in their descriptions. 
+
+```{r}
+#Let's use the description annotation to sort kinases and display them using the karyogram layout
+kinase_karyogram <- yeast_genes_df %>% 
+  drop_na() %>% 
+  filter(grepl("kinase", description)) %>% 
+  as_granges() 
+  
+kinase_karyogram %>% 
+  autoplot(layout = "karyogram", color = 'darkblue') + 
+  labs(title = "Distribution of kinases in the yeast genome")
+```
+
+We can also use the gene descriptions to find the most frequent words associated with each chromosome. We will use the `Tidytext` package to facilitate this analysis. 
+
+```{r}
+library(tidytext)
+yeast_genes_df %>% 
+  drop_na() %>% 
+  unnest_tokens('word', 'description') %>% 
+  anti_join(stop_words, by = 'word') %>% 
+  count(seqnames, word, sort=T) %>% 
+  group_by(seqnames) %>% 
+  slice_max(n, n=6) %>%
+  ungroup() %>% 
+  mutate(word = reorder_within(word, n, seqnames)) %>% 
+  ggplot(aes(n, word, fill = seqnames)) +
+  geom_col() +
+  facet_wrap(~seqnames, scales = "free") +
+  scale_y_reordered() +
+  labs(
+    x = "Word frequency", y = NULL,
+    title = "Top words from gene description annotation by chromosome"
+  ) + 
+  theme(legend.position = "none")
+```
+
+A more interesting selection of words can be found by selecting the unique words associated with each chromosome. We can do this by using the TF-IDF algorithm.   
+
+```{r}
+common_words <- c("protein","involved", "required", "complex", "subunit", "involved", "dna")
+tfidf <- yeast_genes_df %>% 
+  drop_na() %>% 
+  unnest_tokens('word', 'description') %>% 
+  filter(!word %in% common_words) %>% 
+  anti_join(stop_words, by = 'word') %>% 
+  dplyr::count(seqnames, word, sort=T) %>% 
+  group_by(seqnames) %>% 
+  slice_max(n, n=6)
+
+tfidf %>% 
+  bind_tf_idf(word, seqnames, n) %>% 
+  group_by(seqnames) %>% 
+  slice_max(tf_idf, n=12) %>%
+  ungroup() %>% 
+  mutate(word = reorder_within(word, tf_idf, seqnames)) %>% 
+  ggplot(aes(tf_idf, word, fill = seqnames)) +
+  geom_col() +
+  facet_wrap(~seqnames, scales = "free") +
+  scale_y_reordered() +
+  labs(
+    x = "Word frequency", y = NULL,
+    title = "TF_IDF algorithm"
+  ) + 
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "TF-IDF of chromosome-word pairs")
+
+```
+
+
+## Outro
+
+We looked at several Bioconductor packages for accessing genomic reference data. We also used several complementary packages for data manipulation, including `Biostrings`, `GRanges`, `GenomicFeatures` and `ggbio`. In a follow up post, I plan to explore the `Gviz` package which can be used to create custom data track visualizations.

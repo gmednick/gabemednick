@@ -39,7 +39,7 @@ library(gt)
 doParallel::registerDoParallel()</code></pre>
 <pre class="r"><code>#u &lt;- system.file(&quot;memes/safe.png&quot;, package=&quot;meme&quot;)
 u &lt;- &quot;memes/safe.png&quot;
-x = meme(u, &quot;Safe!&quot;, &quot;Physics vs. The matrix.&quot;)
+x = meme(u, &quot;Safe!&quot;, &quot;Models be like&quot;)
 x</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>baseball &lt;- read_csv(&#39;train.csv&#39;)</code></pre>
@@ -173,8 +173,8 @@ glm_fit_resamps %&gt;% collect_metrics() %&gt;%
 <pre><code>## # A tibble: 2 × 3
 ##   .metric     .estimator .estimate
 ##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
-## 1 accuracy    binary         0.952
-## 2 mn_log_loss binary         0.116</code></pre>
+## 1 accuracy    binary         0.951
+## 2 mn_log_loss binary         0.119</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**Logistic regression results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -228,7 +228,7 @@ final_fit %&gt;%
 ##   Metric   Estimator Estimate
 ##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
 ## 1 accuracy binary       0.974
-## 2 roc_auc  binary       0.988</code></pre>
+## 2 roc_auc  binary       0.980</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**Random forrest results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -288,7 +288,7 @@ xg_final_fit %&gt;%
 ##   Metric   Estimator Estimate
 ##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
 ## 1 accuracy binary       0.974
-## 2 roc_auc  binary       0.979</code></pre>
+## 2 roc_auc  binary       0.971</code></pre>
 <pre class="r"><code>  # gt() %&gt;%
   # tab_header(title = md(&quot;**XGboost results**&quot;))  %&gt;%
   # tab_options(container.height = 400,
@@ -681,27 +681,27 @@ bind_rows(glm_fit_resamps %&gt;%
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9520522</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9510207</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">mn_log_loss</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1164299</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1187313</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9744819</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9740179</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9875531</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9803071</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9738633</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9737086</td></tr>
     <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
 <td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
-<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9787581</td></tr>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9709157</td></tr>
   </tbody>
   
   
