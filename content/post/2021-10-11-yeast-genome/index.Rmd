@@ -27,9 +27,11 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```{r}
 # load packages
 library(tidyverse)
+library(patchwork)
 library(ggridges)
 library(BSgenome)
 library(glue)
+library(GenomicRanges)
 library(AnnotationHub)
 library(org.Sc.sgd.db)
 library(plyranges)
@@ -38,11 +40,15 @@ theme_set(theme_light())
 library(Gviz)
 library(ggbio)
 library(BiocPkgTools)
+library(biocViews)
 ```
 
 ## Intro
 
-This post provides a friendly introduction to working with packages from the Bioconductor repository and the Tidyverse for bioinformatics. Bioconductor is a repository which contains over 5000 peer reviewed packages for bioinformatics. We can explore the Bioconductor repository using the `BiocPkgTools` package. Here, I visualize the top 30 downloaded packages, the count of packages by category and the number of packages added in each category by year.
+This post provides a friendly introduction to working with packages from the Bioconductor repository for computational biology. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the `BiocPkgTools` package. Here, I visualize the top 30 downloaded packages, the count of packages by category and the number of packages added in each category by year.
+
+
+There are over 2500 annotation packages and slightly less in the software category. Let's see what the top packages are.
 
 ```{r}
 #library(BiocPkgTools)
@@ -52,7 +58,17 @@ pkgs %>%
   distinct(Package) %>% 
   dplyr::count() 
 
-pkgs %>% 
+package_category <- pkgs %>% firstInBioc() %>% 
+  group_by(repo) %>%
+  dplyr::count() %>% 
+  ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
+  geom_col() +
+  labs(title = "Bioconductor packages by category",
+       x = "Package count",
+       y = "",
+       color = "Category")
+
+top_downloads <- pkgs %>% 
   group_by(Package) %>% 
   summarize(tot_downloads = sum(Nb_of_downloads)) %>% 
   slice_max(n = 30, tot_downloads) %>% 
@@ -60,40 +76,70 @@ pkgs %>%
   ggplot(aes(tot_downloads, Package, fill = tot_downloads)) +
   geom_col() +
   theme(legend.position = "none") +
-  labs(title = "Most downloaded Bioconductor packages",
+  labs(title = "Most downloaded",
        x = "Total downloads",
-       y = "") 
+       y = "") +
+  scale_x_continuous(labels = scales::scientific) +
+  theme(axis.text.x = element_text(angle = 45, hjust = +1))
 
-pkgs %>% firstInBioc() %>% 
-  group_by(repo) %>%
-  dplyr::count() %>% 
-  ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
+
+package_category | top_downloads
+```
+
+Let's also look at the top 8 most downloaded packages in each category.
+
+```{r}
+library(tidytext)
+
+pkgs %>%
+  group_by(repo, Package) %>% 
+  summarize(tot_downloads = sum(Nb_of_downloads)) %>% 
+  ungroup() %>% 
+  group_by(repo) %>% 
+  slice_max(tot_downloads, n = 8) %>% 
+  mutate(repo = as.factor(repo),
+         Package = reorder_within(Package, tot_downloads, repo)) %>%
+  ggplot(aes(tot_downloads, Package, fill = repo)) +
   geom_col() +
-  labs(title = "Abundance of Bioconductor packages by category",
-       x = "Package count",
+  facet_wrap(~repo, scales = 'free', ncol = 1) +
+  scale_y_reordered() +
+  theme(legend.position = "none") +
+  labs(title = "Most downloaded Bioconductor packages by category",
+       x = "Total downloads",
        y = "")
- 
-pkgs %>% firstInBioc() %>% 
-  filter(Year >= 2011) %>% 
+
+```
+
+Let's also look at how the categories have grown over time.
+
+```{r}
+pkgs %>%  firstInBioc() %>% 
   group_by(Date, repo) %>% 
-  add_count() %>% 
-  ggplot(aes(Date, n, color = repo)) +
+  count() %>% 
+  ungroup() %>% 
+  group_by(repo) %>% 
+  mutate(tot_packages = cumsum(n)) %>% 
+  ggplot(aes(Date, tot_packages, color = repo)) +
   geom_line() +
   labs(title = "Bioconductor package count over time",
        x = "Year",
-       y = "Count")
+       y = "Count",
+       color = "Category")
 
 ```
 
 ## Diving into the yeast genome
 
-It is surprising to see the number of annotation packages that are available. One reason for this is that each available genome is wrapped into it's own package. In this post, we will use at least three different annotation packages for the yeast genome: one to access the full genome (BSgenome.Scerevisiae.UCSC.sacCer3), one to access important ranges (TxDb.Scerevisiae.UCSC.sacCer3.sgdGene) such as genes, transcripts, promoters, etc., and one to access the various annotation sources (org.Sc.sgd.db), such as common names and descriptions for each gene.
+In this post, we will use several packages that allow the researcher to access and manipulate genomic data in R.  We will use `BSgenome.Scerevisiae.UCSC.sacCer3` to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and various annotation sources available in `org.Sc.sgd.db`. 
 
-We can access the genome of *Saccharomyces cerevisiae* with the `BSgenome.Scerevisiae.UCSC.sacCer3` package. The function, `available.genomes()`, provides a complete list of all available genomes. We will use the yeast reference genome ("sacCer3") from UCSC. Sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package which is automatically installed as a dependency.
+These package are available for other model organisms as well. For instance, the function, `available.genomes()`, provides a complete list of all available BSgenome database objects. The sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package.
+
+Let's take a look inside our BSgenome object for yeast. 
 
 ```{r}
 library(BSgenome.Scerevisiae.UCSC.sacCer3)
 library(Biostrings)
+
 # See a complete list of >100 available genomes from UCSC
 available.genomes() %>% head()
 # Access the yeast genome
@@ -110,7 +156,11 @@ print(.S4methods(class = "BSgenome"))
 
 # chromosome names
 yeast %>% seqnames()
+```
 
+It's worth noting that the BSgenome object points to our genome object but does not download data for speed. There are several function that can be used to access the gene sequence when we want it.
+
+```{r}
 # Select chromosome sequence by name, one or many. And select start, end and or width:
 getSeq(yeast, "chrM", end = 50)
 
@@ -118,7 +168,7 @@ getSeq(yeast, "chrM", end = 50)
 subseq(yeast$chrI, 1,100)
 ```
 
-## Creating a custom summary function
+## Create a custom summary function
 
 Let's create a summary function that returns chromosome names, the length of each chromosome and the GC percentage for each.
 
@@ -146,6 +196,7 @@ summarize_yeast_genome()
 
 ## Extracting the imp3 gene
 
+After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, I will need to find the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (found online) and use the `matchPattern()` function to find the start and end of the sequence. I also use `countPattern()` to make sure that the sequence is only found once in the genome. Finally, I create a custom GRanges object and `getSeq()` to retrieve the sequence. I can then use `translate()` to pull the amino acid sequence. 
 
 ```{r}
 # imp3 yeast gene on chrVIII
@@ -210,7 +261,7 @@ seqlevels(yeast_genome)
 
 yeast_genes <- genes(yeast_genome) 
 
-# This is my first attempt at using ggbio 
+# ggbio 
 autoplot(yeast_genes, layout = 'karyogram', color = 'lightblue', coverage.col = "gray50") + 
   labs(title = "Karyogram layout displaying gene distribution") 
 
@@ -248,22 +299,23 @@ yeast_genes_df %>%
        y = "")
 ```
 
-Since we also have data on gene widths, we can plot the average gene width for each chromosome. In the first example, I use `geom_density()` and `facet_wrap()` but I prefer the second method of comparison using `geom_density_ridges()` from the `GGridges` package.
+Since we also have data on gene widths, we can plot the count density of gene width. The aesthetic, `geom_density_ridges()` from the `GGridges` package provides a nice way to visualize gene width across chromosomes.
 
 ```{r}
-yeast_genes_df %>%
-  group_by(seqnames) %>%
-  mutate(avg_width = mean(width)) %>%
-  add_count(seqnames) %>%
-  ggplot(aes(width, fill = avg_width)) +
-  geom_density() +
-  facet_wrap(~seqnames, scales = "free_y") +
-  scale_fill_viridis_c(alpha = 0.8) +
-  labs(title = 'Distribution of gene width for each chromsome',
-      x="Gene width density (log)",
-      y = "",
-      fill = "Avg width") +
-  scale_x_log10()
+# I prefer the geom_density_ridges for viewing gene widths across chromosomes
+# yeast_genes_df %>%
+#   group_by(seqnames) %>%
+#   mutate(avg_width = mean(width)) %>%
+#   add_count(seqnames) %>%
+#   ggplot(aes(width, fill = avg_width)) +
+#   geom_density() +
+#   facet_wrap(~seqnames, scales = "free_y") +
+#   scale_fill_viridis_c(alpha = 0.8) +
+#   labs(title = 'Distribution of gene width for each chromsome',
+#       x="Gene width density (log)",
+#       y = "",
+#       fill = "Avg width") +
+#   scale_x_log10()
 
 
 yeast_genes_df %>%
@@ -375,4 +427,4 @@ tfidf %>%
 
 ## Outro
 
-We looked at several Bioconductor packages for accessing genomic reference data. We also used several complementary packages for data manipulation, including `Biostrings`, `GRanges`, `GenomicFeatures` and `ggbio`. In a follow up post, I plan to explore the `Gviz` package which can be used to create custom data track visualizations.
+We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several complementary packages for data manipulation, including `Biostrings`, `GenomicRanges`, `GenomicFeatures` and `ggbio`. In a follow up post, I plan to explore the `Gviz` package which can be used to create custom data track visualizations.
