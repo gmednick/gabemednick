@@ -107,7 +107,7 @@ pkgs %>%
   labs(title = "Most downloaded Bioconductor packages by category",
        x = "Total downloads",
        y = "") +
-  theme(plot.title = element_text(hjust = -4))
+  theme(plot.title = element_text(hjust = -3))
 
 ```
 
@@ -427,4 +427,4 @@ tfidf %>%
 
 ## Outro
 
-We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several essential packages for data manipulation, including `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`. In a follow up post, I plan to explore yeast genome further with data from the `yeastExpData` package and the `yeastNagalakshmi` package. 
+We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`, we also saw how we can incorporate the `Tidyverse` into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the `yeastExpData` and `yeastNagalakshmi` packages. 

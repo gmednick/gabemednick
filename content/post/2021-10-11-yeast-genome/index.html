@@ -100,7 +100,7 @@ pkgs %&gt;%
   labs(title = &quot;Most downloaded Bioconductor packages by category&quot;,
        x = &quot;Total downloads&quot;,
        y = &quot;&quot;) +
-  theme(plot.title = element_text(hjust = -4))</code></pre>
+  theme(plot.title = element_text(hjust = -3))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
 <pre class="r"><code>pkgs %&gt;%  firstInBioc() %&gt;% 
@@ -454,6 +454,6 @@ tfidf %&gt;%
 </div>
 <div id="outro" class="section level2">
 <h2>Outro</h2>
-<p>We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several essential packages for data manipulation, including <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>. In a follow up post, I plan to explore yeast genome further with data from the <code>yeastExpData</code> package and the <code>yeastNagalakshmi</code> package.</p>
+<p>We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>, we also saw how we can incorporate the <code>Tidyverse</code> into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the <code>yeastExpData</code> and <code>yeastNagalakshmi</code> packages.</p>
 </div>
 </div>
