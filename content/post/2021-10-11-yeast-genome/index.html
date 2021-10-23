@@ -120,20 +120,21 @@ pkgs %&gt;%
 <div id="diving-into-the-yeast-genome" class="section level2">
 <h2>Diving into the yeast genome</h2>
 <p>In this post, we will use several packages that allow the bioinformatician to access and manipulate genomic data in R. We will use <code>BSgenome.Scerevisiae.UCSC.sacCer3</code> to access yeast sequence data, <code>TxDb.Scerevisiae.UCSC.sacCer3.sgdGene</code> to access genetic ranges such as genes, transcripts, promoters, and use various annotation sources available in the <code>org.Sc.sgd.db</code> package.</p>
-<p>Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance to access sequence for the human genome, we load the <code>BSgenome.Hsapiens.UCSC.hg19</code> package. The function, <code>available.genomes()</code>, provides a complete list of available BSgenome database objects. Sequences derived from BSgenome objects are of the <code>DNAString</code> class and can be modified with functions from the <code>Biostrings</code> package.</p>
-<p>Let’s take a look inside the yeast BSgenome object.</p>
-<pre class="r"><code>library(BSgenome.Scerevisiae.UCSC.sacCer3)
-library(Biostrings)
-
-# See a complete list of &gt;100 available genomes from UCSC
-available.genomes() %&gt;% head()</code></pre>
+<p>Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance to access sequence for the human genome, we load the <code>BSgenome.Hsapiens.UCSC.hg19</code> package. The function, <code>available.genomes()</code>, provides a complete list of available BSgenome database objects.</p>
+<pre class="r"><code># The complete list includes &gt;100 genomes from UCSC
+available.genomes() %&gt;% 
+  head()</code></pre>
 <pre><code>## [1] &quot;BSgenome.Alyrata.JGI.v1&quot;                
 ## [2] &quot;BSgenome.Amellifera.BeeBase.assembly4&quot;  
 ## [3] &quot;BSgenome.Amellifera.NCBI.AmelHAv3.1&quot;    
 ## [4] &quot;BSgenome.Amellifera.UCSC.apiMel2&quot;       
 ## [5] &quot;BSgenome.Amellifera.UCSC.apiMel2.masked&quot;
 ## [6] &quot;BSgenome.Aofficinalis.NCBI.V1&quot;</code></pre>
-<pre class="r"><code># Access the yeast genome
+<p>Now let’s take a look inside the yeast BSgenome object.</p>
+<pre class="r"><code>library(BSgenome.Scerevisiae.UCSC.sacCer3)
+library(Biostrings)
+
+# Access the yeast genome
 yeast &lt;- BSgenome.Scerevisiae.UCSC.sacCer3
 yeast</code></pre>
 <pre><code>## Yeast genome:
@@ -146,6 +147,21 @@ yeast</code></pre>
 ## #   chrX    chrXI   chrXII  chrXIII chrXIV  chrXV   chrXVI  chrM           
 ## # (use &#39;seqnames()&#39; to see all the sequence names, use the &#39;$&#39; or &#39;[[&#39; operator
 ## # to access a given sequence)</code></pre>
+<p>We can see a list of the available acessor functions from the following.</p>
+<pre class="r"><code>#The available BSgenome accessors are:
+print(.S4methods(class = &quot;BSgenome&quot;))</code></pre>
+<pre><code>##  [1] $               coerce          show            [[             
+##  [5] autoplot        length          names           as.list        
+##  [9] seqinfo         seqnames        organism        metadata       
+## [13] commonName      countPWM        export          extractAt      
+## [17] getSeq          injectSNPs      masknames       matchPWM       
+## [21] mseqnames       provider        providerVersion releaseDate    
+## [25] releaseName     seqinfo&lt;-       seqnames&lt;-      snpcount       
+## [29] SNPlocs_pkgname snplocs         sourceUrl       vcountPattern  
+## [33] Views           vmatchPattern   vcountPDict     vmatchPDict    
+## [37] bsgenomeName    metadata&lt;-     
+## see &#39;?methods&#39; for accessing help and source code</code></pre>
+<p>Sequences derived from BSgenome objects are of the <code>DNAString</code> class and can be modified with functions from the <code>Biostrings</code> package.</p>
 <pre class="r"><code>class(yeast$chrI)</code></pre>
 <pre><code>## [1] &quot;DNAString&quot;
 ## attr(,&quot;package&quot;)
@@ -165,21 +181,9 @@ seqinfo(yeast)</code></pre>
 ##   chrXV       1091291      FALSE sacCer3
 ##   chrXVI       948066      FALSE sacCer3
 ##   chrM          85779       TRUE sacCer3</code></pre>
-<pre class="r"><code>#The availabe BSgenome accessors are:
-print(.S4methods(class = &quot;BSgenome&quot;))</code></pre>
-<pre><code>##  [1] $               coerce          show            [[             
-##  [5] autoplot        length          names           as.list        
-##  [9] seqinfo         seqnames        organism        metadata       
-## [13] commonName      countPWM        export          extractAt      
-## [17] getSeq          injectSNPs      masknames       matchPWM       
-## [21] mseqnames       provider        providerVersion releaseDate    
-## [25] releaseName     seqinfo&lt;-       seqnames&lt;-      snpcount       
-## [29] SNPlocs_pkgname snplocs         sourceUrl       vcountPattern  
-## [33] Views           vmatchPattern   vcountPDict     vmatchPDict    
-## [37] bsgenomeName    metadata&lt;-     
-## see &#39;?methods&#39; for accessing help and source code</code></pre>
 <pre class="r"><code># chromosome names
-yeast %&gt;% seqnames()</code></pre>
+yeast %&gt;% 
+  seqnames()</code></pre>
 <pre><code>##  [1] &quot;chrI&quot;    &quot;chrII&quot;   &quot;chrIII&quot;  &quot;chrIV&quot;   &quot;chrV&quot;    &quot;chrVI&quot;   &quot;chrVII&quot; 
 ##  [8] &quot;chrVIII&quot; &quot;chrIX&quot;   &quot;chrX&quot;    &quot;chrXI&quot;   &quot;chrXII&quot;  &quot;chrXIII&quot; &quot;chrXIV&quot; 
 ## [15] &quot;chrXV&quot;   &quot;chrXVI&quot;  &quot;chrM&quot;</code></pre>
@@ -229,19 +233,20 @@ summarize_yeast_genome()</code></pre>
 </div>
 <div id="extracting-the-imp3-gene" class="section level2">
 <h2>Extracting the imp3 gene</h2>
-<p>After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (<a href="https://www.yeastgenome.org/locus/S000001191/sequence" class="uri">https://www.yeastgenome.org/locus/S000001191/sequence</a>) and use the <code>matchPattern()</code> function from <code>Biostrings</code> to find the start and end of the sequence. I also use <code>countPattern()</code> to make sure that the sequence is found only once in the genome. After creating a GRanges object we can get the gene sequence with <code>getSeq()</code> and the amino acid sequence with <code>translate()</code>.</p>
+<p>After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence found <a href="https://www.yeastgenome.org/locus/S000001191/sequence">here</a>.</p>
 <pre class="r"><code># imp3 yeast gene on chrVIII
 imp3_start &lt;- &quot;ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGTTATTGAAAAAAGTAGA&quot;
 
 imp3_end &lt;- &quot;CTAAGATCAAGAAAACCTTGTTGAGATACAGAAACCAAATCGACGATTTTGATTTTTCATAA&quot;
 
 # count occurrences of imp3_start to ensure there is only one match
-chr8_imp3 &lt;- countPattern(pattern=imp3_start,
+countPattern(pattern=imp3_start,
                             subject=yeast[[&#39;chrVIII&#39;]],
                             max.mismatch = 2,
-                            min.mismatch = 0)
-
-# Calculate imp3_start and and imp3_end positions
+                            min.mismatch = 0)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>The <code>countPattern()</code> function can be used to make sure that the sequence is found only once in the genome. The <code>matchPattern()</code> function, also from <code>Biostrings</code>, can be used to find the genomic coordinates.</p>
+<pre class="r"><code># Calculate imp3_start and and imp3_end positions
 imp3_start &lt;- matchPattern(pattern=imp3_start,
              subject=yeast[[&#39;chrVIII&#39;]],
              max.mismatch = 2,
@@ -257,9 +262,9 @@ imp3_range &lt;- GRanges(seqnames=&quot;chrVIII&quot;,
                         ranges=IRanges(start=393534,
                                        end=394085),
                         strand=&quot;+&quot;)
-#GRanges(&quot;chrVIII&quot;, start = 393534, end = 394085)
-
-# Extract imp3 sequence
+#GRanges(&quot;chrVIII&quot;, start = 393534, end = 394085)</code></pre>
+<p>After creating a GRanges object we can get the gene sequence with <code>getSeq()</code> and the amino acid sequence using <code>translate()</code>.</p>
+<pre class="r"><code># Extract imp3 sequence
 Imp3_seq &lt;- getSeq(yeast, names=imp3_range)
 Imp3_seq</code></pre>
 <pre><code>## DNAStringSet object of length 1:
@@ -280,7 +285,7 @@ imp3_protein</code></pre>
 </div>
 <div id="working-with-txdb-objects" class="section level2">
 <h2>Working with TxDb objects</h2>
-<p>The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts. Model organisms TxDb objects are often pre-packaged but you can also make you own TxDb object since it is essentially a database object containing information we would normally store in GTF/GFF files. The functions to work with TxDb objects are mostly from the <code>GenomicFeatures</code> package. When we use a function such as <code>gene()</code>, the function will return a GRanges object with the gene coordinates for each chromosome. The function <code>.S4methods(class = 'GenomicRanges')</code> provides a summary list of available methods to work with the GRanges object.</p>
+<p>The TxDb package provides a an efficient data container for extracting promoters, genes, exons and transcripts. There are TxDb packages for many model organisms but you can also create custom TxDb objects as well. The functions to work with TxDb objects are mostly from the <code>GenomicFeatures</code> package. When we use a function such as <code>gene()</code>, the function will return a GRanges object with the gene coordinates for each chromosome. The function <code>.S4methods(class = 'GenomicRanges')</code> provides a summary list of available methods to work with the GRanges object.</p>
 <pre class="r"><code>#BiocManager::install(&quot;TxDb.Scerevisiae.UCSC.sacCer3.sgdGene&quot;)
 # .S4methods(class = &#39;GenomicRanges&#39;) find available methods
 library(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
@@ -296,7 +301,7 @@ seqlevels(yeast_genome)</code></pre>
 # ggbio 
 autoplot(yeast_genes, layout = &#39;karyogram&#39;, color = &#39;lightblue&#39;, coverage.col = &quot;gray50&quot;) + 
   labs(title = &quot;Karyogram layout displaying gene distribution&quot;) </code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <pre class="r"><code># Let&#39;s extract all transcript sequences
 yeastGeneSeqs &lt;- getSeq(yeast, names=yeast_genes)
 yeastGeneSeqs</code></pre>
@@ -338,7 +343,7 @@ yeast_genes_df %&gt;%
        subtitle = &quot;Total genes = 6534&quot;,
        x = &#39;Gene count&#39;,
        y = &quot;&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Since we also have data on gene widths, we can plot the count density of gene width. The aesthetic, <code>geom_density_ridges()</code> from the <code>GGridges</code> package provides a nice way to visualize gene width across chromosomes.</p>
 <pre class="r"><code># I prefer the geom_density_ridges for viewing gene widths across chromosomes
 # yeast_genes_df %&gt;%
@@ -367,7 +372,7 @@ yeast_genes_df %&gt;%
       x=&quot;Gene length&quot;,
       y = &quot;&quot;) +
   theme(legend.position = &quot;none&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <div id="annotation" class="section level2">
 <h2>Annotation</h2>
 <p>We can annotate our GRanges object using the <code>org.Sc.sgd.db</code> package which includes various annotation sources such as GEO and ENCODE. Here, I’m going to add the common name and description for each gene. We will then use the <code>tidytext</code> package to explore the most common words associated with each chromosome.</p>
@@ -400,7 +405,7 @@ kinase_karyogram &lt;- yeast_genes_df %&gt;%
 kinase_karyogram %&gt;% 
   autoplot(layout = &quot;karyogram&quot;, color = &#39;darkblue&#39;) + 
   labs(title = &quot;Distribution of kinases in the yeast genome&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>We can also use the gene descriptions to find the most frequent words associated with each chromosome. We will use the <code>Tidytext</code> package to facilitate this analysis.</p>
 <pre class="r"><code>library(tidytext)
 yeast_genes_df %&gt;% 
@@ -421,7 +426,7 @@ yeast_genes_df %&gt;%
     title = &quot;Top words from gene description annotation by chromosome&quot;
   ) + 
   theme(legend.position = &quot;none&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>A more interesting selection of words can be found by selecting the unique words associated with each chromosome. We can do this by using the TF-IDF algorithm.</p>
 <pre class="r"><code>common_words &lt;- c(&quot;protein&quot;,&quot;involved&quot;, &quot;required&quot;, &quot;complex&quot;, &quot;subunit&quot;, &quot;involved&quot;, &quot;dna&quot;)
 tfidf &lt;- yeast_genes_df %&gt;% 
@@ -450,7 +455,7 @@ tfidf %&gt;%
   theme(legend.position = &quot;none&quot;) +
   labs(x = &quot;&quot;,
        y = &quot;TF-IDF of chromosome-word pairs&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>

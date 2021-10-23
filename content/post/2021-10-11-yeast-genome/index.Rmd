@@ -86,7 +86,7 @@ top_downloads <- pkgs %>%
 package_category | top_downloads
 ```
 
-We can all visualize the most popular packages in each category. 
+We can use the following incantation to visualize the most popular packages in each category. 
 
 ```{r}
 library(tidytext)
@@ -133,30 +133,41 @@ pkgs %>%  firstInBioc() %>%
 
 In this post, we will use several packages that allow the bioinformatician to access and manipulate genomic data in R.  We will use `BSgenome.Scerevisiae.UCSC.sacCer3` to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and use various annotation sources available in the `org.Sc.sgd.db` package. 
 
-Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance to access sequence for the human genome, we load the `BSgenome.Hsapiens.UCSC.hg19` package. The function, `available.genomes()`, provides a complete list of available BSgenome database objects. Sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package.
+Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance, we can load the `BSgenome.Hsapiens.UCSC.hg19` package to access the human genome. The function, `available.genomes()`, provides a complete list of the available BSgenome objects. 
 
-Let's take a look inside the yeast BSgenome object. 
+```{r}
+# The complete list includes >100 genomes from UCSC
+available.genomes() %>% 
+  head()
+```
 
+Next let's take a look inside the yeast BSgenome object. 
 ```{r}
 library(BSgenome.Scerevisiae.UCSC.sacCer3)
 library(Biostrings)
 
-# See a complete list of >100 available genomes from UCSC
-available.genomes() %>% head()
 # Access the yeast genome
 yeast <- BSgenome.Scerevisiae.UCSC.sacCer3
 yeast
 
+```
+
+We can generate a list of the available acessor functions.
+```{r}
+#The available BSgenome accessors are:
+.S4methods(class = "BSgenome")
+```
+
+Sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package.
+```{r}
 class(yeast$chrI)
 
 # provides a short description of the object
 seqinfo(yeast)
 
-#The availabe BSgenome accessors are:
-print(.S4methods(class = "BSgenome"))
-
 # chromosome names
-yeast %>% seqnames()
+yeast %>% 
+  seqnames()
 ```
 
 The BSgenome object points to our genome object but does not import data into memory unless we ask for it. Let's take a look at a couple of the functions for importing our sequence data.
@@ -194,10 +205,10 @@ unlist(bsapply(param, "GC", as.prob = TRUE))
 summarize_yeast_genome()
 ```
 
-
 ## Extracting the imp3 gene
 
-After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (https://www.yeastgenome.org/locus/S000001191/sequence) and use the `matchPattern()` function from `Biostrings` to find the start and end of the sequence. I also use `countPattern()` to make sure that the sequence is found only once in the genome. After creating a GRanges object we can get the gene sequence with `getSeq()` and the amino acid sequence with `translate()`. 
+After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence found [here](https://www.yeastgenome.org/locus/S000001191/sequence).  
+
 
 ```{r}
 # imp3 yeast gene on chrVIII
@@ -206,11 +217,14 @@ imp3_start <- "ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGTTATTGAAAAAAGTAGA"
 imp3_end <- "CTAAGATCAAGAAAACCTTGTTGAGATACAGAAACCAAATCGACGATTTTGATTTTTCATAA"
 
 # count occurrences of imp3_start to ensure there is only one match
-chr8_imp3 <- countPattern(pattern=imp3_start,
+countPattern(pattern=imp3_start,
                             subject=yeast[['chrVIII']],
                             max.mismatch = 2,
                             min.mismatch = 0)
+```
 
+The `countPattern()` function can be used to make sure that the sequence is found only once in the genome. The `matchPattern()` function, also from `Biostrings`, can be used to find the genomic coordinates.
+```{r}
 # Calculate imp3_start and and imp3_end positions
 imp3_start <- matchPattern(pattern=imp3_start,
              subject=yeast[['chrVIII']],
@@ -228,10 +242,14 @@ imp3_range <- GRanges(seqnames="chrVIII",
                                        end=394085),
                         strand="+")
 #GRanges("chrVIII", start = 393534, end = 394085)
+```
 
+After creating a GRanges object we can get the gene sequence with `getSeq()` and the amino acid sequence using `translate()`.
+```{r}
 # Extract imp3 sequence
 Imp3_seq <- getSeq(yeast, names=imp3_range)
 Imp3_seq
+
 
 imp3_protein <- translate(Imp3_seq)
 imp3_protein
@@ -248,7 +266,7 @@ imp3_protein
 
 ## Working with TxDb objects
 
-The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts. Model organisms TxDb objects are often pre-packaged but you can also make you own TxDb object since it is essentially a database object containing information we would normally store in GTF/GFF files. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object with the gene coordinates for each chromosome. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
+The TxDb package provides a an efficient data container for extracting promoters, genes, exons and transcripts. There are TxDb packages for many model organisms but you can also create custom TxDb objects as well. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object with the gene coordinates for each chromosome. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
 
 ```{r}
 #BiocManager::install("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
@@ -423,7 +441,6 @@ tfidf %>%
        y = "TF-IDF of chromosome-word pairs")
 
 ```
-
 
 ## Summary
 
