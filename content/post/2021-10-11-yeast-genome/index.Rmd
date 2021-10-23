@@ -65,7 +65,8 @@ package_category <- pkgs %>% firstInBioc() %>%
   labs(title = "Categories",
        x = "Package count",
        y = "",
-       color = "Category")
+       color = "Category") +
+  theme(legend.position = 'none')
 
 top_downloads <- pkgs %>% 
   group_by(Package) %>% 
@@ -105,7 +106,8 @@ pkgs %>%
   theme(legend.position = "none") +
   labs(title = "Most downloaded Bioconductor packages by category",
        x = "Total downloads",
-       y = "")
+       y = "") +
+  theme(plot.title = element_text(hjust = -4))
 
 ```
 

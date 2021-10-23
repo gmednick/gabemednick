@@ -61,7 +61,8 @@ pkgs %&gt;%
   labs(title = &quot;Categories&quot;,
        x = &quot;Package count&quot;,
        y = &quot;&quot;,
-       color = &quot;Category&quot;)
+       color = &quot;Category&quot;) +
+  theme(legend.position = &#39;none&#39;)
 
 top_downloads &lt;- pkgs %&gt;% 
   group_by(Package) %&gt;% 
@@ -98,7 +99,8 @@ pkgs %&gt;%
   theme(legend.position = &quot;none&quot;) +
   labs(title = &quot;Most downloaded Bioconductor packages by category&quot;,
        x = &quot;Total downloads&quot;,
-       y = &quot;&quot;)</code></pre>
+       y = &quot;&quot;) +
+  theme(plot.title = element_text(hjust = -4))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
 <pre class="r"><code>pkgs %&gt;%  firstInBioc() %&gt;% 
