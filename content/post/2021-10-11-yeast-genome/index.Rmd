@@ -131,9 +131,9 @@ pkgs %>%  firstInBioc() %>%
 
 ## Diving into the yeast genome
 
-In this post, we will use several packages that allow the bioinformatician to access and manipulate genomic data in R.  We will use `BSgenome.Scerevisiae.UCSC.sacCer3` to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and use various annotation sources available in the `org.Sc.sgd.db` package. 
+To explore the yeast genome, we will use the `BSgenome.Scerevisiae.UCSC.sacCer3` package to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and use the `org.Sc.sgd.db` package to access various annotation sources. 
 
-Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance, we can load the `BSgenome.Hsapiens.UCSC.hg19` package to access the human genome. The function, `available.genomes()`, provides a complete list of the available BSgenome objects. 
+These packages are available for other model organisms as well. For instance, we can load the `BSgenome.Hsapiens.UCSC.hg19` package to access the human genome. The function, `available.genomes()`, provides a complete list of the available BSgenome objects. 
 
 ```{r}
 # The complete list includes >100 genomes from UCSC
@@ -152,7 +152,7 @@ yeast
 
 ```
 
-We can generate a list of the available acessor functions.
+Use the following function to view a list of the available acessor functions for working with our BSgenome objects.
 ```{r}
 #The available BSgenome accessors are:
 .S4methods(class = "BSgenome")
@@ -170,7 +170,7 @@ yeast %>%
   seqnames()
 ```
 
-The BSgenome object points to our genome object but does not import data into memory unless we ask for it. Let's take a look at a couple of the functions for importing our sequence data.
+The BSgenome object points to the genome object but does not import data into memory unless we ask for it. Let's take a look at a couple of the functions for importing sequence data.
 
 ```{r}
 # Select chromosome sequence by name, one or many. And select start, end and or width:
@@ -244,7 +244,7 @@ imp3_range <- GRanges(seqnames="chrVIII",
 #GRanges("chrVIII", start = 393534, end = 394085)
 ```
 
-After creating a GRanges object we can get the gene sequence with `getSeq()` and the amino acid sequence using `translate()`.
+After creating a GRanges object we can get the gene sequence with `getSeq()` and the amino acid sequence using `translate()`. 
 ```{r}
 # Extract imp3 sequence
 Imp3_seq <- getSeq(yeast, names=imp3_range)
@@ -263,10 +263,11 @@ imp3_protein
 #                      transcripts=yeast_genes)
 
 ```
+The complete sequence will not print to the console, so it is necessary to export the data to file to view the sequence. In order to do so, a fasta file can be generated with the function, `writeXStringSet(yeastGeneSeqs,"yeastGeneSeqs.fa")`
 
 ## Working with TxDb objects
 
-The TxDb package provides a an efficient data container for extracting promoters, genes, exons and transcripts. There are TxDb packages for many model organisms but you can also create custom TxDb objects as well. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object with the gene coordinates for each chromosome. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
+The TxDb package provides an efficient data container for extracting promoters, genes, exons and transcripts. There are TxDb packages for many model organisms but one can also create custom TxDb objects as well. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object with the gene coordinates for each chromosome. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
 
 ```{r}
 #BiocManager::install("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
@@ -287,8 +288,6 @@ autoplot(yeast_genes, layout = 'karyogram', color = 'lightblue', coverage.col = 
 yeastGeneSeqs <- getSeq(yeast, names=yeast_genes)
 yeastGeneSeqs
 
-# We can then create a fasta file if desired
-# writeXStringSet(yeastGeneSeqs,"yeastGeneSeqs.fa")
 ```
 
 # Incorporating ggplot2
