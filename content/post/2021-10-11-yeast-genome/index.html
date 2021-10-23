@@ -39,10 +39,10 @@ library(Gviz)
 library(ggbio)
 library(BiocPkgTools)
 library(biocViews)</code></pre>
-<div id="intro" class="section level2">
-<h2>Intro</h2>
-<p>This post provides a friendly introduction to working with packages from the Bioconductor repository for computational biology. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the <code>BiocPkgTools</code> package. Here, I visualize the top 30 downloaded packages, the count of packages by category and the number of packages added in each category by year.</p>
-<p>There are over 2500 annotation packages and slightly less in the software category. Let’s see what the top packages are.</p>
+<div id="what-is-bioconductor" class="section level2">
+<h2>What is Bioconductor</h2>
+<p>Bioconductor is a repository of packages for bioinformatics. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the <code>BiocPkgTools</code> package.</p>
+<p>Let’s visualize the package count by category and the most downloaded packages.</p>
 <pre class="r"><code>#library(BiocPkgTools)
 pkgs &lt;- biocDownloadStats()
 
@@ -58,7 +58,7 @@ pkgs %&gt;%
   dplyr::count() %&gt;% 
   ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
   geom_col() +
-  labs(title = &quot;Bioconductor packages by category&quot;,
+  labs(title = &quot;Categories&quot;,
        x = &quot;Package count&quot;,
        y = &quot;&quot;,
        color = &quot;Category&quot;)
@@ -71,7 +71,7 @@ top_downloads &lt;- pkgs %&gt;%
   ggplot(aes(tot_downloads, Package, fill = tot_downloads)) +
   geom_col() +
   theme(legend.position = &quot;none&quot;) +
-  labs(title = &quot;Most downloaded&quot;,
+  labs(title = &quot;Top downloads&quot;,
        x = &quot;Total downloads&quot;,
        y = &quot;&quot;) +
   scale_x_continuous(labels = scales::scientific) +
@@ -80,7 +80,7 @@ top_downloads &lt;- pkgs %&gt;%
 
 package_category | top_downloads</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>Let’s also look at the top 8 most downloaded packages in each category.</p>
+<p>We can all visualize the most popular packages in each category.</p>
 <pre class="r"><code>library(tidytext)
 
 pkgs %&gt;%
@@ -100,7 +100,7 @@ pkgs %&gt;%
        x = &quot;Total downloads&quot;,
        y = &quot;&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Let’s also look at how the categories have grown over time.</p>
+<p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
 <pre class="r"><code>pkgs %&gt;%  firstInBioc() %&gt;% 
   group_by(Date, repo) %&gt;% 
   count() %&gt;% 
@@ -117,9 +117,9 @@ pkgs %&gt;%
 </div>
 <div id="diving-into-the-yeast-genome" class="section level2">
 <h2>Diving into the yeast genome</h2>
-<p>In this post, we will use several packages that allow the researcher to access and manipulate genomic data in R. We will use <code>BSgenome.Scerevisiae.UCSC.sacCer3</code> to access yeast sequence data, <code>TxDb.Scerevisiae.UCSC.sacCer3.sgdGene</code> to access genetic ranges such as genes, transcripts, promoters, and various annotation sources available in <code>org.Sc.sgd.db</code>.</p>
-<p>These package are available for other model organisms as well. For instance, the function, <code>available.genomes()</code>, provides a complete list of all available BSgenome database objects. The sequences derived from BSgenome objects are of the <code>DNAString</code> class and can be modified with functions from the <code>Biostrings</code> package.</p>
-<p>Let’s take a look inside our BSgenome object for yeast.</p>
+<p>In this post, we will use several packages that allow the bioinformatician to access and manipulate genomic data in R. We will use <code>BSgenome.Scerevisiae.UCSC.sacCer3</code> to access yeast sequence data, <code>TxDb.Scerevisiae.UCSC.sacCer3.sgdGene</code> to access genetic ranges such as genes, transcripts, promoters, and use various annotation sources available in the <code>org.Sc.sgd.db</code> package.</p>
+<p>Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance to access sequence for the human genome, we load the <code>BSgenome.Hsapiens.UCSC.hg19</code> package. The function, <code>available.genomes()</code>, provides a complete list of available BSgenome database objects. Sequences derived from BSgenome objects are of the <code>DNAString</code> class and can be modified with functions from the <code>Biostrings</code> package.</p>
+<p>Let’s take a look inside the yeast BSgenome object.</p>
 <pre class="r"><code>library(BSgenome.Scerevisiae.UCSC.sacCer3)
 library(Biostrings)
 
@@ -181,7 +181,7 @@ yeast %&gt;% seqnames()</code></pre>
 <pre><code>##  [1] &quot;chrI&quot;    &quot;chrII&quot;   &quot;chrIII&quot;  &quot;chrIV&quot;   &quot;chrV&quot;    &quot;chrVI&quot;   &quot;chrVII&quot; 
 ##  [8] &quot;chrVIII&quot; &quot;chrIX&quot;   &quot;chrX&quot;    &quot;chrXI&quot;   &quot;chrXII&quot;  &quot;chrXIII&quot; &quot;chrXIV&quot; 
 ## [15] &quot;chrXV&quot;   &quot;chrXVI&quot;  &quot;chrM&quot;</code></pre>
-<p>It’s worth noting that the BSgenome object points to our genome object but does not download data for speed. There are several function that can be used to access the gene sequence when we want it.</p>
+<p>The BSgenome object points to our genome object but does not import data into memory unless we ask for it. Let’s take a look at a couple of the functions for importing our sequence data.</p>
 <pre class="r"><code># Select chromosome sequence by name, one or many. And select start, end and or width:
 getSeq(yeast, &quot;chrM&quot;, end = 50)</code></pre>
 <pre><code>## 50-letter DNAString object
@@ -191,9 +191,9 @@ subseq(yeast$chrI, 1,100)</code></pre>
 <pre><code>## 100-letter DNAString object
 ## seq: CCACACCACACCCACACACCCACACACCACACCACA...CTAACACTACCCTAACACAGCCCTAATCTAACCCTG</code></pre>
 </div>
-<div id="create-a-custom-summary-function" class="section level2">
-<h2>Create a custom summary function</h2>
-<p>Let’s create a summary function that returns chromosome names, the length of each chromosome and the GC percentage for each.</p>
+<div id="a-custom-summary-function" class="section level2">
+<h2>A custom summary function</h2>
+<p>For fun, let’s create a summary function that returns the name, length and GC percentage for each chromosome</p>
 <pre class="r"><code># Yeast genome summary function: summarize_yeast_genome()
 summarize_yeast_genome &lt;- function() {
 
@@ -227,7 +227,7 @@ summarize_yeast_genome()</code></pre>
 </div>
 <div id="extracting-the-imp3-gene" class="section level2">
 <h2>Extracting the imp3 gene</h2>
-<p>After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, I will need to find the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (found online) and use the <code>matchPattern()</code> function to find the start and end of the sequence. I also use <code>countPattern()</code> to make sure that the sequence is only found once in the genome. Finally, I create a custom GRanges object and <code>getSeq()</code> to retrieve the sequence. I can then use <code>translate()</code> to pull the amino acid sequence.</p>
+<p>After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (<a href="https://www.yeastgenome.org/locus/S000001191/sequence" class="uri">https://www.yeastgenome.org/locus/S000001191/sequence</a>) and use the <code>matchPattern()</code> function from <code>Biostrings</code> to find the start and end of the sequence. I also use <code>countPattern()</code> to make sure that the sequence is found only once in the genome. After creating a GRanges object we can get the gene sequence with <code>getSeq()</code> and the amino acid sequence with <code>translate()</code>.</p>
 <pre class="r"><code># imp3 yeast gene on chrVIII
 imp3_start &lt;- &quot;ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGTTATTGAAAAAAGTAGA&quot;
 
@@ -278,7 +278,7 @@ imp3_protein</code></pre>
 </div>
 <div id="working-with-txdb-objects" class="section level2">
 <h2>Working with TxDb objects</h2>
-<p>The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts for various organisms. TxDb objects are essentially a database containing information we would store in GTF/GFF files. The functions to work with TxDb objects are mostly from the <code>GenomicFeatures</code> package. When we use a function such as <code>gene()</code>, the function will return a GRanges object. The function <code>.S4methods(class = 'GenomicRanges')</code> provides a summary list of available methods to work with the GRanges object.</p>
+<p>The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts. Model organisms TxDb objects are often pre-packaged but you can also make you own TxDb object since it is essentially a database object containing information we would normally store in GTF/GFF files. The functions to work with TxDb objects are mostly from the <code>GenomicFeatures</code> package. When we use a function such as <code>gene()</code>, the function will return a GRanges object with the gene coordinates for each chromosome. The function <code>.S4methods(class = 'GenomicRanges')</code> provides a summary list of available methods to work with the GRanges object.</p>
 <pre class="r"><code>#BiocManager::install(&quot;TxDb.Scerevisiae.UCSC.sacCer3.sgdGene&quot;)
 # .S4methods(class = &#39;GenomicRanges&#39;) find available methods
 library(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
@@ -452,6 +452,6 @@ tfidf %&gt;%
 </div>
 <div id="outro" class="section level2">
 <h2>Outro</h2>
-<p>We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several complementary packages for data manipulation, including <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code> and <code>ggbio</code>. In a follow up post, I plan to explore the <code>Gviz</code> package which can be used to create custom data track visualizations.</p>
+<p>We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several essential packages for data manipulation, including <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>. In a follow up post, I plan to explore yeast genome further with data from the <code>yeastExpData</code> package and the <code>yeastNagalakshmi</code> package.</p>
 </div>
 </div>

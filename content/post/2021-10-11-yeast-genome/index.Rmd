@@ -43,12 +43,11 @@ library(BiocPkgTools)
 library(biocViews)
 ```
 
-## Intro
+## What is Bioconductor
 
-This post provides a friendly introduction to working with packages from the Bioconductor repository for computational biology. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the `BiocPkgTools` package. Here, I visualize the top 30 downloaded packages, the count of packages by category and the number of packages added in each category by year.
+Bioconductor is a repository of packages for bioinformatics. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the `BiocPkgTools` package.
 
-
-There are over 2500 annotation packages and slightly less in the software category. Let's see what the top packages are.
+Let's visualize the package count by category and the most downloaded packages.
 
 ```{r}
 #library(BiocPkgTools)
@@ -63,7 +62,7 @@ package_category <- pkgs %>% firstInBioc() %>%
   dplyr::count() %>% 
   ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
   geom_col() +
-  labs(title = "Bioconductor packages by category",
+  labs(title = "Categories",
        x = "Package count",
        y = "",
        color = "Category")
@@ -76,7 +75,7 @@ top_downloads <- pkgs %>%
   ggplot(aes(tot_downloads, Package, fill = tot_downloads)) +
   geom_col() +
   theme(legend.position = "none") +
-  labs(title = "Most downloaded",
+  labs(title = "Top downloads",
        x = "Total downloads",
        y = "") +
   scale_x_continuous(labels = scales::scientific) +
@@ -86,7 +85,7 @@ top_downloads <- pkgs %>%
 package_category | top_downloads
 ```
 
-Let's also look at the top 8 most downloaded packages in each category.
+We can all visualize the most popular packages in each category. 
 
 ```{r}
 library(tidytext)
@@ -110,7 +109,7 @@ pkgs %>%
 
 ```
 
-Let's also look at how the categories have grown over time.
+Let's finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.
 
 ```{r}
 pkgs %>%  firstInBioc() %>% 
@@ -130,11 +129,11 @@ pkgs %>%  firstInBioc() %>%
 
 ## Diving into the yeast genome
 
-In this post, we will use several packages that allow the researcher to access and manipulate genomic data in R.  We will use `BSgenome.Scerevisiae.UCSC.sacCer3` to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and various annotation sources available in `org.Sc.sgd.db`. 
+In this post, we will use several packages that allow the bioinformatician to access and manipulate genomic data in R.  We will use `BSgenome.Scerevisiae.UCSC.sacCer3` to access yeast sequence data, `TxDb.Scerevisiae.UCSC.sacCer3.sgdGene` to access genetic ranges such as genes, transcripts, promoters, and use various annotation sources available in the `org.Sc.sgd.db` package. 
 
-These package are available for other model organisms as well. For instance, the function, `available.genomes()`, provides a complete list of all available BSgenome database objects. The sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package.
+Although these three packages are specific to the yeast genome, there are similar packages for other model organisms. For instance to access sequence for the human genome, we load the `BSgenome.Hsapiens.UCSC.hg19` package. The function, `available.genomes()`, provides a complete list of available BSgenome database objects. Sequences derived from BSgenome objects are of the `DNAString` class and can be modified with functions from the `Biostrings` package.
 
-Let's take a look inside our BSgenome object for yeast. 
+Let's take a look inside the yeast BSgenome object. 
 
 ```{r}
 library(BSgenome.Scerevisiae.UCSC.sacCer3)
@@ -158,7 +157,7 @@ print(.S4methods(class = "BSgenome"))
 yeast %>% seqnames()
 ```
 
-It's worth noting that the BSgenome object points to our genome object but does not download data for speed. There are several function that can be used to access the gene sequence when we want it.
+The BSgenome object points to our genome object but does not import data into memory unless we ask for it. Let's take a look at a couple of the functions for importing our sequence data.
 
 ```{r}
 # Select chromosome sequence by name, one or many. And select start, end and or width:
@@ -168,9 +167,9 @@ getSeq(yeast, "chrM", end = 50)
 subseq(yeast$chrI, 1,100)
 ```
 
-## Create a custom summary function
+## A custom summary function
 
-Let's create a summary function that returns chromosome names, the length of each chromosome and the GC percentage for each.
+For fun, let's create a summary function that returns the name, length and GC percentage for each chromosome
 
 ```{r}
 # Yeast genome summary function: summarize_yeast_genome()
@@ -196,7 +195,7 @@ summarize_yeast_genome()
 
 ## Extracting the imp3 gene
 
-After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, I will need to find the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (found online) and use the `matchPattern()` function to find the start and end of the sequence. I also use `countPattern()` to make sure that the sequence is only found once in the genome. Finally, I create a custom GRanges object and `getSeq()` to retrieve the sequence. I can then use `translate()` to pull the amino acid sequence. 
+After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence (https://www.yeastgenome.org/locus/S000001191/sequence) and use the `matchPattern()` function from `Biostrings` to find the start and end of the sequence. I also use `countPattern()` to make sure that the sequence is found only once in the genome. After creating a GRanges object we can get the gene sequence with `getSeq()` and the amino acid sequence with `translate()`. 
 
 ```{r}
 # imp3 yeast gene on chrVIII
@@ -245,10 +244,9 @@ imp3_protein
 
 ```
 
-
 ## Working with TxDb objects
 
-The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts for various organisms. TxDb objects are essentially a database containing information we would store in GTF/GFF files. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
+The TxDb package can be used to access important ranges including, promoters, genes, exons and transcripts. Model organisms TxDb objects are often pre-packaged but you can also make you own TxDb object since it is essentially a database object containing information we would normally store in GTF/GFF files. The functions to work with TxDb objects are mostly from the `GenomicFeatures` package. When we use a function such as `gene()`, the function will return a GRanges object with the gene coordinates for each chromosome. The function `.S4methods(class = 'GenomicRanges')` provides a summary list of available methods to work with the GRanges object.
 
 ```{r}
 #BiocManager::install("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
@@ -427,4 +425,4 @@ tfidf %>%
 
 ## Outro
 
-We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several complementary packages for data manipulation, including `Biostrings`, `GenomicRanges`, `GenomicFeatures` and `ggbio`. In a follow up post, I plan to explore the `Gviz` package which can be used to create custom data track visualizations.
+We looked at several essential Bioconductor packages for accessing genomic reference data. We also used several essential packages for data manipulation, including `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`. In a follow up post, I plan to explore yeast genome further with data from the `yeastExpData` package and the `yeastNagalakshmi` package. 
