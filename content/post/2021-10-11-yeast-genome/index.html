@@ -110,7 +110,7 @@ pkgs %&gt;%
   group_by(repo) %&gt;% 
   mutate(tot_packages = cumsum(n)) %&gt;% 
   ggplot(aes(Date, tot_packages, color = repo)) +
-  geom_line() +
+  geom_line(size = 1) +
   labs(title = &quot;Bioconductor package count over time&quot;,
        x = &quot;Year&quot;,
        y = &quot;Count&quot;,
@@ -452,8 +452,8 @@ tfidf %&gt;%
        y = &quot;TF-IDF of chromosome-word pairs&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
-<div id="outro" class="section level2">
-<h2>Outro</h2>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
 <p>We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>, we also saw how we can incorporate the <code>Tidyverse</code> into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the <code>yeastExpData</code> and <code>yeastNagalakshmi</code> packages.</p>
 </div>
 </div>

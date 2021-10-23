@@ -121,7 +121,7 @@ pkgs %>%  firstInBioc() %>%
   group_by(repo) %>% 
   mutate(tot_packages = cumsum(n)) %>% 
   ggplot(aes(Date, tot_packages, color = repo)) +
-  geom_line() +
+  geom_line(size = 1) +
   labs(title = "Bioconductor package count over time",
        x = "Year",
        y = "Count",
@@ -425,6 +425,6 @@ tfidf %>%
 ```
 
 
-## Outro
+## Summary
 
 We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`, we also saw how we can incorporate the `Tidyverse` into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the `yeastExpData` and `yeastNagalakshmi` packages. 
