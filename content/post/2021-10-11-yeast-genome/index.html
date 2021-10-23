@@ -100,7 +100,7 @@ pkgs %&gt;%
   labs(title = &quot;Most downloaded Bioconductor packages by category&quot;,
        x = &quot;Total downloads&quot;,
        y = &quot;&quot;) +
-  theme(plot.title = element_text(hjust = -3))</code></pre>
+  theme(plot.title = element_text(hjust = -2))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
 <pre class="r"><code>pkgs %&gt;%  firstInBioc() %&gt;% 

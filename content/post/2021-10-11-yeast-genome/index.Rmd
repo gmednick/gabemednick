@@ -107,7 +107,7 @@ pkgs %>%
   labs(title = "Most downloaded Bioconductor packages by category",
        x = "Total downloads",
        y = "") +
-  theme(plot.title = element_text(hjust = -3))
+  theme(plot.title = element_text(hjust = -2))
 
 ```
 
