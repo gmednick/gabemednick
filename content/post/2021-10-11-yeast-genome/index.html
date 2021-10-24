@@ -52,7 +52,7 @@ pkgs %&gt;%
 <pre><code>## # A tibble: 1 × 1
 ##       n
 ##   &lt;int&gt;
-## 1  5635</code></pre>
+## 1  5637</code></pre>
 <pre class="r"><code>package_category &lt;- pkgs %&gt;% firstInBioc() %&gt;% 
   group_by(repo) %&gt;%
   dplyr::count() %&gt;% 
@@ -103,18 +103,22 @@ pkgs %&gt;%
   theme(plot.title = element_text(hjust = 0))</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
-<pre class="r"><code>pkgs %&gt;%  firstInBioc() %&gt;% 
+<pre class="r"><code>labels &lt;- pkgs %&gt;% group_by(repo) %&gt;% summarize()
+library(ggrepel)
+pkgs %&gt;%  firstInBioc() %&gt;% 
   group_by(Date, repo) %&gt;% 
   count() %&gt;% 
   ungroup() %&gt;% 
   group_by(repo) %&gt;% 
-  mutate(tot_packages = cumsum(n)) %&gt;% 
-  ggplot(aes(Date, tot_packages, color = repo)) +
+  mutate(tot_packages = cumsum(n),
+         label = if_else(tot_packages == max(tot_packages), repo, NA_character_),
+         label = glue(&quot;{repo} ({max(tot_packages)})&quot;)) %&gt;% 
+  ggplot(aes(Date, tot_packages, color = label,)) +
   geom_line(size = 1) +
   labs(title = &quot;Bioconductor package count over time&quot;,
        x = &quot;Year&quot;,
        y = &quot;Count&quot;,
-       color = &quot;Category&quot;)</code></pre>
+       color = &quot;Category&quot;) </code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="diving-into-the-yeast-genome" class="section level2">
@@ -413,7 +417,7 @@ yeast_genes_df %&gt;%
   anti_join(stop_words, by = &#39;word&#39;) %&gt;% 
   count(seqnames, word, sort=T) %&gt;% 
   group_by(seqnames) %&gt;% 
-  slice_max(n, n=6) %&gt;%
+  slice_max(n, n=5) %&gt;%
   ungroup() %&gt;% 
   mutate(word = reorder_within(word, n, seqnames)) %&gt;% 
   ggplot(aes(n, word, fill = seqnames)) +
@@ -424,7 +428,10 @@ yeast_genes_df %&gt;%
     x = &quot;Word frequency&quot;, y = NULL,
     title = &quot;Top words from gene description annotation by chromosome&quot;
   ) + 
-  theme(legend.position = &quot;none&quot;)</code></pre>
+  theme(legend.position = &quot;none&quot;) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>A more interesting selection of words can be found by selecting the unique words associated with each chromosome. We can do this by using the TF-IDF algorithm.</p>
 <pre class="r"><code>common_words &lt;- c(&quot;protein&quot;,&quot;involved&quot;, &quot;required&quot;, &quot;complex&quot;, &quot;subunit&quot;, &quot;involved&quot;, &quot;dna&quot;)
@@ -435,12 +442,12 @@ tfidf &lt;- yeast_genes_df %&gt;%
   anti_join(stop_words, by = &#39;word&#39;) %&gt;% 
   dplyr::count(seqnames, word, sort=T) %&gt;% 
   group_by(seqnames) %&gt;% 
-  slice_max(n, n=6)
+  slice_max(n, n=5)
 
 tfidf %&gt;% 
   bind_tf_idf(word, seqnames, n) %&gt;% 
   group_by(seqnames) %&gt;% 
-  slice_max(tf_idf, n=12) %&gt;%
+  #slice_max(tf_idf, n=12) %&gt;%
   ungroup() %&gt;% 
   mutate(word = reorder_within(word, tf_idf, seqnames)) %&gt;% 
   ggplot(aes(tf_idf, word, fill = seqnames)) +
@@ -453,11 +460,14 @@ tfidf %&gt;%
   ) + 
   theme(legend.position = &quot;none&quot;) +
   labs(x = &quot;&quot;,
-       y = &quot;TF-IDF of chromosome-word pairs&quot;)</code></pre>
+       y = &quot;TF-IDF of chromosome-word pairs&quot;) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<p>We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>, we also saw how we can incorporate the <code>Tidyverse</code> into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the <code>yeastExpData</code> and <code>yeastNagalakshmi</code> packages.</p>
+<p>This post introduced several core Bioconductor packages for accessing, annotating and manipulating genomic data. We used packages such as <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>. Finally, we utilized the tidy data framework and used packages such as <code>Dplyr</code>, <code>GGplot2</code> and the <code>Tidytext</code> package for natural language processing. In a follow up post, I plan to dive deeper into the yeast genome using data from the <code>yeastExpData</code> and <code>yeastNagalakshmi</code> packages.</p>
 </div>
 </div>
