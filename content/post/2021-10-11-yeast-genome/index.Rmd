@@ -114,6 +114,7 @@ pkgs %>%
 Let's finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.
 
 ```{r}
+library(ggrepel)
 pkgs %>%  firstInBioc() %>% 
   group_by(Date, repo) %>% 
   count() %>% 
@@ -125,7 +126,11 @@ pkgs %>%  firstInBioc() %>%
   labs(title = "Bioconductor package count over time",
        x = "Year",
        y = "Count",
-       color = "Category")
+       color = "Category") +
+  geom_label_repel(aes(label = max(repo),
+                   nudge_x = 1,
+                   na.rm = TRUE) +
+  theme(legend.position = "none")
 
 ```
 
@@ -443,4 +448,4 @@ tfidf %>%
 
 ## Summary
 
-We looked at several core Bioconductor packages for accessing, annotating and manipulating genomic data. In addition to using packages such `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`, we also saw how we can incorporate the `Tidyverse` into our analysis. In a follow up post, I plan to dive deeper into the yeast genome using data from the `yeastExpData` and `yeastNagalakshmi` packages. 
+This post introduced several core Bioconductor packages for accessing, annotating and manipulating genomic data. We used packages such as `Biostrings`, `GenomicRanges`, `GenomicFeatures`, `Plyranges` and `ggbio`. We also incorporated the tidy data framework and used packages such as `Dplyr`, `GGplot2` and the `Tidytext` package for natural language processing. In a follow up post, I plan to dive deeper into the yeast genome using data from the `yeastExpData` and `yeastNagalakshmi` packages. 
