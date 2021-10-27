@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Accessing and exploring the yeast genome with packages with key packages from Bioconductor
+summary: Accessing and exploring the yeast genome with key packages from Bioconductor
 authors: []
 lastmod: ''
 featured: no
@@ -52,7 +52,7 @@ pkgs %&gt;%
 <pre><code>## # A tibble: 1 × 1
 ##       n
 ##   &lt;int&gt;
-## 1  5637</code></pre>
+## 1  5646</code></pre>
 <pre class="r"><code>package_category &lt;- pkgs %&gt;% firstInBioc() %&gt;% 
   group_by(repo) %&gt;%
   dplyr::count() %&gt;% 

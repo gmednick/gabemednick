@@ -1,0 +1,285 @@
+---
+title: "Exploring the human genome with Bioconductor"
+author: "Gabe Mednick"
+date: '2021-10-26'
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: A primer for accessing, annotating and visualizing the human genome with Bioconductor packages
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: hsapiens
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+```
+
+## Mission
+
+Last time, we accessed data for the yeast genome and used several essential packages from the Bioconductor repository. In this post, I will load the BSgenome sequence object, genomic ranges and annotation data for the human genome and review some of the accessor functions for working with these data objects. I will use data from the `cpgIlands` package to generate visualization tracks using the `Gviz` package. To conclude, I will explore common strategies for accessing annotation data.
+
+Let's get started!
+
+```{r}
+# Load packages
+library(tidyverse)
+theme_set(theme_light())
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(Homo.sapiens) # Use with AnnotationDbi accessors e.g., columns(Homo.sapiens)
+library(Biostrings)
+library(GenomicRanges)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(AnnotationHub)
+library(plyranges)
+library(GenomicFeatures)
+library(ggbio)
+library(Gviz)
+library(glue)
+```
+
+With the amazing TxDb package for the human genome (`TxDb.Hsapiens.UCSC.hg19.knownGene`), we can extract ranges for genes, transcripts, exons, promoters or other custom genomic ranges with minimal effort. We will use the `genes()` function to get the genomic ranges for all human genes.
+
+```{r}
+human_txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene # Genomic ragnes for genes
+
+seqinfo(human_txdb)
+
+genes <- genes(human_txdb)
+```
+
+Let's do a quick visualization of the total gene count by chromosomes. To add a layer of information, I will use the `glue` package to combine chromosome name and gene count.
+
+```{r}
+chrom_names <- c(paste0("chr", 1:22), 'chrX', 'chrY')
+
+genes %>% as_tibble() %>% 
+  mutate(seqnames = as.character(seqnames)) %>% 
+  filter(seqnames %in% chrom_names) %>% 
+  group_by(seqnames) %>% 
+  count() %>% 
+  mutate(chrom_gene = glue('{seqnames} ({n})')) %>% 
+  ggplot(aes(n, fct_reorder(chrom_gene, n), fill = n)) +
+  geom_col() +
+  labs(title = "Gene count by chromosome", 
+       y = NULL,
+       x = NULL) +
+  theme(legend.position = 'none')
+```
+
+In the last example, I converted from GRanges to a data frame, filtered for standard chromosomes, tallied genes by chromosome and plotted the results with GGplot2. A simpler way to filter for standard chromosomes can be achieved with the function, `keepStandardChromosomes(x)` where x can be any Seqinfo object (TxDb).
+
+## CpG islands (CGIs)
+
+CGIs are genomic regions with a higher frequency of CpG dinucleotide repeats. Many genes in vertebrate genomes have CGIs associated with their promoter regions. These CGIs are recognized as functionally important for regulating gene expression. CGIs with a lack of DNA methylation are associated with active promoter regions.
+
+We will use the `cpgIslands` dataset to create an annotation data track and combine it with other tracks using the `Gviz` package. The tracks in the following plot include a representation of chromosome 7 with a red mark to specify the region of the CpG data, a ruler based on the min and max ranges of the CpG data, a track specifying the locations of CGIs and a final track for gene models in this region.
+
+```{r}
+library(Gviz)
+data(cpgIslands)
+cpgIslands
+data(geneModels)
+
+# Data for hg19, chr7
+gen <- genome(cpgIslands)
+
+# Chromosome name
+chr <- as.character(unique(seqnames(cpgIslands)))
+
+# Ideogram track
+itrack <- IdeogramTrack(genome = gen, chromosome = chr)
+
+# Axis ruler track
+gtrack <- GenomeAxisTrack()
+
+# Add cpgIsland track
+atrack <- AnnotationTrack(cpgIslands, name = "CpG")
+
+# Add gene models track
+grtrack <- GeneRegionTrack(geneModels, genome = gen,
+                           chromosome = chr, name = "Gene Models")
+
+#Annoation track for CPG island overlaps with promoters
+promoters <- promoters(human_txdb, downstream = 100) %>% 
+  filter(seqnames == "chr7")
+
+subsetByOverlaps(cpgIslands, promoters, ignore.strand = TRUE)
+
+# Combine as list plot
+plotTracks(list(itrack, gtrack, atrack, grtrack))
+
+```
+
+I borrowed the previous example from the [Gviz vignette](http://www.bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.html). Now that we are `Gviz` wizards, let's create our own custom example using the gene info for the voltage sensing potassium (herg) channel in the human heart and surrounding regions on chromosome 2.
+
+```{r}
+herg_channel <- GRanges("chr2:163227917-163695257", strand = "-")
+
+# transcriptsBy(human_txdb, herg_channel) #to get sequences
+genomeAxis <- GenomeAxisTrack(name="MyAxis") 
+
+
+anno_track <- AnnotationTrack(herg_channel, name = "Herg")
+
+# Ideogram
+ideoTrack <- IdeogramTrack(genome = "hg19", chromosome = "chr2")
+
+hg19 <- c(chr2 = "hg19")
+chrom = "chr2"
+
+human_transcripts <- transcriptsBy(human_txdb, by = 'gene') %>% 
+  as_tibble() %>% 
+  filter(seqnames == "chr2")
+
+geneTrack <- GeneRegionTrack(human_transcripts, genome = hg19,
+                           chromosome = chrom, name = "Gene Models")
+
+# Show chromosome band ID
+plotTracks(list(ideoTrack, anno_track, geneTrack, genomeAxis), 
+           from = 162225917, to = 164697257)
+
+```
+
+There are many more track possibilities with `Gviz`. We will revisit the package in a future post and show how we can utilize many different plot types.
+
+# Gene annotation
+
+The default gene_id column for TxDb objects uses the NCBI Entrez ID nomenclature. Before, we get into the nitty-gritty of annotating genes, it's worth noting that we may need to change our chromosome naming conventions to work with the annotation database of interest. The package, `GenomeInfoDb` makes this easy.
+
+```{r}
+library(GenomeInfoDb)
+
+chromNaming <- genomeStyles()
+names(chromNaming) # See what organism genomes are available
+
+chromNaming$Homo_sapiens %>% 
+  head() # See conventions for homosapiens
+
+# E.g.
+seqlevelsStyle(genes) <- "UCSC" # change chromosome naming conventions if desired
+seqlevelsStyle(genes)
+
+```
+
+Columns, keytypes and keys are the arguments that allow `AnnotationDbi::select()` to retrieve annotation data from the OrgDb database. In the following code chunk, I use `columns()` to see the available annotation and `keytypes()` to see the types of identifiers for the `org.Hs.eg.db` database object.
+
+```{r}
+library(org.Hs.eg.db)
+columns(org.Hs.eg.db) # available annotation resource databases for homo sapiens
+
+#keytypes(org.Hs.eg.db) # types of identifiers (often same as the columns() ouput)
+#keys(org.Hs.eg.db) # returns keys (index) for the database contained in the OrgDb object
+
+library(AnnotationDbi)
+
+# Let's try an example using alpha-1-B glycoprotein (A1BG) as our gene of interest to annotate
+AnnotationDbi::select(org.Hs.eg.db, keys = "A1BG", keytype = "SYMBOL", 
+       columns = c("SYMBOL", "GENENAME", "CHR", "GO", "PROSITE"))
+#returns annotated data as a data.frame
+
+## Annotating all genes
+# Method 1: only returns the the columns listed in the columns vector
+geneIDs <- genes$gene_id
+genes_df <- AnnotationDbi::select(org.Hs.eg.db, keys = geneIDs, keytype = "ENTREZID",
+                                 columns = c("SYMBOL", "GENENAME", "ENTREZID"))
+genes_df %>% head(30) %>% 
+  DT::datatable()
+
+# annotating all genes
+# Method 2: Adds new annotation columns to original data frame   
+genes_df2 <- genes %>% 
+  as_tibble() %>% 
+  mutate(
+    gene_name = AnnotationDbi::mapIds(org.Hs.eg.db,
+                                      keys = genes$gene_id,
+                                      keytype = "ENTREZID",
+                                      column = "GENENAME",
+                                      multiVals = "first"
+    ),
+    prot_fam = AnnotationDbi::mapIds(org.Hs.eg.db,
+                                      keys = genes$gene_id,
+                                      keytype = "ENTREZID",
+                                      column = "PFAM",
+                                      multiVals = "first"
+    ))
+
+genes_df2 %>% 
+  head(30) %>% 
+  DT::datatable()
+
+```
+
+I'd like to convert the protein family column from a PFAM code_id to a recognizable category (e.g., transcription factor) and plot the most common categories. I have not figured out how to do this yet but I did consult Google and found the `PFAM.db` package, which I'm looking into. The documentation says that it works with the `AnnotationDbi::select()` function.
+
+The `AnnotationDbi` package provides an interface to connect with SQLite-based annotation packages. `AnnotationDb` is the virtual base class for all annotation packages. It contain a database connection and is meant to be the parent for a set of classes in the Bioconductor annotation packages.
+
+```{r}
+
+library(PFAM.db)
+
+x <- PFAMDE # Maps from PFAM id to description
+annotation <- select()
+PFAM_ids <- genes_df2 %>% 
+  drop_na() %>% 
+  pull(prot_fam)
+#ls(x) will print PFAM ids
+pfam_data <- capture.output(PFAM())
+N <- subset(PFAM.db, Lkeys=PFAM_ids, Rkeys=x)
+head(qcdata, 20)
+class(x)
+show(x)
+summary(x)
+
+genes_df2 <- genes %>% 
+  as_tibble() %>% 
+  mutate(
+    gene_name = AnnotationDbi::mapIds(org.Hs.eg.db,
+                                      keys = genes$gene_id,
+                                      keytype = "ENTREZID",
+                                      column = "GENENAME",
+                                      multiVals = "first"
+    )
+pfam_categories <- AnnotationDbi::select(PFAM.db, keys = PFAM_ids, keytype = "PFAM",
+                                 columns = c("SYMBOL", "GENENAME", "ENTREZID"))
+```
+
+### Annotation hub
+
+The Annotation hub is a meta resource for accessing annotation databases. It can be challenging to navigate the Annotation hub if you don't know what you're looking for. In the following example, I connect to the hub and then use `subset` to filter for human genome annotations. I then show a couple of ways to explore the content providers, data types and
+
+```{r}
+ah <- AnnotationHub()
+ah <- subset(ah, species == "Homo sapiens")
+
+unique(ah$dataprovider) %>% 
+  head(10) # Ahub annotation data providers
+
+unique(ah$rdataclass) %>% 
+  head(10) #  Annotation data types
+
+mcols(ah) %>% 
+  head(10) # Provides a DataFrame
+
+
+grs <- query(ah, pattern = "GRanges") # filter for annotations that are GRanges
+grs
+
+#display(ah)
+
+# Example of extracting data from the query results
+res <- grs[[1]] # extracting the first annotation resource
+head(res)
+
+```
+
+I am excited to move forward in this series of posts on bioinformatics and will definitely be revisiting many of the packages that I've discussed so far. Up to this point, we have focused on reference genome sequence ranges, sequence extraction, genomic visualization and annotation. In future posts, I hope to incorporate genomic data analysis using experimental data. Until then, stay safe and keep coding!

@@ -8,7 +8,7 @@ output:
 categories: []
 tags: []
 subtitle: ''
-summary: Accessing and exploring the yeast genome with packages with key packages from Bioconductor
+summary: Accessing and exploring the yeast genome with key packages from Bioconductor
 authors: []
 lastmod: ''
 featured: no
@@ -130,8 +130,6 @@ pkgs %>%  firstInBioc() %>%
        x = "Year",
        y = "Count",
        color = "Category") 
-  
-  
 ```
 
 ## Diving into the yeast genome
