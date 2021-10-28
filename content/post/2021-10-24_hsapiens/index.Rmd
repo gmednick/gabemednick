@@ -224,7 +224,8 @@ I'd like to convert the protein family column from a PFAM code_id to a recogniza
 The `AnnotationDbi` package provides an interface to connect with SQLite-based annotation packages. `AnnotationDb` is the virtual base class for all annotation packages. It contain a database connection and is meant to be the parent for a set of classes in the Bioconductor annotation packages.
 
 ```{r}
-
+library(RColorBrewer)
+mypalette<-brewer.pal(25,"Greens")
 library(PFAM.db)
 
 x <- PFAMDE # Maps from PFAM id to description
@@ -250,14 +251,13 @@ PFAM_annotated_genes %>%
   labs(title = "Most common gene families",
        y = "",
        x = "") +
-  scale_fill_viridis_d(option = "D")
+  scale_fill_viridis_d()
   
-
 ```
 
 ### Annotation hub
 
-The Annotation hub is a meta resource for accessing annotation databases. It can be challenging to navigate the Annotation hub if you don't know what you're looking for. In the following example, I connect to the hub and then use `subset` to filter for human genome annotations. I then show a couple of ways to explore the content providers, data types and
+The Annotation hub is a meta resource for accessing annotation databases. It can be challenging to navigate the Annotation hub if you don't know what you're looking for. In the following example, I connect to the hub and then use `subset` to filter for human genome annotations. I then show a couple of ways to explore the annotation resources, filter the available content and extract data.
 
 ```{r}
 ah <- AnnotationHub()
