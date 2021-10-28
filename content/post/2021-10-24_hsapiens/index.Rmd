@@ -206,7 +206,7 @@ genes_df2 <- genes %>%
                                       column = "GENENAME",
                                       multiVals = "first"
     ),
-    prot_fam = AnnotationDbi::mapIds(org.Hs.eg.db,
+    pfam_id = AnnotationDbi::mapIds(org.Hs.eg.db,
                                       keys = genes$gene_id,
                                       keytype = "ENTREZID",
                                       column = "PFAM",
@@ -228,29 +228,31 @@ The `AnnotationDbi` package provides an interface to connect with SQLite-based a
 library(PFAM.db)
 
 x <- PFAMDE # Maps from PFAM id to description
-annotation <- select()
-PFAM_ids <- genes_df2 %>% 
-  drop_na() %>% 
-  pull(prot_fam)
-#ls(x) will print PFAM ids
-pfam_data <- capture.output(PFAM())
-N <- subset(PFAM.db, Lkeys=PFAM_ids, Rkeys=x)
-head(qcdata, 20)
-class(x)
-show(x)
-summary(x)
+class(x) #class is AnnDbBimap
+# search documentation ?AnnDbBimap
+#Bimap-toTable {AnnotationDbi}
 
-genes_df2 <- genes %>% 
-  as_tibble() %>% 
-  mutate(
-    gene_name = AnnotationDbi::mapIds(org.Hs.eg.db,
-                                      keys = genes$gene_id,
-                                      keytype = "ENTREZID",
-                                      column = "GENENAME",
-                                      multiVals = "first"
-    )
-pfam_categories <- AnnotationDbi::select(PFAM.db, keys = PFAM_ids, keytype = "PFAM",
-                                 columns = c("SYMBOL", "GENENAME", "ENTREZID"))
+prot_fams <- toTable(x) %>% 
+  tibble() # extract prot_family keys and convert to tibble
+
+PFAM_annotated_genes <- genes_df2 %>% # join prot_fams to genes_df2 dataset
+  drop_na() %>% 
+  left_join(prot_fams, by = c("pfam_id" = "ac")) %>% 
+  dplyr::select(gene_name, "prot_family" = de, everything())
+
+PFAM_annotated_genes %>% 
+  count(prot_family, sort = TRUE) %>%
+  slice_max(n, n = 25) %>%
+  group_by(prot_family) %>%
+  ggplot(aes(n, fct_reorder(prot_family, n), fill = prot_family)) +
+  geom_col() +
+  theme(legend.position = 'none') +
+  labs(title = "Most common gene families",
+       y = "",
+       x = "") +
+  scale_fill_viridis_d(option = "D")
+  
+
 ```
 
 ### Annotation hub
