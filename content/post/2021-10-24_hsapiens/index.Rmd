@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 
 ## Mission
 
-Last time, we accessed data for the yeast genome and used several essential packages from the Bioconductor repository. In this post, I will load the BSgenome sequence object, genomic ranges and annotation data for the human genome and review some of the accessor functions for working with these data objects. I will use data from the `cpgIlands` package to generate visualization tracks using the `Gviz` package. To conclude, I will explore common strategies for accessing annotation data.
+Last time, we accessed data for the yeast genome and used several essential packages from the Bioconductor repository. In this post, I will load the BSgenome sequence object, genomic ranges and annotation data for the human genome and review some of the accessor functions for working with these data objects. I will use data from the `cpgIslands` package to generate visualization tracks using the `Gviz` package. To conclude, I will explore common strategies for accessing annotation data.
 
 Let's get started!
 
