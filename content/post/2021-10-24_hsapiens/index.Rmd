@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 
 ## Mission
 
-Last time, we accessed data for the yeast genome and used several essential packages from the Bioconductor repository. In this post, I will load the BSgenome sequence object, genomic ranges and annotation data for the human genome and review some of the accessor functions for working with these data objects. I will use data from the `cpgIslands` package to generate visualization tracks using the `Gviz` package. To conclude, I will explore common strategies for accessing annotation data.
+Last time, we accessed data for the yeast genome and used several essential packages from the Bioconductor repository. In this post, I will load the BSgenome sequence object, genomic ranges and annotation data for the human genome and review some of the accessor functions for working with these data objects. Then I will use data from the `cpgIslands` package to generate visualization tracks using the `Gviz` package. To conclude, I will explore common strategies for accessing annotation data.
 
 Let's get started!
 
@@ -224,8 +224,7 @@ I'd like to convert the protein family column from a PFAM code_id to a recogniza
 The `AnnotationDbi` package provides an interface to connect with SQLite-based annotation packages. `AnnotationDb` is the virtual base class for all annotation packages. It contain a database connection and is meant to be the parent for a set of classes in the Bioconductor annotation packages.
 
 ```{r}
-library(RColorBrewer)
-mypalette<-brewer.pal(25,"Greens")
+
 library(PFAM.db)
 
 x <- PFAMDE # Maps from PFAM id to description
