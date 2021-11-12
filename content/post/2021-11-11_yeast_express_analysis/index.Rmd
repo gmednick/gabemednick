@@ -24,7 +24,7 @@ slug: yeast_expression
 
 ## Yeast microarray data
 
-In biology, the term 'omics' is used to refer to studies that involve a meta view of the behavior of an entire class of molecules. Omics can refer to a range of disciplines, including genomics, proteomics, metabolomics, metagenomics and transcriptomics. This post will focus on transcriptomics, the field of study that looks at RNA expression and transcriptional regulation in response to specific changes. We will be using gene expression data from [Brauer et al, 2008] (<https://www.molbiolcell.org/doi/full/10.1091/mbc.e07-08-0779>). The title of their paper provides a powerful summary of the experiment and what they learned from the data: 'Coordination of Growth Rate, Cell Cycle, Stress Response, and Metabolic Activity in Yeast'.
+In biology, the term 'omics' is used to refer to studies that involve a meta view of the behavior of an entire class of molecules. Omics can refer to a range of disciplines, including genomics, proteomics, metabolomics, metagenomics and transcriptomics. This post will focus on transcriptomics, the field of study that looks at RNA expression and transcriptional regulation in response to specific changes. We will be using gene expression data from [Brauer et al, 2008](<https://www.molbiolcell.org/doi/full/10.1091/mbc.e07-08-0779>). The title of their paper provides a powerful summary of the experiment and what they learned from the data: 'Coordination of Growth Rate, Cell Cycle, Stress Response, and Metabolic Activity in Yeast'.
 
 In my last two posts, I have tried to emphasize the use of Bioconductor packages and the Tidyverse in a seamless analysis workflow. Although we may ultimately be working with specialized bioinformatics packages such as `Deseq2`, `EdgeR` or `Lima` for analysis of transcriptomic data, David Robinson notes that 'Any challenge in plotting, filtering, or merging your data will get directly in the way of answering scientific questions'. This is why the `Tidyverse` is essential to any analysis workflow.
 
@@ -33,7 +33,7 @@ As noted, the data is from yeast and the gene expression levels were measured un
 Before we dive into the deeps of this analysis, I want to give credit and thanks to David Robinson. David is one of the most insightful and inspiring data scientists on the planet. He has a few courses on DataCamp and regularly [livestreams](https://www.youtube.com/channel/UCeiiqmVK07qhY-wvg3IZiZQ) data analysis with R, the Tidyverse and Tidymodels. This post will closely follow a [series of posts](http://varianceexplained.org/r/tidy-genomics-biobroom/) by David that focus on working with genomic data.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 library(tidyverse)
 theme_set(theme_light())
