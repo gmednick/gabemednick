@@ -1,5 +1,5 @@
 ---
-title: "Transcriptomic analysis of nutrient limitation in yeast"
+title: "Transcriptomic analysis of yeast in response to selective nutrient limitation"
 author: "Gabe Mednick"
 date: "2021-11-11"
 output:
@@ -44,8 +44,8 @@ theme_set(theme_light())
 # write_rds(yeast_data, 'yeast_data')
 yeast_df <- read_rds("yeast_data")
 
-yeast_df %>% 
-  glimpse()
+# yeast_df %>% 
+#   glimpse()
 
 yeast_df %>% 
   DT::datatable()
@@ -222,31 +222,6 @@ yeast_df_tidy %>%
 ```
 
 ```{r}
-
-#Create a plotting function
-
-# categor_facet_plot <- function(search_term, feature) {
-#   yeast_df_tidy %>% 
-#   select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
-#   filter(grepl(!!enquo(search_term), feature),
-#          gene_name != "") %>%
-#   add_count(gene_name) %>%
-#   group_by(gene_name, gid) %>%
-#   ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
-#   geom_line() +
-#   facet_wrap(~gene_name, scales = 'free') +                                                   
-#   theme(axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank())
-# }
-# 
-# categor_facet_plot(sulfur, feature = activity)
-# +
-#   labs(title = "Expression levels vs growth rate under selective nutrient limitation",
-#        x = "Growth rate",
-#        y = "Expression") 
-```
-
-```{r}
 # group_slice function
 group_slice <- function(dt, v) {
   stopifnot('data.frame' %in% class(dt))
@@ -352,7 +327,7 @@ high_express <- model_tib %>%
   arrange(desc(estimate)) %>%
   drop_na() %>% 
   filter(gene_name != "") %>% 
-  head(n=15) %>%
+  head(n=15) %>% 
   ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
@@ -380,5 +355,30 @@ low_express <- model_tib %>%
 
 high_express / low_express
 ```
+In the previous plot, we used the results from the linear model to visualize the genes with the most positive or negative slopes respectively. Let's create one more visualization to look at the genes with the most positive change in expression in response to growth rate (under one of the nutrient conditions). 
 
-Hopefully this post has convinced you that the tidyverse is the ideal backbone for any omics analysis. The tidyverse is important for data cleaning, visualization, developing intuition, generating models and evaluating the results. In a follow up post, I plan to show how the tidyverse can also be used throughout an RNA-seq workflow analysis. As well, using the `tidybulk` package from the Biconductor repository, I will show how the tidyverse and several specialized packages such as `Deseq2`, `EdgeR` and `Lima` can complement each other. Until then, tidy on!
+```{r}
+over_epressed <- c("SUL1",   "UTR2",   "HXT2",   "CWP1",   "RPL31B", "RPL7A",  "RPS28A", "RPL24A", "BUD19", "CWP1",   "RPS8A",  "SNU13", "RPP2A")
+
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(gene_name %in% over_epressed,
+         gene_name != "") %>%
+  add_count(gene_name) %>%
+  group_by(gene_name, gid) %>%
+  ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
+  geom_line() +
+  facet_wrap(~gene_name, scales = 'free') +
+  labs(title = "Expression levels vs growth rate under selective nutrient limitation",
+       subtitle = "Most over expressed genes",
+       x = "Growth rate",
+       y = "Expression") +                                                        
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization and developing intuition, generating models and evaluating the results. That said, from the comments of David's post, an important point was made:
+
+"..If you want to do statistical analysis of genomics data it is better to rely on the Bioconductor packages themselves which have been optimized for the characteristics such as small sample sizes relative to the numbers of features."
+
+In a follow up post, I will use an RNA-seq dataset to show how the `tidybulk` package can seamlessly bridge the tidyverse with specialized Bioconductor packages such as `Deseq2`, `EdgeR` and `Lima`. Until then, tidy on!
