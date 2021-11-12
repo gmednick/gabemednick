@@ -380,7 +380,7 @@ yeast_df_tidy %>%
         axis.ticks.y = element_blank())
 ```
 
-Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization and developing intuition, generating models and evaluating the results. That said, from the comments of David's post, an important point was made:
+Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization, generating models and evaluating the results. That said, an important point was made in the comments of David's post:
 
 "..If you want to do statistical analysis of genomics data it is better to rely on the Bioconductor packages themselves which have been optimized for the characteristics such as small sample sizes relative to the numbers of features."
 
