@@ -261,11 +261,11 @@ yeast_df_tidy %&gt;%
 </div>
 <div id="quantifying-expression-levels-with-linear-regression" class="section level2">
 <h2>Quantifying expression levels with linear regression</h2>
-<p>In the last series of plots, we saw that FBP26 expression levels decrease linearly with increased growth rate. The FBP26 enzyme is involved in glucose metabolism.</p>
-<p>For a more general primer on this type of analysis, please see the vignette, <a href="https://cran.r-project.org/web/packages/broom/vignettes/broom_and_dplyr.html">broom and dplyr</a></p>
+<p>We are going to use base R’s <code>lm()</code> function to estimate the expression for each gene-nutrient combination. This can be done by grouping and nesting the data, then using the <code>purrr</code> package to iterate over the samples and return a linear model for each. Finally, we can use the <code>broom</code> package to return a tibble and <code>ggplot2</code> to look at the results.</p>
 <pre class="r"><code>library(tidymodels)
 library(broom)
 library(patchwork)
+library(glue)
 
 #David&#39;s example of running a linear model for each gene
 # linear_models &lt;- yeast_df_tidy %&gt;%
@@ -293,9 +293,10 @@ high_express &lt;- model_tib %&gt;%
   filter(term != &quot;(Intercept)&quot;) %&gt;%
   arrange(desc(estimate)) %&gt;%
   drop_na() %&gt;% 
-  filter(gene_name != &quot;&quot;) %&gt;% 
+  filter(gene_name != &quot;&quot;) %&gt;%
   head(n=15) %&gt;% 
-  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  mutate(gene_name_nut = glue(&quot;{gene_name}-{nutrient}&quot;)) %&gt;% 
+  ggplot(aes(estimate, fct_reorder(gene_name_nut, estimate), color = estimate)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = &quot;Genes that were &#39;turned on&#39; with increased growth rate&quot;,
@@ -310,8 +311,9 @@ low_express &lt;- model_tib %&gt;%
   drop_na() %&gt;% 
   arrange(desc(estimate)) %&gt;%
   filter(gene_name != &quot;&quot;) %&gt;%
-  tail(n=15) %&gt;%
-  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  tail(n=15) %&gt;% 
+  mutate(gene_name_nut = glue(&quot;{gene_name}-{nutrient}&quot;)) %&gt;% 
+  ggplot(aes(estimate, fct_reorder(gene_name_nut, estimate), color = estimate)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = &quot;Genes that were &#39;turned off&#39; with increased growth rate&quot;,
@@ -322,12 +324,13 @@ low_express &lt;- model_tib %&gt;%
 
 high_express / low_express</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
-In the previous plot, we used the results from the linear model to visualize the genes with the most positive or negative slopes respectively. Let’s create one more visualization to look at the genes with the most positive change in expression in response to growth rate (under one of the nutrient conditions).</p>
-<pre class="r"><code>over_epressed &lt;- c(&quot;SUL1&quot;,   &quot;UTR2&quot;,   &quot;HXT2&quot;,   &quot;CWP1&quot;,   &quot;RPL31B&quot;, &quot;RPL7A&quot;,  &quot;RPS28A&quot;, &quot;RPL24A&quot;, &quot;BUD19&quot;, &quot;CWP1&quot;,   &quot;RPS8A&quot;,  &quot;SNU13&quot;, &quot;RPP2A&quot;)
+In the previous plot, we used the results from the linear model to visualize the genes with the most positive or negative slopes (estimates) respectively. We also included errorbars to show the 95% confidence intervals.</p>
+<p>Let’s create one more visualization to look at the genes with the most positive change in expression in response to growth rate (under one of the nutrient conditions).</p>
+<pre class="r"><code>over_expressed &lt;- c(&quot;SUL1&quot;,   &quot;UTR2&quot;,   &quot;HXT2&quot;,   &quot;CWP1&quot;,   &quot;RPL31B&quot;, &quot;RPL7A&quot;,  &quot;RPS28A&quot;, &quot;RPL24A&quot;, &quot;BUD19&quot;, &quot;CWP1&quot;,   &quot;RPS8A&quot;,  &quot;SNU13&quot;, &quot;RPP2A&quot;)
 
 yeast_df_tidy %&gt;% 
   select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %&gt;%
-  filter(gene_name %in% over_epressed,
+  filter(gene_name %in% over_expressed,
          gene_name != &quot;&quot;) %&gt;%
   add_count(gene_name) %&gt;%
   group_by(gene_name, gid) %&gt;%

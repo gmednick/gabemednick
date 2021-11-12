@@ -291,14 +291,13 @@ FBP26 exhibits a trend of decreasing expression with increasing growth rate. We 
 
 ## Quantifying expression levels with linear regression
 
-In the last series of plots, we saw that FBP26 expression levels decrease linearly with increased growth rate. The FBP26 enzyme is involved in glucose metabolism.
-
-For a more general primer on this type of analysis, please see the vignette, [broom and dplyr](https://cran.r-project.org/web/packages/broom/vignettes/broom_and_dplyr.html)
+We are going to use base R's `lm()` function to estimate the expression for each gene-nutrient combination. This can be done by grouping and nesting the data, then using the `purrr` package to iterate over the samples and return a linear model for each. Finally, we can use the `broom` package to return a tibble and `ggplot2` to look at the results. 
 
 ```{r}
 library(tidymodels)
 library(broom)
 library(patchwork)
+library(glue)
 
 #David's example of running a linear model for each gene
 # linear_models <- yeast_df_tidy %>%
@@ -326,9 +325,10 @@ high_express <- model_tib %>%
   filter(term != "(Intercept)") %>%
   arrange(desc(estimate)) %>%
   drop_na() %>% 
-  filter(gene_name != "") %>% 
+  filter(gene_name != "") %>%
   head(n=15) %>% 
-  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  mutate(gene_name_nut = glue("{gene_name}-{nutrient}")) %>% 
+  ggplot(aes(estimate, fct_reorder(gene_name_nut, estimate), color = estimate)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = "Genes that were 'turned on' with increased growth rate",
@@ -343,8 +343,9 @@ low_express <- model_tib %>%
   drop_na() %>% 
   arrange(desc(estimate)) %>%
   filter(gene_name != "") %>%
-  tail(n=15) %>%
-  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  tail(n=15) %>% 
+  mutate(gene_name_nut = glue("{gene_name}-{nutrient}")) %>% 
+  ggplot(aes(estimate, fct_reorder(gene_name_nut, estimate), color = estimate)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   labs(title = "Genes that were 'turned off' with increased growth rate",
@@ -355,14 +356,16 @@ low_express <- model_tib %>%
 
 high_express / low_express
 ```
-In the previous plot, we used the results from the linear model to visualize the genes with the most positive or negative slopes respectively. Let's create one more visualization to look at the genes with the most positive change in expression in response to growth rate (under one of the nutrient conditions). 
+In the previous plot, we used the results from the linear model to visualize the genes with the most positive or negative slopes (estimates) respectively. We also included errorbars to show the 95% confidence intervals.
+
+Let's create one more visualization to look at the genes with the most positive change in expression in response to growth rate (under one of the nutrient conditions). 
 
 ```{r}
-over_epressed <- c("SUL1",   "UTR2",   "HXT2",   "CWP1",   "RPL31B", "RPL7A",  "RPS28A", "RPL24A", "BUD19", "CWP1",   "RPS8A",  "SNU13", "RPP2A")
+over_expressed <- c("SUL1",   "UTR2",   "HXT2",   "CWP1",   "RPL31B", "RPL7A",  "RPS28A", "RPL24A", "BUD19", "CWP1",   "RPS8A",  "SNU13", "RPP2A")
 
 yeast_df_tidy %>% 
   select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
-  filter(gene_name %in% over_epressed,
+  filter(gene_name %in% over_expressed,
          gene_name != "") %>%
   add_count(gene_name) %>%
   group_by(gene_name, gid) %>%
