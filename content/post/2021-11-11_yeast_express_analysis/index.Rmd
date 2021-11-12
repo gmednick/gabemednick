@@ -1,0 +1,384 @@
+---
+title: "Transcriptomic analysis of nutrient limitation in yeast"
+author: "Gabe Mednick"
+date: "2021-11-11"
+output:
+  html_document:
+    df_print: paged
+categories: []
+tags: []
+subtitle: ''
+summary: This post demonstrates how the Tidyvere can enlighten any omics analysis
+authors: []
+lastmod: ''
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+slug: yeast_expression
+---
+
+### This post is still under construction
+
+## Yeast microarray data
+
+In biology, the term 'omics' is used to refer to studies that involve a meta view of the behavior of an entire class of molecules. Omics can refer to a range of disciplines, including genomics, proteomics, metabolomics, metagenomics and transcriptomics. This post will focus on transcriptomics, the field of study that looks at RNA expression and transcriptional regulation in response to specific changes. We will be using gene expression data from [Brauer et al, 2008] (<https://www.molbiolcell.org/doi/full/10.1091/mbc.e07-08-0779>). The title of their paper provides a powerful summary of the experiment and what they learned from the data: 'Coordination of Growth Rate, Cell Cycle, Stress Response, and Metabolic Activity in Yeast'.
+
+In my last two posts, I have tried to emphasize the use of Bioconductor packages and the Tidyverse in a seamless analysis workflow. Although we may ultimately be working with specialized bioinformatics packages such as `Deseq2`, `EdgeR` or `Lima` for analysis of transcriptomic data, David Robinson notes that 'Any challenge in plotting, filtering, or merging your data will get directly in the way of answering scientific questions'. This is why the `Tidyverse` is essential to any analysis workflow.
+
+As noted, the data is from yeast and the gene expression levels were measured under conditions of selective nutrient starvation. Growth rates were also carefully controlled by using a chemostat to regulate the flow of fresh growth media. The expression data was collected using an Affymatrix microarray. Microarrays still have diagnostic applications but, RNA-seq has become the preferred method for measuring expression data. RNA-seq counts all RNA transcripts directly while microaaray counts are based on fluorescence intensity. Another limitation of microarrays is that they are limited to the complementary probe sequences that are included in the microarray library.
+
+Before we dive into the deeps of this analysis, I want to give credit and thanks to David Robinson. David is one of the most insightful and inspiring data scientists on the planet. He has a few courses on DataCamp and regularly [livestreams](https://www.youtube.com/channel/UCeiiqmVK07qhY-wvg3IZiZQ) data analysis with R, the Tidyverse and Tidymodels. This post will closely follow a [series of posts](http://varianceexplained.org/r/tidy-genomics-biobroom/) by David that focus on working with genomic data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+
+library(tidyverse)
+theme_set(theme_light())
+```
+
+```{r}
+# yeast_data <- read_delim("http://varianceexplained.org/files/Brauer2008_DataSet1.tds")
+# write_rds(yeast_data, 'yeast_data')
+yeast_df <- read_rds("yeast_data")
+
+yeast_df %>% 
+  glimpse()
+
+yeast_df %>% 
+  DT::datatable()
+```
+
+## Cleaning the data
+
+Now that we've seen the data, let's talk about how we can make the information more useful by tidying it. A Tidy data frame should have one variable per column and one observation per row. In the Brauer data, the `NAME` column has multiple pieces of information separated by '\|\|'. Similarly, the numeric column names are made up of the nutrient that is being limited in growth media and the growth rate. The respective values are the relative expression levels for each gene under the given conditions. Enough talk, let's code.
+
+```{r}
+# I'm going to pivot the table longer by combining all nutrient conditions into one column and expression values into another. Then we can separate and the information in the above mentioned columns in only a couple of steps using separate()
+yeast_df_tidy <- yeast_df %>% 
+  pivot_longer(G0.05:U0.3, names_to = 'nutrient_growth', values_to = 'expression_levels') %>% 
+  separate(nutrient_growth, c("nutrient", "growth_rate"), sep = 1, convert = TRUE) %>% 
+  separate(NAME, c('gene_name', 'molec_process', 'activity', 'sys_id', 'id'), sep = "\\|\\|") %>% 
+  mutate(across(everything(), str_squish),
+         growth_rate = as.numeric(growth_rate),
+         expression_levels = as.numeric(expression_levels),
+         activity = str_remove(molec_process, "[*]"),
+         molec_process = str_remove(activity, "[*]"),
+         molec_process = str_remove(activity, "activity")) %>% 
+  janitor::clean_names() # clean column names
+# growth_rate and expression_levels are characters-->let's convert them to numeric 
+```
+
+```{r}
+yeast_df_tidy %>% 
+  head(30) %>% 
+  DT::datatable()
+```
+
+Cool, let's explore some of the benefits of Tidying our data? For starters, we can explore the data with the data visualization package, `GGplot2`. When we cleaned the data, we separated important annotation information about each gene. Let's use this information to count each category and see what the most common molecular processes in .
+
+```{r}
+# plotting most common gene product associated molecular processes
+yeast_df_tidy %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  drop_na(molec_process) %>%
+  group_by(gene_name, molec_process) %>% 
+  count(sort = T) %>%
+  ungroup() %>%
+  slice(n = 4:20) %>% 
+  ggplot(aes(n, fct_reorder(molec_process, n), fill = molec_process)) +
+  geom_col() +
+  theme(legend.position = 'none') +
+  labs(title = 'Most common molecular processes',
+       subtitle = "Gene count in yeast",
+       y = NULL,
+       x = NULL) +
+  theme(plot.title = element_text(color = "blue", size = 14, face = "bold", hjust = -1))
+
+```
+
+Let's also look at the annotation for gene product activity.
+
+```{r}
+# plotting most common gene product function
+yeast_df_tidy %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  drop_na(activity) %>%
+  group_by(gene_name, activity) %>% 
+  count(sort = T) %>%
+  ungroup() %>%
+  slice(n = 4:20) %>% 
+  ggplot(aes(n,fct_reorder(activity, n), fill = activity)) +
+  geom_col() +
+  theme(legend.position = 'none') +
+  labs(title = "Most common gene product activity",
+       subtitle = "Gene count in yeast",
+       y = NULL,
+       x = NULL) +
+  theme(plot.title = element_text(color = "blue", size = 14, face = "bold", hjust = -1))
+
+```
+
+Visualizing relationships in our data can help us check for inconsistencies and deepen our intuition about the relationships between variables. For instance, let's consider how expression levels depend on growth rate for each of the nutrient limiting categories. Genes that show an increase or decrease in expression may be directly affected by the specific nutrient limitation. Let's start off by looking at a couple of individual genes under each nutrient limiting condition and then expand our visual exploration to look for patterns based on activity or molecular process.
+
+```{r}
+#Let's replace the nutrient symbols with names
+nutrients <- c(G = 'Glucose', L = 'Leucine', N = 'Nitrogen', P  = 'Phosphate', S = 
+'Sulfate', N = 'Ammonia', U = 'Uracil')
+
+yeast_df_tidy <- yeast_df_tidy %>% 
+  mutate(nutrient = recode(
+    nutrient, !!!nutrients
+  ))
+```
+
+```{r}
+yeast_df_tidy %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  filter(gene_name == "SUL1") %>% 
+  ggplot(aes(growth_rate, expression_levels, color = nutrient)) +
+  geom_line() +
+  labs(title = "Expression levels vs growth rate for SUL1",
+       subtitle = "SUL1 is involved in sulfate transport",
+       x = "Growth rate",
+       y = "Expression")
+```
+
+Without more information about SUL1, it's hard to know what we should expect. I would expect it's activity to increase with growth rate under sulfate limiting conditions (more sulfate present in the media). Instead, it appears to increase wit increasing uracil and phosphate.
+
+This time, let's try a gene whose protein product is directly involved in the synthesis of a limiting nutrient. For this, we will use LEU1 which is involved in the synthesis of leucine.
+
+```{r}
+yeast_df_tidy %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  filter(gene_name == "LEU1") %>% 
+  ggplot(aes(growth_rate, expression_levels, color = nutrient)) +
+  geom_line() +
+  labs(title = "Expression levels vs growth rate for LEU1",
+       x = "Growth rate",
+       y = "Expression")
+```
+
+Now, we can see a very clear trend: As growth rate increasing (increasing availability of leucine in the growth media) the in-house machinery for leucine biosynthesis is turned down.
+
+Let's use `filter()` and `facet_wrap()` to search for gene products involved in different categories to get a better sense of our data.
+
+```{r}
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(grepl("leucine biosynthesis", activity),
+         gene_name != "") %>%
+  group_by(gene_name, gid, nutrient) %>% 
+  ungroup() %>% 
+  distinct(gene_name, .keep_all = T) %>% 
+  select(gene_name, activity, molec_process, nutrient) %>% 
+  DT::datatable() 
+
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(grepl("leucine biosynthesis", activity),
+         gene_name != "") %>%
+  group_by(gene_name, gid, nutrient) %>% 
+  #group_slice(1:35) %>% 
+  ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
+  geom_line() +
+  facet_wrap(~gene_name, scales = 'free') +
+  labs(title = "Expression levels vs growth rate under selective nutrient limitation",
+       subtitle = "filtering for genes with 'leucine biosynthesis' activity",
+       x = "Growth rate",
+       y = "Expression") +                                                        
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+```{r}
+# let's start by looking at the data
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(grepl("glucose metabolism", activity),
+         gene_name != "") %>%
+  count(gene_name, molec_process, activity) %>% 
+  select(-n) %>% 
+  DT::datatable() 
+
+# Let's visualize genes with glucose metabolism activity
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(grepl("glucose metabolism", activity),
+         gene_name != "") %>%
+  add_count(gene_name) %>%
+  group_by(gene_name, gid) %>%
+  ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
+  geom_line() +
+  facet_wrap(~gene_name, scales = 'free') +
+  labs(title = "Expression levels vs growth rate under selective nutrient limitation",
+       subtitle = "Genes associated with glucose metabolism",
+       x = "Growth rate",
+       y = "Expression") +                                                        
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+```{r}
+
+#Create a plotting function
+
+# categor_facet_plot <- function(search_term, feature) {
+#   yeast_df_tidy %>% 
+#   select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+#   filter(grepl(!!enquo(search_term), feature),
+#          gene_name != "") %>%
+#   add_count(gene_name) %>%
+#   group_by(gene_name, gid) %>%
+#   ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
+#   geom_line() +
+#   facet_wrap(~gene_name, scales = 'free') +                                                   
+#   theme(axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank())
+# }
+# 
+# categor_facet_plot(sulfur, feature = activity)
+# +
+#   labs(title = "Expression levels vs growth rate under selective nutrient limitation",
+#        x = "Growth rate",
+#        y = "Expression") 
+```
+
+```{r}
+# group_slice function
+group_slice <- function(dt, v) {
+  stopifnot('data.frame' %in% class(dt))
+  stopifnot(v > 0, (v %% 1) == 0)
+  if(n_groups(dt) >= 2) #warn('Only 1 group to slice')
+  #get the grouping variables
+  groups=
+    unique(dt %>% select()) %>%
+    group_by() %>%
+    slice(v)
+ #subset our original data
+  out = inner_join(dt, groups)
+  out
+}
+
+#Table for a subset of genes related to glucose metabolism
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  filter(grepl("nitrogen", activity),
+         gene_name != "") %>%
+  group_by(gene_name, gid, nutrient) %>% 
+  #group_slice(1:35) %>%
+  ungroup() %>% 
+  distinct(gene_name, .keep_all = T) %>% 
+  select(gene_name, activity, molec_process, nutrient) %>% 
+  DT::datatable() 
+
+yeast_df_tidy %>% 
+  select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
+  #mutate(across(everything(), str_squish)) %>%
+  filter(grepl("nitrogen", activity),
+         gene_name != "") %>%
+  group_by(gene_name, gid, nutrient) %>% 
+  #group_slice(1:35) %>% 
+  ggplot(aes(growth_rate, expression_levels, color = nutrient, group = nutrient)) +
+  geom_line() +
+  facet_wrap(~gene_name, scales = 'free') +
+  labs(title = "Expression levels vs growth rate under selective nutrient limitation",
+       subtitle = "filtering for genes with 'Nitrogen biosynthesis' activity",
+       x = "Growth rate",
+       y = "Expression") +                                                        
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+In this next plot, we are going to 'zoom' in on one gene and visualize growth rate vs expression as a scatter plot. This time, we will consider each nutrient condition separately using `facet_wrap()` and fit a linear model to the data points with `geom_smooth(method = 'lm')`.
+
+```{r}
+# Use a named character vector for unquote splicing with !!!
+# level_key <- c(a = "apple", b = "banana", c = "carrot")
+# recode(char_vec, !!!level_key)
+
+yeast_df_tidy %>% 
+  mutate(nutrient = recode(nutrient, !!!nutrients)) %>% 
+  filter(gene_name == "FBP26") %>%
+  ggplot(aes(growth_rate, expression_levels, color = nutrient)) +
+  geom_point(size = 2) +
+  facet_wrap(~ nutrient) +
+  geom_smooth(method = 'lm', size = .5) +
+  labs(title = 'FBP26 expression vs growth rate under selective nutrient starvation',
+       x = "Growth rate",
+       y = "Expression levels")
+
+```
+
+FBP26 exhibits a trend of decreasing expression with increasing growth rate. We see that a linear model fits this trend quite well. In th next section we are going to generate linear models for each gene and nutrient combination. Then we will look at how we can visualize significant genes based on whether they were up or down regulated in relation to growth rate.
+
+## Quantifying expression levels with linear regression
+
+In the last series of plots, we saw that FBP26 expression levels decrease linearly with increased growth rate. The FBP26 enzyme is involved in glucose metabolism.
+
+For a more general primer on this type of analysis, please see the vignette, [broom and dplyr](https://cran.r-project.org/web/packages/broom/vignettes/broom_and_dplyr.html)
+
+```{r}
+library(tidymodels)
+library(broom)
+library(patchwork)
+
+#David's example of running a linear model for each gene
+# linear_models <- yeast_df_tidy %>%
+#   drop_na(expression_levels) %>% 
+#   group_by(gene_name, gid, nutrient) %>%
+#   do(tidy(lm(expression_levels ~ growth_rate, .)))
+
+lm_express_mod <- yeast_df_tidy %>% 
+  drop_na() %>%
+  select(gene_name, gid, nutrient, expression_levels, growth_rate) %>% 
+  group_by(gene_name, gid, nutrient) %>% 
+  nest(-gene_name, -gid, -nutrient)
+
+# Model results were saved as rds file to increase speed of knitting the html post
+# model_lm <- lm_express_mod %>% 
+#   mutate(model = map(data, ~lm(expression_levels ~ growth_rate, data = .x)),
+#          tidy_model = map(model, tidy, conf.int = TRUE)) %>% 
+#   select(gene_name, tidy_model) %>% 
+#   unnest(tidy_model)
+
+#write_rds(model_lm, 'model_tibble')
+model_tib <- read_rds("model_tibble")
+
+high_express <- model_tib %>%
+  filter(term != "(Intercept)") %>%
+  arrange(desc(estimate)) %>%
+  drop_na() %>% 
+  filter(gene_name != "") %>% 
+  head(n=15) %>%
+  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
+  labs(title = "Genes that were 'turned on' with increased growth rate",
+       y = NULL) +
+  scale_color_viridis_c() +
+  theme_dark() +
+  theme(legend.position = 'none')
+
+
+low_express <- model_tib %>%
+  filter(term != "(Intercept)") %>%
+  drop_na() %>% 
+  arrange(desc(estimate)) %>%
+  filter(gene_name != "") %>%
+  tail(n=15) %>%
+  ggplot(aes(estimate, fct_reorder(gene_name, estimate), color = estimate)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
+  labs(title = "Genes that were 'turned off' with increased growth rate",
+       y = NULL) +
+  scale_color_viridis_c(begin = 1, end = 0) +
+  theme_dark() +
+  theme(legend.position = 'none')
+
+high_express / low_express
+```
+
+Hopefully this post has convinced you that the tidyverse is the ideal backbone for any omics analysis. The tidyverse is important for data cleaning, visualization, developing intuition, generating models and evaluating the results. In a follow up post, I plan to show how the tidyverse can also be used throughout an RNA-seq workflow analysis. As well, using the `tidybulk` package from the Biconductor repository, I will show how the tidyverse and several specialized packages such as `Deseq2`, `EdgeR` and `Lima` can complement each other. Until then, tidy on!
