@@ -28,7 +28,7 @@ slug: yeast_expression
 <link href="{{< blogdown/postref >}}index_files/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="{{< blogdown/postref >}}index_files/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="{{< blogdown/postref >}}index_files/dt-core/js/jquery.dataTables.min.js"></script>
-<link href="{{< blogdown/postref >}}index_files/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<link href="{{< blogdown/postref >}}index_files/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
 <script src="{{< blogdown/postref >}}index_files/crosstalk/js/crosstalk.min.js"></script>
 
 
@@ -39,7 +39,7 @@ slug: yeast_expression
 <h2>Yeast microarray data</h2>
 <p>In biology, the term ‘omics’ is used to refer to studies that involve a meta view of the behavior of an entire class of molecules. Omics can refer to a range of disciplines, including genomics, proteomics, metabolomics, metagenomics and transcriptomics. This post will focus on transcriptomics, the field of study that looks at RNA expression and transcriptional regulation in response to specific changes. We will be using gene expression data from <a href="https://www.molbiolcell.org/doi/full/10.1091/mbc.e07-08-0779">Brauer et al, 2008</a>. The title of their paper provides a powerful summary of the experiment and what they learned from the data: ‘Coordination of Growth Rate, Cell Cycle, Stress Response, and Metabolic Activity in Yeast’.</p>
 <p>In my last two posts, I have tried to emphasize the use of Bioconductor packages and the Tidyverse in a seamless analysis workflow. Although we may ultimately be working with specialized bioinformatics packages such as <code>Deseq2</code>, <code>EdgeR</code> or <code>Lima</code> for analysis of transcriptomic data, David Robinson notes that ‘Any challenge in plotting, filtering, or merging your data will get directly in the way of answering scientific questions’. This is why the <code>Tidyverse</code> is essential to any analysis workflow.</p>
-<p>As noted, the data is from yeast and the gene expression levels were measured under conditions of selective nutrient starvation. Growth rates were also carefully controlled by using a chemostat to regulate the flow of fresh growth media. The expression data was collected using an Affymatrix microarray. Microarrays still have diagnostic applications but, RNA-seq has become the preferred method for measuring expression data. RNA-seq counts all RNA transcripts directly while microaaray counts are based on fluorescence intensity. Another limitation of microarrays is that they are limited to the complementary probe sequences that are included in the microarray library.</p>
+<p>As noted, the data is from yeast and the gene expression levels were measured under conditions of selective nutrient starvation. Growth rates were also carefully controlled by using a chemostat to regulate the flow of fresh growth media. The expression data was collected using a microarray. Microarrays measure expression levels as fluorescence intensities that are proportional to the number of sequences that bind to the complementary probe sequences of the array. RNA-seq experiments are considered more accurate since all RNA transcripts are counted directly.</p>
 <p>Before we dive into the deeps of this analysis, I want to give credit and thanks to David Robinson. David is one of the most insightful and inspiring data scientists on the planet. He has a few courses on DataCamp and regularly <a href="https://www.youtube.com/channel/UCeiiqmVK07qhY-wvg3IZiZQ">livestreams</a> data analysis with R, the Tidyverse and Tidymodels. This post will closely follow a <a href="http://varianceexplained.org/r/tidy-genomics-biobroom/">series of posts</a> by David that focus on working with genomic data.</p>
 <pre class="r"><code># yeast_data &lt;- read_delim(&quot;http://varianceexplained.org/files/Brauer2008_DataSet1.tds&quot;)
 # write_rds(yeast_data, &#39;yeast_data&#39;)
@@ -344,7 +344,7 @@ yeast_df_tidy %&gt;%
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank())</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<p>Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization and developing intuition, generating models and evaluating the results. That said, from the comments of David’s post, an important point was made:</p>
+<p>Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization, generating models and evaluating the results. That said, an important point was made in the comments of David’s post:</p>
 <p>“..If you want to do statistical analysis of genomics data it is better to rely on the Bioconductor packages themselves which have been optimized for the characteristics such as small sample sizes relative to the numbers of features.”</p>
 <p>In a follow up post, I will use an RNA-seq dataset to show how the <code>tidybulk</code> package can seamlessly bridge the tidyverse with specialized Bioconductor packages such as <code>Deseq2</code>, <code>EdgeR</code> and <code>Lima</code>. Until then, tidy on!</p>
 </div>
