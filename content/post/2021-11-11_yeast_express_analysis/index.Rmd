@@ -382,6 +382,6 @@ yeast_df_tidy %>%
 
 Hopefully this post has convinced you that the tidyverse can be the backbone of any omics analysis. It is essential for data cleaning, visualization, generating models and evaluating the results. That said, an important point was made in the comments of David's post:
 
-"..If you want to do statistical analysis of genomics data it is better to rely on the Bioconductor packages themselves which have been optimized for the characteristics such as small sample sizes relative to the numbers of features."
+"..If you want to do statistical analysis of genomics data it is better to rely on the Bioconductor packages themselves which have been optimized for the characteristics such as small sample sizes relative to the number of features."
 
 In a follow up post, I will use an RNA-seq dataset to show how the `tidybulk` package can seamlessly bridge the tidyverse with specialized Bioconductor packages such as `Deseq2`, `EdgeR` and `Lima`. Until then, tidy on!
