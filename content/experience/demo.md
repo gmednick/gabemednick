@@ -49,5 +49,7 @@ subtitle = ""
  # CSS class.
  css_class = ""
 +++
+
 <br/><br/>
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "resume/gmednickCV.pdf" "newtab" >}}resumé{{< /staticref >}}
+
+{{< staticref "resume/gmednickCV.pdf" "newtab" >}}{{< icon name="download" pack="fas" >}} Download my resumé{{< /staticref >}}
