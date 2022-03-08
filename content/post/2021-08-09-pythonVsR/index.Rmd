@@ -25,9 +25,9 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
 # Introduction
-In this post, I answer the age-old question, 'Python or R?' with the following retort, 'Why not both?'. The R package, `Reticulate`, allows us to bridge Python and R in a seamless fashion. We can install Python packages and work with Python objects in R or vice versa all in one document.
+In this post, I answer the age-old question, 'Python or R?' by saying 'Why not both?!'. Thanks to the R package, `Reticulate`, we can bridge Python and R in a seamless fashion. Reticulate provides an R interface to Python modules, classes, and functions. It also allows us to bridge Python objects to R and vice versa.
 
-There are fantastic packages, such as `Biostrings` in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. This post uses R and, in some examples, Python to solve some of these 'character string' manipulations from scratch. Several of the Python examples are sourced from [Martin Schweitzer's fantastic talk](https://www.youtube.com/watch?v=uWWoRa8thN0) at PyCon, 2016.
+There are fantastic packages, such as `Biostrings` in R, that are designed for common nucleic acid manipulations such as transcribing DNA into RNA or providing the reverse complement of a DNA primer. Check out my post, 'Exploring the yeast genome with Bioconductor' for the `Biostrings` package in action. This post uses R and Python to solve these 'character string' puzzles from scratch. Several of the Python examples are sourced from [Martin Schweitzer's fantastic talk](https://www.youtube.com/watch?v=uWWoRa8thN0) at PyCon, 2016.
 
 ### Example 1
 

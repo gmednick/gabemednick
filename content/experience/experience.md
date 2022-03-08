@@ -77,5 +77,4 @@ date_format = "Jan 2006"
   * Biology 
   * Equitable, student centered teaching 
   """
-
 +++
