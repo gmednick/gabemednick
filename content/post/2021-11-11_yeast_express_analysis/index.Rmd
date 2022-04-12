@@ -36,9 +36,11 @@ Before we dive into the deeps of this analysis, I want to give credit and thanks
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 
 library(tidyverse)
+library(gt)
 theme_set(theme_light())
 ```
 
+Let's start by taking a look at the first few rows of data
 ```{r}
 # yeast_data <- read_delim("http://varianceexplained.org/files/Brauer2008_DataSet1.tds")
 # write_rds(yeast_data, 'yeast_data')
@@ -48,7 +50,14 @@ yeast_df <- read_rds("yeast_data")
 #   glimpse()
 
 yeast_df %>% 
-  DT::datatable()
+  head(10) %>% 
+  gt() %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = "#E0FFFF"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
 ```
 
 ## Cleaning the data
@@ -71,10 +80,18 @@ yeast_df_tidy <- yeast_df %>%
 # growth_rate and expression_levels are characters-->let's convert them to numeric 
 ```
 
+Let's look at the data again after cleaning it!
+
 ```{r}
 yeast_df_tidy %>% 
-  head(30) %>% 
-  DT::datatable()
+  head(10) %>% 
+  gt() %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = "#E0FFFF"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body())
 ```
 
 Cool, let's explore some of the benefits of Tidying our data? For starters, we can explore the data with the data visualization package, `GGplot2`. When we cleaned the data, we separated important annotation information about each gene. Let's use this information to count each category and see what the most common molecular processes in .
