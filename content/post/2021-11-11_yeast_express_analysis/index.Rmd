@@ -50,7 +50,7 @@ yeast_df <- read_rds("yeast_data")
 #   glimpse()
 
 yeast_df %>% 
-  head(10) %>% 
+  head(5) %>% 
   gt() %>% 
   tab_style(
     style = list(
@@ -84,7 +84,7 @@ Let's look at the data again after cleaning it!
 
 ```{r}
 yeast_df_tidy %>% 
-  head(10) %>% 
+  head(5) %>% 
   gt() %>% 
   tab_style(
     style = list(
