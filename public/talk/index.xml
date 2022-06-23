@@ -2,14 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>All Talks &amp; Workshops | Gabe Mednick</title>
-    <link>/talk/</link>
-      <atom:link href="/talk/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://www.gabemednick.com/talk/</link>
+      <atom:link href="https://www.gabemednick.com/talk/index.xml" rel="self" type="application/rss+xml" />
     <description>All Talks &amp; Workshops</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2021</copyright>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2022</copyright>
     <image>
-      <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
+      <url>https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
       <title>All Talks &amp; Workshops</title>
-      <link>/talk/</link>
+      <link>https://www.gabemednick.com/talk/</link>
     </image>
     
   </channel>

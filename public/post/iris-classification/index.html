@@ -23,7 +23,7 @@
   
   
 
-  
+  <meta name="author" content="Gabriel Mednick, PhD">
 
   
   
@@ -33,7 +33,7 @@
   <meta name="description" content="Flower classification using Tidymodels">
 
   
-  <link rel="alternate" hreflang="en-us" href="/post/iris-classification/">
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/iris-classification/">
 
   
 
@@ -219,6 +219,44 @@
 
 
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
   
 
 
@@ -231,7 +269,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/post/iris-classification/">
+  <link rel="canonical" href="https://www.gabemednick.com/post/iris-classification/">
 
   
   
@@ -246,10 +284,10 @@
   <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Gabe Mednick">
-  <meta property="og:url" content="/post/iris-classification/">
+  <meta property="og:url" content="https://www.gabemednick.com/post/iris-classification/">
   <meta property="og:title" content="Iris Classification | Gabe Mednick">
-  <meta property="og:description" content="Flower classification using Tidymodels"><meta property="og:image" content="/post/iris-classification/featured.png">
-  <meta property="twitter:image" content="/post/iris-classification/featured.png"><meta property="og:locale" content="en-us">
+  <meta property="og:description" content="Flower classification using Tidymodels"><meta property="og:image" content="https://www.gabemednick.com/post/iris-classification/featured.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/iris-classification/featured.png"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2020-10-21T00:00:00&#43;00:00">
@@ -278,23 +316,28 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "/post/iris-classification/"
+    "@id": "https://www.gabemednick.com/post/iris-classification/"
   },
   "headline": "Iris Classification",
   
   "image": [
-    "/post/iris-classification/featured.png"
+    "https://www.gabemednick.com/post/iris-classification/featured.png"
   ],
   
   "datePublished": "2020-10-21T00:00:00Z",
   "dateModified": "2020-10-21T15:11:02-07:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
   
   "publisher": {
     "@type": "Organization",
     "name": "Gabe Mednick",
     "logo": {
       "@type": "ImageObject",
-      "url": "/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
     }
   },
   "description": "Flower classification using Tidymodels"
@@ -415,64 +458,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#about"><span>About</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#experience"><span>Experience</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link " href="/#posts"><span>Blog</span></a>
         </li>
 
@@ -503,6 +488,28 @@
 
         <li class="nav-item">
           <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
         </li>
 
         
@@ -610,11 +617,6 @@
   
 
   
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    10 min read
-  </span>
-  
 
   
   
@@ -656,11 +658,11 @@
 
     <div class="article-style">
       
-<script src="/post/iris-classification/index_files/header-attrs/header-attrs.js"></script>
+<script src="https://www.gabemednick.com/post/iris-classification/index_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="iris-data" class="section level1">
-<h1>Iris data</h1>
+<div id="iris-data" class="section level2">
+<h2>Iris data</h2>
 <p>The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every installation of R. You can use <code>data()</code> to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., <code>data(package = 'dplyr')</code>.</p>
 <p>Let’s take a look at the data.</p>
 <pre class="r"><code># load the iris data set and clean the column names with janitor::clean_names()
@@ -689,63 +691,85 @@ iris_df %&gt;%  str()</code></pre>
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.</p>
-<p><strong>Let’s use the data to create a classification model that predicts the species of iris based on a flower’s measurements.</strong></p>
+<p>The dataset contains three unique species of iris and four variables or features (sepal length and width, and petal length and width). The data is clean but with only 150 observations it’s a wee bit small for training a model. To compensate for this, we will use bootstrap resampling.</p>
+<div id="outline" class="section level4">
+<h4>Outline</h4>
+<p><strong>Train a classification model to predict flower species based on the four available features</strong></p>
+<p>The model formula will have the form <code>species ~ .</code> where <code>.</code> represents all explanatory variables in the data.</p>
+</div>
 </div>
 <div id="visualize-relationships" class="section level1">
 <h1>Visualize relationships</h1>
 <p>Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data.</p>
-<pre class="r"><code>sepal &lt;- iris_df %&gt;% 
+<pre class="r"><code>library(ggforce)
+
+sepal &lt;- iris_df %&gt;% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
-  geom_point(size = 1) + facet_wrap(~species) +
+  geom_point(size = 1) + 
+  facet_wrap(~species) +
   labs(x = &#39;sepal length&#39;,
        y = &#39;sepal width&#39;) +
   theme(legend.position = &#39;none&#39;) 
 
 petal &lt;- iris_df %&gt;% 
   ggplot(aes(petal_length, petal_width, color = species)) +
-  geom_point(size =1) + facet_wrap(~species) +
+  geom_point(size =1) + 
+  facet_wrap(~species) +
   labs(x = &#39;petal length&#39;,
        y = &#39;petal width&#39;) +
   theme(legend.position = &#39;none&#39;) 
 
-(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there&#39;s a better way..</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-</div>
-<div id="tidy-the-dataset" class="section level1">
-<h1>Tidy the dataset</h1>
-<p>Let’s change the shape of our data by combining the four iris features into a single column (named <code>metric</code>) and the associated values will populate a new column (named <code>value</code>). This transformation into a longer dataset can be achieved with the function <code>pivot_longer()</code>. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.</p>
+(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked </code></pre>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>sl_sw &lt;- iris_df %&gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point(size = 1) +
+  labs(x = &#39;sepal length&#39;,
+       y = &#39;sepal width&#39;) +
+  theme(legend.position = &#39;none&#39;)
+
+sl_sw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = &quot;Comparing sepal length vs sepal width across species&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<pre class="r"><code>pl_pw &lt;- iris_df %&gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point(size =1) + 
+  labs(x = &#39;petal length&#39;,
+       y = &#39;petal width&#39;) +
+  theme(legend.position = &#39;none&#39;) 
+
+pl_pw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = &quot;Comparing petal length vs petal width across species&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+<p>Let’s change the shape of our data by combining the four iris features into a single column (<code>metric</code>) and the associated values will populate a new column (<code>value</code>). This transformation into a longer dataset can be achieved with the function <code>pivot_longer()</code>.</p>
 <pre class="r"><code>iris_df_long &lt;- iris_df %&gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &#39;metric&#39;,
                values_to =&#39;value&#39;) 
-# A boxplot is a great way to see the median values of our features by species.
-iris_df_long %&gt;% 
-  ggplot(aes(metric, value, color = species)) +
-  geom_boxplot() </code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code># A nice alternative is to facet by the metric to convey the same information but with added clarity. 
+
+
+# A boxplot is a great way to compare the distribution of each features by species.
 iris_df_long %&gt;%
-  ggplot(aes(species, value, color = species)) +
+  ggplot(aes(species, value, fill = species)) +
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
-<pre class="r"><code># The same information can be displayed by comparing the distributions in histogram.
-iris_df_long %&gt;%
-  ggplot(aes(value, fill = species)) +
-  geom_histogram(bins = 20, alpha = 0.7) +
-  facet_wrap(~ metric, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-3-3.png" width="672" /></p>
-<pre class="r"><code># geom_denisty is a nice alternative to geom_histogram.
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># Looking at the data in a different way, geom_density is a nice alternative to geom_histogram.
+
 iris_df_long %&gt;% 
   ggplot(aes(value, fill = species)) +
   geom_density(alpha = .5) +
   facet_wrap(~ metric, scales = &quot;free&quot;)</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
-</div>
-<div id="get-modelling" class="section level1">
-<h1>Get modelling</h1>
-<p>Before we get to modeling, we need to split the data. By default, <code>initial split()</code> provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function <code>bootstraps()</code> will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times.</p>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<div id="splitting-the-data-into-training-and-test-sets" class="section level2">
+<h2>Splitting the data into training and test sets</h2>
+<p>By default, <code>initial split()</code> provides a 75:25 split for our train and test sets respectively. Since our dataset is small to begin with, we are going to make bootstrap resamples from the training data. The function <code>bootstraps()</code> will split the data into training and test sets, then repeat this process with replacement a specified number of times (25 is the default).</p>
 <pre class="r"><code>set.seed(123)
 tidy_split &lt;- initial_split(iris_df)
 tidy_split</code></pre>
@@ -757,7 +781,7 @@ iris_test &lt;- testing(tidy_split)
 iris_boots &lt;- bootstraps(iris_train, times = 30) 
 iris_boots</code></pre>
 <pre><code>## # Bootstrap sampling 
-## # A tibble: 30 x 2
+## # A tibble: 30 × 2
 ##    splits           id         
 ##    &lt;list&gt;           &lt;chr&gt;      
 ##  1 &lt;split [112/45]&gt; Bootstrap01
@@ -772,11 +796,11 @@ iris_boots</code></pre>
 ## 10 &lt;split [112/37]&gt; Bootstrap10
 ## # … with 20 more rows</code></pre>
 </div>
-<div id="recipes" class="section level1">
-<h1>Recipes</h1>
+<div id="recipes" class="section level2">
+<h2>Recipes</h2>
 <p>Recipes is a powerful tool with functions for a wide range of feature engineering tasks designed to prepare data for modeling. Typing <code>recipes::</code> into the Rstudio console is a great way to browse the available functions in the package.</p>
 <p><img src="recipes_functions.jpg" /></p>
-<p>Let’s create a recipe to demonstrate how easy it is to apply feature engineering. There is really no need for feature engineering with this dataset, so we won’t actually use this recipe in the final workflow.</p>
+<p>Let’s create a simple recipe to demonstrate optional feature engineering steps for our numeric data.</p>
 <pre class="r"><code>iris_rec &lt;- recipe(species ~., data = iris_train) %&gt;%
   step_pca(all_predictors()) %&gt;%
   step_normalize(all_predictors())
@@ -840,8 +864,8 @@ kable(head(iris_juice &lt;- juice(prep)))</code></pre>
 </tbody>
 </table>
 </div>
-<div id="creating-models-with-parsnip" class="section level1">
-<h1>Creating models with <strong>Parsnip</strong></h1>
+<div id="creating-models-with-parsnip" class="section level2">
+<h2>Creating models with <strong>Parsnip</strong></h2>
 <p>Let’s set up two different models: first, a <strong>generalized linear model</strong> or <strong>glmnet</strong>. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.</p>
 <pre class="r"><code># set seed
 set.seed(1234)
@@ -878,28 +902,28 @@ glmnet_results &lt;- glmnet_wf %&gt;%
 glmnet_results</code></pre>
 <pre><code>## # Resampling results
 ## # Bootstrap sampling 
-## # A tibble: 30 x 6
-##    splits       id        .metrics      .notes       .extracts    .predictions  
-##    &lt;list&gt;       &lt;chr&gt;     &lt;list&gt;        &lt;list&gt;       &lt;list&gt;       &lt;list&gt;        
-##  1 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [45 ×…
-##  2 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [43 ×…
-##  3 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
-##  4 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [40 ×…
-##  5 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [39 ×…
-##  6 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [41 ×…
-##  7 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [35 ×…
-##  8 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [37 ×…
-##  9 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [42 ×…
-## 10 &lt;split [112… Bootstra… &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [1 … &lt;tibble [37 ×…
+## # A tibble: 30 × 6
+##    splits           id          .metrics         .notes  .extracts  .predictions
+##    &lt;list&gt;           &lt;chr&gt;       &lt;list&gt;           &lt;list&gt;  &lt;list&gt;     &lt;list&gt;      
+##  1 &lt;split [112/45]&gt; Bootstrap01 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [45…
+##  2 &lt;split [112/43]&gt; Bootstrap02 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [43…
+##  3 &lt;split [112/39]&gt; Bootstrap03 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [39…
+##  4 &lt;split [112/40]&gt; Bootstrap04 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [40…
+##  5 &lt;split [112/39]&gt; Bootstrap05 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [39…
+##  6 &lt;split [112/41]&gt; Bootstrap06 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [41…
+##  7 &lt;split [112/35]&gt; Bootstrap07 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [35…
+##  8 &lt;split [112/37]&gt; Bootstrap08 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [37…
+##  9 &lt;split [112/42]&gt; Bootstrap09 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [42…
+## 10 &lt;split [112/37]&gt; Bootstrap10 &lt;tibble [2 × 4]&gt; &lt;tibbl… &lt;tibble [… &lt;tibble [37…
 ## # … with 20 more rows</code></pre>
 <pre class="r"><code># look at the model metrics
 collect_metrics(glmnet_results)</code></pre>
-<pre><code>## # A tibble: 2 x 6
+<pre><code>## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass 0.958    30 0.00507 Preprocessor1_Model1
 ## 2 roc_auc  hand_till  0.994    30 0.00119 Preprocessor1_Model1</code></pre>
-<p>Now for a <strong>random forest</strong> model. We only need to tweak a few things and walah!</p>
+<p>Now for a <strong>random forest</strong> model. We only need to change a few things and walah!</p>
 <pre class="r"><code>set.seed(1234)
 rf_mod &lt;- rand_forest() %&gt;%
   set_engine(&quot;ranger&quot;) %&gt;%
@@ -917,15 +941,15 @@ rf_results &lt;- rf_wf %&gt;%
     control = control_resamples(save_pred = TRUE)
     )
 collect_metrics(rf_results)</code></pre>
-<pre><code>## # A tibble: 2 x 6
+<pre><code>## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n  std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy multiclass 0.950    30 0.00446  Preprocessor1_Model1
-## 2 roc_auc  hand_till  0.994    30 0.000982 Preprocessor1_Model1</code></pre>
+## 1 accuracy multiclass 0.953    30 0.00449  Preprocessor1_Model1
+## 2 roc_auc  hand_till  0.995    30 0.000800 Preprocessor1_Model1</code></pre>
 <p>Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   conf_mat_resampled() </code></pre>
-<pre><code>## # A tibble: 9 x 3
+<pre><code>## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &lt;fct&gt;      &lt;fct&gt;       &lt;dbl&gt;
 ## 1 setosa     setosa     14    
@@ -939,7 +963,7 @@ collect_metrics(rf_results)</code></pre>
 ## 9 virginica  virginica  14.2</code></pre>
 <pre class="r"><code>rf_results %&gt;%
   conf_mat_resampled() </code></pre>
-<pre><code>## # A tibble: 9 x 3
+<pre><code>## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &lt;fct&gt;      &lt;fct&gt;       &lt;dbl&gt;
 ## 1 setosa     setosa     14    
@@ -947,28 +971,28 @@ collect_metrics(rf_results)</code></pre>
 ## 3 setosa     virginica   0    
 ## 4 versicolor setosa      0    
 ## 5 versicolor versicolor 10.2  
-## 6 versicolor virginica   1.13 
+## 6 versicolor virginica   1.03 
 ## 7 virginica  setosa      0    
 ## 8 virginica  versicolor  0.867
-## 9 virginica  virginica  13.9</code></pre>
+## 9 virginica  virginica  14</code></pre>
 <p>The ROC curve helps us visually interpret our model performance at every threshold.</p>
 <pre class="r"><code>glmnet_results %&gt;%
   collect_predictions() %&gt;%
   group_by(id) %&gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
   autoplot()</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre class="r"><code>rf_results %&gt;%
   collect_predictions() %&gt;%
   group_by(id) %&gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&gt;%
   autoplot() +
   theme(legend.position = &#39;none&#39;)</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
-<div id="final-fit" class="section level1">
-<h1>Final fit</h1>
-<p>This is it! By using the <code>last_fit(tidy_split)</code>, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.</p>
+<div id="final-fit" class="section level2">
+<h2>Final fit</h2>
+<p>By using the <code>last_fit(tidy_split)</code>, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.</p>
 <pre class="r"><code>final_glmnet &lt;- glmnet_wf %&gt;%
     add_model(glmnet_mod) %&gt;%
     last_fit(tidy_split)
@@ -976,10 +1000,10 @@ collect_metrics(rf_results)</code></pre>
 final_glmnet</code></pre>
 <pre><code>## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
-## 1 &lt;split [112… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [38 × … &lt;workflo…</code></pre>
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &lt;list&gt;           &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;    &lt;list&gt;        &lt;list&gt;   
+## 1 &lt;split [112/38]&gt; train/test split &lt;tibble [… &lt;tibble … &lt;tibble [38 … &lt;workflo…</code></pre>
 <pre class="r"><code>final_rf &lt;- rf_wf %&gt;%
     add_model(rf_mod) %&gt;%
     last_fit(tidy_split)
@@ -987,16 +1011,16 @@ final_glmnet</code></pre>
 final_rf</code></pre>
 <pre><code>## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &lt;list&gt;       &lt;chr&gt;        &lt;list&gt;        &lt;list&gt;       &lt;list&gt;          &lt;list&gt;   
-## 1 &lt;split [112… train/test … &lt;tibble [2 ×… &lt;tibble [0 … &lt;tibble [38 × … &lt;workflo…</code></pre>
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &lt;list&gt;           &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;    &lt;list&gt;        &lt;list&gt;   
+## 1 &lt;split [112/38]&gt; train/test split &lt;tibble [… &lt;tibble … &lt;tibble [38 … &lt;workflo…</code></pre>
 </div>
-<div id="confusion-matrices" class="section level1">
-<h1>Confusion Matrices</h1>
-<p>Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.</p>
+<div id="confusion-matrices" class="section level2">
+<h2>Confusion Matrices</h2>
+<p>Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and the predictions are assigned to the rows.</p>
 <pre class="r"><code>collect_metrics(final_glmnet)</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -1004,9 +1028,9 @@ final_rf</code></pre>
 <pre class="r"><code>collect_predictions(final_glmnet) %&gt;%
   conf_mat(species, .pred_class) %&gt;% 
   autoplot(type = &#39;heatmap&#39;) </code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <pre class="r"><code>collect_metrics(final_rf)</code></pre>
-<pre><code>## # A tibble: 2 x 4
+<pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -1014,12 +1038,13 @@ final_rf</code></pre>
 <pre class="r"><code>collect_predictions(final_rf) %&gt;%
   conf_mat(species, .pred_class) %&gt;% 
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="/post/iris-classification/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
-<div id="final-thoughts" class="section level1">
-<h1>Final thoughts</h1>
-<p>It’s always good to ask the question, ‘Do my results make sense’? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.</p>
-<p>I would like to thank the unsung heroes of the tidyverse and tidymodels: <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing amazing, open source learning resources.</p>
+<div id="final-thoughts" class="section level2">
+<h2>Final thoughts</h2>
+<p>Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the combination of explanatory features provide for a clean separation of species. So yes, our toy model is that good!</p>
+<p>Special thanks to <strong>Julia Silge</strong>, <strong>David Robinson</strong> and <strong>Andrew Couch</strong> for creating and sharing many amazing learning resources for mastering the tidyverse and tidymodels data science packages.</p>
+</div>
 </div>
 
     </div>
@@ -1070,13 +1095,13 @@ final_rf</code></pre>
     <div class="media author-card content-widget-hr">
       
         
-        <img class="avatar mr-3 avatar-circle" src="/author/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="">
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
       
 
       <div class="media-body">
-        <h5 class="card-title"><a href="/"></a></h5>
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
         
-        <p class="card-text">Data scientist, biochemist, computational biologist, educator and life enthusiast.</p>
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
         <ul class="network-icon" aria-hidden="true">
   
     
@@ -1142,7 +1167,7 @@ final_rf</code></pre>
       
     
     <li>
-      <a href="https://www.linkedin.com/in/gabe-mednick-77a000199/" target="_blank" rel="noopener">
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
         <i class="fab fa-linkedin-in"></i>
       </a>
     </li>
@@ -1182,6 +1207,15 @@ final_rf</code></pre>
 
 
   
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/baseball/">Home run analysis</a></li>
+      
+    </ul>
+  </div>
   
 
 
@@ -1311,7 +1345,7 @@ final_rf</code></pre>
   
 
   <p class="powered-by">
-    © Gabe Mednick 2021
+    © Gabe Mednick 2022
   </p>
 
   

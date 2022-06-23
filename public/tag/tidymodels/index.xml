@@ -2,27 +2,725 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tidymodels | Gabe Mednick</title>
-    <link>/tag/tidymodels/</link>
-      <atom:link href="/tag/tidymodels/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://www.gabemednick.com/tag/tidymodels/</link>
+      <atom:link href="https://www.gabemednick.com/tag/tidymodels/index.xml" rel="self" type="application/rss+xml" />
     <description>tidymodels</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2021</copyright><lastBuildDate>Wed, 21 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2022</copyright><lastBuildDate>Mon, 13 Sep 2021 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
+      <url>https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
       <title>tidymodels</title>
-      <link>/tag/tidymodels/</link>
+      <link>https://www.gabemednick.com/tag/tidymodels/</link>
     </image>
     
     <item>
-      <title>Iris Classification</title>
-      <link>/post/iris-classification/</link>
-      <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
-      <guid>/post/iris-classification/</guid>
+      <title>Home run analysis</title>
+      <link>https://www.gabemednick.com/post/baseball/</link>
+      <pubDate>Mon, 13 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>https://www.gabemednick.com/post/baseball/</guid>
       <description>
-&lt;script src=&#34;/post/iris-classification/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.gabemednick.com/post/baseball/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
-&lt;div id=&#34;iris-data&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Iris data&lt;/h1&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In this post, I’m going to explore a baseball dataset that was recently used in the Sliced machine learning competition on Kaggle. The goal was to build a model to predict home runs. In the competition, log loss was used to evaluate model performance. We will build and tune several models to compare with each other and the Sliced competition &lt;a href=&#34;https://www.kaggle.com/c/sliced-s01e09-playoffs-1/leaderboard&#34;&gt;leaderboard&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During the Sliced competition, Jesse Mostipak and David Robinson used the &lt;code&gt;meme&lt;/code&gt; package to woo the online audience and win the popular vote. Who knew that cat memes and machine learning went so well together? So, of course, I knew I had to give the package a whirl in my next post. In addition to creating memes, the package can also be used to add an image to the background of plots made with the &lt;code&gt;ggplot2&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;Before we get started, I would like to add the following disclaimer: I am utterly ignorant about the rules and lingo of baseball but I will try my best to not offend any diehard fans. With that said, let’s start by exploring the variables we have to build our &lt;strong&gt;home run&lt;/strong&gt; prediction model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(tidymodels)
+library(patchwork)
+theme_set(theme_light())
+library(grid)
+library(meme)
+library(ggimage)
+library(gt)
+doParallel::registerDoParallel()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#u &amp;lt;- system.file(&amp;quot;memes/safe.png&amp;quot;, package=&amp;quot;meme&amp;quot;)
+u &amp;lt;- &amp;quot;memes/safe.png&amp;quot;
+x = meme(u, &amp;quot;Safe!&amp;quot;, &amp;quot;Models be like&amp;quot;)
+x&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball &amp;lt;- read_csv(&amp;#39;train.csv&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-viz&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Viz&lt;/h2&gt;
+&lt;p&gt;The baseball dataset has the following features: is_batter_lefty, is_pitcher_lefty, bb_type, bearing, pitch_name, park, inning, outs_when_up, balls, strikes, plate_x, plate_z, pitch_mph, launch_speed, launch_angle. Visualizing our data can help us get a sense of what variables are important for predicting home runs. Let’s first look at the number of home runs by pitch type.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball %&amp;gt;% 
+  filter(pitch_name != &amp;#39;Forkball&amp;#39;) %&amp;gt;% 
+  mutate(pitch_name = fct_reorder(pitch_name, is_home_run, sum)) %&amp;gt;% 
+  ggplot(aes(is_home_run, pitch_name, fill = pitch_name)) +
+  geom_col() +
+  theme(legend.position = &amp;#39;none&amp;#39;) +
+  scale_fill_viridis_d(option=&amp;quot;plasma&amp;quot;, alpha = .9) +
+  labs(x=&amp;#39;Home runs&amp;#39;,
+       y=&amp;#39;&amp;#39;,
+       title=&amp;#39;Number of home runs by pitch type&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A 4-seem fastball pitch has resulted in the most home runs by far. Next, let’s see what types of batting hits result in a home run.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;color2 &amp;lt;- c(&amp;quot;#FEBC2AFF&amp;quot;, &amp;quot;#F48849FF&amp;quot;)
+baseball %&amp;gt;% 
+  filter(bb_type == &amp;quot;line_drive&amp;quot; | bb_type == &amp;quot;fly_ball&amp;quot;) %&amp;gt;% 
+  filter(is_home_run == 1) %&amp;gt;% 
+  #mutate(pitch_name = fct_reorder(bb_type, is_home_run, sum)) %&amp;gt;% 
+  ggplot(aes(bb_type, is_home_run, fill = bb_type)) +
+  geom_col() +
+  theme(legend.position = &amp;#39;none&amp;#39;) +
+  #scale_fill_manual(values = color2) +
+  labs(x=&amp;#39;&amp;#39;,
+       y=&amp;#39;&amp;#39;,
+       title=&amp;#39;Number of home runs for line drive and fly ball hits&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Only the fly ball and line drive result in a home run. The next two plots use the hit trajectory and coordinates relative to home plate to see where home runs occur. For enhanced satisfaction, I’ve added a baseball field to the first plot. This is more of a qualitative image since the position of the field is based on an image and not actual coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;s &amp;lt;- &amp;quot;memes/bb_field.png&amp;quot;
+v = meme(s)
+
+baseball %&amp;gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview= v + aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &amp;#39;A&amp;#39;, labels = percent, alpha = .4) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &amp;quot;Hex plot using color to represent homerun percentage based on the\
+       ball&amp;#39;s trajectory coordinates&amp;quot;, x = &amp;#39;Ball position relative to home plate&amp;#39;, y = &amp;#39;Ball height above ground&amp;#39;, fill = &amp;#39;home runs (%)&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball %&amp;gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &amp;#39;A&amp;#39;, labels = percent, alpha = .8) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &amp;quot;Hex plot using color to represent homerun percentage based on the\
+       ball&amp;#39;s trajectory coordinates&amp;quot;, x = &amp;#39;Ball position relative to home plate&amp;#39;, y = &amp;#39;Ball height above ground&amp;#39;, fill = &amp;#39;home runs (%)&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The following two plots also use the hex style fill and consider home runs based on the hit’s launch angle and launch speed.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball %&amp;gt;% 
+  filter(launch_angle &amp;gt;= 10 &amp;amp; launch_angle &amp;lt;= 55, launch_speed &amp;gt;= 85) %&amp;gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview=v+aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &amp;#39;A&amp;#39;, labels = percent, , alpha = .5) +
+  labs(title = &amp;quot;Hex plot using color to represent homerun\
+       percentage based on the ball&amp;#39;s launch\
+       angle and speed.&amp;quot;, x = &amp;#39;Ball launch angle&amp;#39;, y = &amp;#39;Ball launch speed&amp;#39;, fill = &amp;#39;home runs (%)&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball %&amp;gt;% 
+  filter(launch_angle &amp;gt;= 10 &amp;amp; launch_angle &amp;lt;= 55, launch_speed &amp;gt;= 85) %&amp;gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &amp;#39;A&amp;#39;, labels = percent, , alpha = .8) +
+  labs(title = &amp;quot;Hex plot using color to represent homerun\
+       percentage based on the ball&amp;#39;s launch\
+       angle and speed.&amp;quot;, x = &amp;#39;Ball launch angle&amp;#39;, y = &amp;#39;Ball launch speed&amp;#39;, fill = &amp;#39;home runs (%)&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In the next plot, I create three categories for speed and count the number of home runs for each category.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;baseball %&amp;gt;% 
+  mutate(speed_cat = case_when((pitch_mph &amp;gt; 90) ~ &amp;quot;Pitch speed &amp;gt; 80 mph&amp;quot;,
+                                 (pitch_mph &amp;gt; 80) &amp;amp; (pitch_mph &amp;lt;=  90) ~ &amp;quot;70-80 mph&amp;quot;,
+                                  (pitch_mph &amp;gt; 70) &amp;amp; (pitch_mph &amp;lt;=  80) ~ &amp;quot;60-70 mph&amp;quot;,
+                                 TRUE ~ &amp;quot;Pitch speed &amp;lt; 70 mph&amp;quot;)) %&amp;gt;% 
+  group_by(speed_cat) %&amp;gt;% 
+  filter(is_home_run == 1, speed_cat != &amp;#39;Pitch speed &amp;lt; 70 mph&amp;#39;) %&amp;gt;%
+  ggplot(aes(is_home_run, speed_cat, fill = speed_cat)) +
+  geom_col() +
+  theme(legend.position = &amp;#39;none&amp;#39;) +
+  scale_fill_viridis_d() +
+  labs(title = &amp;quot;home runs based on Pitch speed&amp;quot;,
+       x = &amp;#39;Home runs&amp;#39;,
+       y = &amp;quot;&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;machine-learning&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Machine learning&lt;/h2&gt;
+&lt;p&gt;The first step is to clean the data and generate resamples using &lt;code&gt;vfold_cv()&lt;/code&gt;. The training set is used for the resamples so as to prevent any data linkage.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Create splits and resamples
+baseball_clean &amp;lt;- baseball %&amp;gt;% 
+  drop_na() %&amp;gt;% 
+  mutate(is_home_run = case_when(is_home_run == 1 ~ &amp;#39;yes&amp;#39;,
+                                 TRUE ~ &amp;#39;no&amp;#39;),
+         is_home_run = factor(is_home_run))
+split &amp;lt;- initial_split(baseball_clean)
+
+home_runs_train &amp;lt;- training(split) 
+home_runs_test &amp;lt;- testing(split)
+
+folds &amp;lt;- home_runs_train %&amp;gt;% 
+  vfold_cv(v=5)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;logistic-regression&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Logistic regression&lt;/h3&gt;
+&lt;p&gt;I’m going to use a logistic regression as the first model for comparison. For each model, I will use the log loss and accuracy for evaluation metrics.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glm_recipe &amp;lt;-
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&amp;gt;% 
+  step_zv(all_predictors())
+
+glm_spec &amp;lt;- logistic_reg() %&amp;gt;% 
+  set_mode(&amp;quot;classification&amp;quot;) %&amp;gt;% 
+  set_engine(&amp;quot;glm&amp;quot;)
+
+glm_workflow &amp;lt;-
+  workflow(glm_recipe, glm_spec)
+
+set.seed(1013)
+glm_fit_resamps &amp;lt;- fit_resamples(
+  glm_workflow,
+  resamples = folds,
+  metrics = metric_set(accuracy, mn_log_loss),
+  control = control_resamples(save_pred = TRUE))
+
+glm_fit_resamps %&amp;gt;% collect_metrics() %&amp;gt;%             
+  select(.metric, .estimator, .estimate = mean) #%&amp;gt;% &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 3
+##   .metric     .estimator .estimate
+##   &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;
+## 1 accuracy    binary         0.951
+## 2 mn_log_loss binary         0.119&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  # gt() %&amp;gt;%
+  # tab_header(title = md(&amp;quot;**Logistic regression results**&amp;quot;))  %&amp;gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &amp;quot;#21908CFF&amp;quot;,
+  #             table.width = &amp;quot;75%&amp;quot;,
+  #             column_labels.background.color = &amp;quot;black&amp;quot;,
+  #             table.font.color = &amp;quot;black&amp;quot;) %&amp;gt;%
+  # tab_style(style = list(cell_fill(color = &amp;quot;gray&amp;quot;)),
+  #           locations = cells_body()) &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;random-forest-model&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Random forest model&lt;/h3&gt;
+&lt;p&gt;In the code chunk I will tune a random forrest model, select the best hyperparameters and then use the &lt;code&gt;last_fit()&lt;/code&gt; function to train the model on the training data and predict on the testset.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ranger_recipe &amp;lt;-
+  recipe(formula = is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph +
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean)
+
+ranger_spec &amp;lt;-
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&amp;gt;%
+  set_mode(&amp;quot;classification&amp;quot;) %&amp;gt;%
+  set_engine(&amp;quot;ranger&amp;quot;)
+
+ranger_workflow &amp;lt;-
+  workflow() %&amp;gt;%
+  add_recipe(ranger_recipe) %&amp;gt;%
+  add_model(ranger_spec)
+
+set.seed(90431)
+ranger_tune &amp;lt;-
+  tune_grid(ranger_workflow, 
+            resamples = folds, 
+            grid = 20,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE)
+            )
+
+ranger_tune %&amp;gt;% autoplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;best_params &amp;lt;- ranger_tune %&amp;gt;%
+  select_best()
+
+final_wkflow &amp;lt;- finalize_workflow(ranger_workflow, best_params)
+
+final_fit &amp;lt;- last_fit(final_wkflow, split)
+
+final_fit %&amp;gt;% 
+  collect_metrics() %&amp;gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&amp;gt;% &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.980&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  # gt() %&amp;gt;%
+  # tab_header(title = md(&amp;quot;**Random forrest results**&amp;quot;))  %&amp;gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &amp;quot;#21908CFF&amp;quot;,
+  #             table.width = &amp;quot;75%&amp;quot;,
+  #             column_labels.background.color = &amp;quot;black&amp;quot;,
+  #             table.font.color = &amp;quot;black&amp;quot;) %&amp;gt;%
+  # tab_style(style = list(cell_fill(color = &amp;quot;gray&amp;quot;)),
+  #           locations = cells_body())&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;xgboost-model&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;XGboost model&lt;/h3&gt;
+&lt;p&gt;No modeling post is complete without an XGboost model. We will follow the similar tuning procedure as was done for the random forest model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;xgboost_recipe &amp;lt;- 
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&amp;gt;% 
+  #step_string2factor(one_of(is_home_run)) %&amp;gt;% 
+  step_zv(all_predictors()) 
+
+xgboost_spec &amp;lt;- 
+  boost_tree(trees = 1000, 
+             min_n = tune(), 
+             tree_depth = tune(), 
+             learn_rate = tune(), 
+    loss_reduction = tune(), 
+    sample_size = tune()) %&amp;gt;% 
+  set_mode(&amp;quot;classification&amp;quot;) %&amp;gt;% 
+  set_engine(&amp;quot;xgboost&amp;quot;) 
+
+xgboost_workflow &amp;lt;- 
+  workflow() %&amp;gt;% 
+  add_recipe(xgboost_recipe) %&amp;gt;% 
+  add_model(xgboost_spec) 
+
+set.seed(99176)
+xgboost_tune &amp;lt;-
+  tune_grid(xgboost_workflow, 
+            resamples = folds, 
+            grid = 5,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE))
+
+xgboost_tune %&amp;gt;% autoplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;xg_best_params &amp;lt;- xgboost_tune %&amp;gt;%
+  select_best()
+
+xg_final_wkflow &amp;lt;- finalize_workflow(xgboost_workflow, xg_best_params)
+
+xg_final_fit &amp;lt;- last_fit(xg_final_wkflow, split)
+
+xg_final_fit %&amp;gt;% 
+  collect_metrics() %&amp;gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&amp;gt;% &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.971&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  # gt() %&amp;gt;%
+  # tab_header(title = md(&amp;quot;**XGboost results**&amp;quot;))  %&amp;gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &amp;quot;#21908CFF&amp;quot;,
+  #             table.width = &amp;quot;75%&amp;quot;,
+  #             column_labels.background.color = &amp;quot;black&amp;quot;,
+  #             table.font.color = &amp;quot;black&amp;quot;) %&amp;gt;%
+  # tab_style(style = list(cell_fill(color = &amp;quot;gray&amp;quot;)),
+  #           locations = cells_body())&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary-results&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Summary Results&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;model = c(&amp;quot;glm&amp;quot;, &amp;quot;glm&amp;quot;, &amp;quot;random forest&amp;quot;, &amp;quot;random forest&amp;quot;, &amp;quot;xgboost&amp;quot;, &amp;quot;xgboost&amp;quot;)
+bind_rows(glm_fit_resamps %&amp;gt;%
+            collect_metrics() %&amp;gt;% 
+            select(.metric, .estimator, .estimate = mean), 
+          final_fit %&amp;gt;% 
+  collect_metrics(), 
+  xg_final_fit %&amp;gt;% 
+  collect_metrics()) %&amp;gt;% 
+  bind_cols(tibble(model)) %&amp;gt;% 
+  select(-.config, model,  Metric = .metric, Estimate = .estimate, Estimator = .estimator) %&amp;gt;% 
+  select(model, everything()) %&amp;gt;% 
+  gt() %&amp;gt;%
+  tab_header(title = md(&amp;quot;**Model summary results**&amp;quot;))  %&amp;gt;%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = &amp;quot;#21908CFF&amp;quot;,
+              table.width = &amp;quot;75%&amp;quot;,
+              column_labels.background.color = &amp;quot;black&amp;quot;,
+              table.font.color = &amp;quot;black&amp;quot;) %&amp;gt;%
+  tab_style(style = list(cell_fill(color = &amp;quot;gray&amp;quot;)),
+            locations = cells_body())&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;hlljgevasf&#34; style=&#34;overflow-x:auto;overflow-y:auto;width:auto;height:400px;&#34;&gt;
+&lt;style&gt;html {
+  font-family: -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, Oxygen, Ubuntu, Cantarell, &#39;Helvetica Neue&#39;, &#39;Fira Sans&#39;, &#39;Droid Sans&#39;, Arial, sans-serif;
+}
+
+#hlljgevasf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_heading {
+  background-color: #21908C;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_title {
+  color: #FFFFFF;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hlljgevasf .gt_subtitle {
+  color: #FFFFFF;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hlljgevasf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hlljgevasf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hlljgevasf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hlljgevasf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hlljgevasf .gt_group_heading {
+  padding: 8px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#hlljgevasf .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#hlljgevasf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_stub {
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hlljgevasf .gt_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_grand_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hlljgevasf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_sourcenotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_left {
+  text-align: left;
+}
+
+#hlljgevasf .gt_center {
+  text-align: center;
+}
+
+#hlljgevasf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hlljgevasf .gt_font_normal {
+  font-weight: normal;
+}
+
+#hlljgevasf .gt_font_bold {
+  font-weight: bold;
+}
+
+#hlljgevasf .gt_font_italic {
+  font-style: italic;
+}
+
+#hlljgevasf .gt_super {
+  font-size: 65%;
+}
+
+#hlljgevasf .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+&lt;/style&gt;
+&lt;table class=&#34;gt_table&#34;&gt;
+  &lt;thead class=&#34;gt_header&#34;&gt;
+    &lt;tr&gt;
+      &lt;th colspan=&#34;4&#34; class=&#34;gt_heading gt_title gt_font_normal gt_bottom_border&#34; style&gt;&lt;strong&gt;Model summary results&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+    
+  &lt;/thead&gt;
+  &lt;thead class=&#34;gt_col_headings&#34;&gt;
+    &lt;tr&gt;
+      &lt;th class=&#34;gt_col_heading gt_columns_bottom_border gt_left&#34; rowspan=&#34;1&#34; colspan=&#34;1&#34;&gt;model&lt;/th&gt;
+      &lt;th class=&#34;gt_col_heading gt_columns_bottom_border gt_left&#34; rowspan=&#34;1&#34; colspan=&#34;1&#34;&gt;Metric&lt;/th&gt;
+      &lt;th class=&#34;gt_col_heading gt_columns_bottom_border gt_left&#34; rowspan=&#34;1&#34; colspan=&#34;1&#34;&gt;Estimator&lt;/th&gt;
+      &lt;th class=&#34;gt_col_heading gt_columns_bottom_border gt_right&#34; rowspan=&#34;1&#34; colspan=&#34;1&#34;&gt;Estimate&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class=&#34;gt_table_body&#34;&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;glm&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;accuracy&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.9510207&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;glm&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;mn_log_loss&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.1187313&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;random forest&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;accuracy&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.9740179&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;random forest&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;roc_auc&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.9803071&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;xgboost&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;accuracy&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.9737086&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;xgboost&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;roc_auc&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_left&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;binary&lt;/td&gt;
+&lt;td class=&#34;gt_row gt_right&#34; style=&#34;background-color: #BEBEBE;&#34;&gt;0.9709157&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+  
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;p&gt;The accuracy turned out to be slightly better for the random forest and xgboost models but there was no standout winner. The models appear to have worked really well..I would like to go beyond the test data and see how they perform. I would also still like to compare them to the Sliced leaderboard but, for some reason, the log loss metric was not computed for the latter two models. One question that I plan to follow up on is whether I should down sample the data. I assume there is an overrepresentation of hits that are not home runs. Although we would lose a lot of data, it could result in a much more accurate model.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Iris Classification</title>
+      <link>https://www.gabemednick.com/post/iris-classification/</link>
+      <pubDate>Wed, 21 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.gabemednick.com/post/iris-classification/</guid>
+      <description>
+&lt;script src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;iris-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Iris data&lt;/h2&gt;
 &lt;p&gt;The iris dataset is a classic, so much so that it’s included in the datasets package that comes with every installation of R. You can use &lt;code&gt;data()&lt;/code&gt; to see a list of all available datasets. Datasets that are associated with packages can be found in a similar way, e.g., &lt;code&gt;data(package = &#39;dplyr&#39;)&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Let’s take a look at the data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load the iris data set and clean the column names with janitor::clean_names()
@@ -51,63 +749,85 @@ iris_df %&amp;gt;%  str()&lt;/code&gt;&lt;/pre&gt;
 ##  $ petal_length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
 ##  $ petal_width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
 ##  $ species     : Factor w/ 3 levels &amp;quot;setosa&amp;quot;,&amp;quot;versicolor&amp;quot;,..: 1 1 1 1 1 1 1 1 1 1 ...&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The data is clean but with only 150 observations, it’s worth questioning whether a reliable model can be generated. There are four variables or features (sepal length and width, and petal length and width) in our data and three unique species.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Let’s use the data to create a classification model that predicts the species of iris based on a flower’s measurements.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The dataset contains three unique species of iris and four variables or features (sepal length and width, and petal length and width). The data is clean but with only 150 observations it’s a wee bit small for training a model. To compensate for this, we will use bootstrap resampling.&lt;/p&gt;
+&lt;div id=&#34;outline&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Outline&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;Train a classification model to predict flower species based on the four available features&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The model formula will have the form &lt;code&gt;species ~ .&lt;/code&gt; where &lt;code&gt;.&lt;/code&gt; represents all explanatory variables in the data.&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;visualize-relationships&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Visualize relationships&lt;/h1&gt;
 &lt;p&gt;Before we do any kind of machine learning, it’s helpful to visualize the data and develop a better understanding of the variables as well as their relationships. This will also give us a stronger intuitive sense about the potential predictive power of the data.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sepal &amp;lt;- iris_df %&amp;gt;% 
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggforce)
+
+sepal &amp;lt;- iris_df %&amp;gt;% 
   ggplot(aes(sepal_length, sepal_width, color = species)) +
-  geom_point(size = 1) + facet_wrap(~species) +
+  geom_point(size = 1) + 
+  facet_wrap(~species) +
   labs(x = &amp;#39;sepal length&amp;#39;,
        y = &amp;#39;sepal width&amp;#39;) +
   theme(legend.position = &amp;#39;none&amp;#39;) 
 
 petal &amp;lt;- iris_df %&amp;gt;% 
   ggplot(aes(petal_length, petal_width, color = species)) +
-  geom_point(size =1) + facet_wrap(~species) +
+  geom_point(size =1) + 
+  facet_wrap(~species) +
   labs(x = &amp;#39;petal length&amp;#39;,
        y = &amp;#39;petal width&amp;#39;) +
   theme(legend.position = &amp;#39;none&amp;#39;) 
 
-(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked but there&amp;#39;s a better way..&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;tidy-the-dataset&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Tidy the dataset&lt;/h1&gt;
-&lt;p&gt;Let’s change the shape of our data by combining the four iris features into a single column (named &lt;code&gt;metric&lt;/code&gt;) and the associated values will populate a new column (named &lt;code&gt;value&lt;/code&gt;). This transformation into a longer dataset can be achieved with the function &lt;code&gt;pivot_longer()&lt;/code&gt;. As we shall see, the tidy format lends itself to data visualization and analysis with the tidyverse.&lt;/p&gt;
+(petal/sepal) # patchwork allows us to arrange plots side-by-side or stacked &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sl_sw &amp;lt;- iris_df %&amp;gt;% 
+  ggplot(aes(sepal_length, sepal_width, color = species)) +
+  geom_point(size = 1) +
+  labs(x = &amp;#39;sepal length&amp;#39;,
+       y = &amp;#39;sepal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;)
+
+sl_sw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = &amp;quot;Comparing sepal length vs sepal width across species&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pl_pw &amp;lt;- iris_df %&amp;gt;% 
+  ggplot(aes(petal_length, petal_width, color = species)) +
+  geom_point(size =1) + 
+  labs(x = &amp;#39;petal length&amp;#39;,
+       y = &amp;#39;petal width&amp;#39;) +
+  theme(legend.position = &amp;#39;none&amp;#39;) 
+
+pl_pw + 
+  geom_mark_hull(
+    aes(fill = NULL, label = species),
+    concavity = 2) +
+  labs(title = &amp;quot;Comparing petal length vs petal width across species&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-2-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s change the shape of our data by combining the four iris features into a single column (&lt;code&gt;metric&lt;/code&gt;) and the associated values will populate a new column (&lt;code&gt;value&lt;/code&gt;). This transformation into a longer dataset can be achieved with the function &lt;code&gt;pivot_longer()&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_df_long &amp;lt;- iris_df %&amp;gt;%  
   pivot_longer(cols = sepal_length:petal_width,
                names_to = &amp;#39;metric&amp;#39;,
                values_to =&amp;#39;value&amp;#39;) 
-# A boxplot is a great way to see the median values of our features by species.
-iris_df_long %&amp;gt;% 
-  ggplot(aes(metric, value, color = species)) +
-  geom_boxplot() &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# A nice alternative is to facet by the metric to convey the same information but with added clarity. 
+
+
+# A boxplot is a great way to compare the distribution of each features by species.
 iris_df_long %&amp;gt;%
-  ggplot(aes(species, value, color = species)) +
+  ggplot(aes(species, value, fill = species)) +
   geom_boxplot(alpha = 0.3) +
   facet_wrap(~ metric, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# The same information can be displayed by comparing the distributions in histogram.
-iris_df_long %&amp;gt;%
-  ggplot(aes(value, fill = species)) +
-  geom_histogram(bins = 20, alpha = 0.7) +
-  facet_wrap(~ metric, scales = &amp;quot;free_x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# geom_denisty is a nice alternative to geom_histogram.
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Looking at the data in a different way, geom_density is a nice alternative to geom_histogram.
+
 iris_df_long %&amp;gt;% 
   ggplot(aes(value, fill = species)) +
   geom_density(alpha = .5) +
   facet_wrap(~ metric, scales = &amp;quot;free&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-3-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;get-modelling&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Get modelling&lt;/h1&gt;
-&lt;p&gt;Before we get to modeling, we need to split the data. By default, &lt;code&gt;initial split()&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. Since our dataset is small, we are going to take the training set and make bootstrap resamples. The function &lt;code&gt;bootstraps()&lt;/code&gt; will take the training data, further split it into a training and test set, then repeat this process with replacement a specified number of times.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-3-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;splitting-the-data-into-training-and-test-sets&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Splitting the data into training and test sets&lt;/h2&gt;
+&lt;p&gt;By default, &lt;code&gt;initial split()&lt;/code&gt; provides a 75:25 split for our train and test sets respectively. Since our dataset is small to begin with, we are going to make bootstrap resamples from the training data. The function &lt;code&gt;bootstraps()&lt;/code&gt; will split the data into training and test sets, then repeat this process with replacement a specified number of times (25 is the default).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(123)
 tidy_split &amp;lt;- initial_split(iris_df)
 tidy_split&lt;/code&gt;&lt;/pre&gt;
@@ -119,7 +839,7 @@ iris_test &amp;lt;- testing(tidy_split)
 iris_boots &amp;lt;- bootstraps(iris_train, times = 30) 
 iris_boots&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Bootstrap sampling 
-## # A tibble: 30 x 2
+## # A tibble: 30 × 2
 ##    splits           id         
 ##    &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;      
 ##  1 &amp;lt;split [112/45]&amp;gt; Bootstrap01
@@ -134,11 +854,11 @@ iris_boots&lt;/code&gt;&lt;/pre&gt;
 ## 10 &amp;lt;split [112/37]&amp;gt; Bootstrap10
 ## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;recipes&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Recipes&lt;/h1&gt;
+&lt;div id=&#34;recipes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Recipes&lt;/h2&gt;
 &lt;p&gt;Recipes is a powerful tool with functions for a wide range of feature engineering tasks designed to prepare data for modeling. Typing &lt;code&gt;recipes::&lt;/code&gt; into the Rstudio console is a great way to browse the available functions in the package.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;recipes_functions.jpg&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Let’s create a recipe to demonstrate how easy it is to apply feature engineering. There is really no need for feature engineering with this dataset, so we won’t actually use this recipe in the final workflow.&lt;/p&gt;
+&lt;p&gt;Let’s create a simple recipe to demonstrate optional feature engineering steps for our numeric data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iris_rec &amp;lt;- recipe(species ~., data = iris_train) %&amp;gt;%
   step_pca(all_predictors()) %&amp;gt;%
   step_normalize(all_predictors())
@@ -202,8 +922,8 @@ kable(head(iris_juice &amp;lt;- juice(prep)))&lt;/code&gt;&lt;/pre&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-&lt;div id=&#34;creating-models-with-parsnip&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Creating models with &lt;strong&gt;Parsnip&lt;/strong&gt;&lt;/h1&gt;
+&lt;div id=&#34;creating-models-with-parsnip&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Creating models with &lt;strong&gt;Parsnip&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;Let’s set up two different models: first, a &lt;strong&gt;generalized linear model&lt;/strong&gt; or &lt;strong&gt;glmnet&lt;/strong&gt;. In this step we will create the model, workflow and fit the bootstraps. Let’s take a look at the output from each step.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# set seed
 set.seed(1234)
@@ -240,28 +960,28 @@ glmnet_results &amp;lt;- glmnet_wf %&amp;gt;%
 glmnet_results&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
 ## # Bootstrap sampling 
-## # A tibble: 30 x 6
-##    splits       id        .metrics      .notes       .extracts    .predictions  
-##    &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;     &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;        
-##  1 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [45 ×…
-##  2 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [43 ×…
-##  3 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
-##  4 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [40 ×…
-##  5 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [39 ×…
-##  6 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [41 ×…
-##  7 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [35 ×…
-##  8 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [37 ×…
-##  9 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [42 ×…
-## 10 &amp;lt;split [112… Bootstra… &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [1 … &amp;lt;tibble [37 ×…
+## # A tibble: 30 × 6
+##    splits           id          .metrics         .notes  .extracts  .predictions
+##    &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;       &amp;lt;list&amp;gt;           &amp;lt;list&amp;gt;  &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;      
+##  1 &amp;lt;split [112/45]&amp;gt; Bootstrap01 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [45…
+##  2 &amp;lt;split [112/43]&amp;gt; Bootstrap02 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [43…
+##  3 &amp;lt;split [112/39]&amp;gt; Bootstrap03 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [39…
+##  4 &amp;lt;split [112/40]&amp;gt; Bootstrap04 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [40…
+##  5 &amp;lt;split [112/39]&amp;gt; Bootstrap05 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [39…
+##  6 &amp;lt;split [112/41]&amp;gt; Bootstrap06 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [41…
+##  7 &amp;lt;split [112/35]&amp;gt; Bootstrap07 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [35…
+##  8 &amp;lt;split [112/37]&amp;gt; Bootstrap08 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [37…
+##  9 &amp;lt;split [112/42]&amp;gt; Bootstrap09 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [42…
+## 10 &amp;lt;split [112/37]&amp;gt; Bootstrap10 &amp;lt;tibble [2 × 4]&amp;gt; &amp;lt;tibbl… &amp;lt;tibble [… &amp;lt;tibble [37…
 ## # … with 20 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# look at the model metrics
 collect_metrics(glmnet_results)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
 ## 1 accuracy multiclass 0.958    30 0.00507 Preprocessor1_Model1
 ## 2 roc_auc  hand_till  0.994    30 0.00119 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to tweak a few things and walah!&lt;/p&gt;
+&lt;p&gt;Now for a &lt;strong&gt;random forest&lt;/strong&gt; model. We only need to change a few things and walah!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1234)
 rf_mod &amp;lt;- rand_forest() %&amp;gt;%
   set_engine(&amp;quot;ranger&amp;quot;) %&amp;gt;%
@@ -279,15 +999,15 @@ rf_results &amp;lt;- rf_wf %&amp;gt;%
     control = control_resamples(save_pred = TRUE)
     )
 collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 6
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 6
 ##   .metric  .estimator  mean     n  std_err .config             
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
-## 1 accuracy multiclass 0.950    30 0.00446  Preprocessor1_Model1
-## 2 roc_auc  hand_till  0.994    30 0.000982 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
+## 1 accuracy multiclass 0.953    30 0.00449  Preprocessor1_Model1
+## 2 roc_auc  hand_till  0.995    30 0.000800 Preprocessor1_Model1&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Here’s a look at the confusion matrix summaries for both models. The confusion matrix let’s us see the correct and incorrect predictions of our models in a single table.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;       &amp;lt;dbl&amp;gt;
 ## 1 setosa     setosa     14    
@@ -301,7 +1021,7 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 ## 9 virginica  virginica  14.2&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
   conf_mat_resampled() &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 3
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 × 3
 ##   Prediction Truth        Freq
 ##   &amp;lt;fct&amp;gt;      &amp;lt;fct&amp;gt;       &amp;lt;dbl&amp;gt;
 ## 1 setosa     setosa     14    
@@ -309,28 +1029,28 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 ## 3 setosa     virginica   0    
 ## 4 versicolor setosa      0    
 ## 5 versicolor versicolor 10.2  
-## 6 versicolor virginica   1.13 
+## 6 versicolor virginica   1.03 
 ## 7 virginica  setosa      0    
 ## 8 virginica  versicolor  0.867
-## 9 virginica  virginica  13.9&lt;/code&gt;&lt;/pre&gt;
+## 9 virginica  virginica  14&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The ROC curve helps us visually interpret our model performance at every threshold.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;glmnet_results %&amp;gt;%
   collect_predictions() %&amp;gt;%
   group_by(id) %&amp;gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
   autoplot()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rf_results %&amp;gt;%
   collect_predictions() %&amp;gt;%
   group_by(id) %&amp;gt;%
   roc_curve(species, .pred_setosa:.pred_virginica) %&amp;gt;%
   autoplot() +
   theme(legend.position = &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;final-fit&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Final fit&lt;/h1&gt;
-&lt;p&gt;This is it! By using the &lt;code&gt;last_fit(tidy_split)&lt;/code&gt;, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.&lt;/p&gt;
+&lt;div id=&#34;final-fit&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Final fit&lt;/h2&gt;
+&lt;p&gt;By using the &lt;code&gt;last_fit(tidy_split)&lt;/code&gt;, we are able to train our model on the training set and test the model on the testing set in one fell swoop! Note, this is the only time we use the test set.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_glmnet &amp;lt;- glmnet_wf %&amp;gt;%
     add_model(glmnet_mod) %&amp;gt;%
     last_fit(tidy_split)
@@ -338,10 +1058,10 @@ collect_metrics(rf_results)&lt;/code&gt;&lt;/pre&gt;
 final_glmnet&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
-## 1 &amp;lt;split [112… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [38 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;            &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;    &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;   
+## 1 &amp;lt;split [112/38]&amp;gt; train/test split &amp;lt;tibble [… &amp;lt;tibble … &amp;lt;tibble [38 … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_rf &amp;lt;- rf_wf %&amp;gt;%
     add_model(rf_mod) %&amp;gt;%
     last_fit(tidy_split)
@@ -349,16 +1069,16 @@ final_glmnet&lt;/code&gt;&lt;/pre&gt;
 final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## # Resampling results
 ## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits       id           .metrics      .notes       .predictions    .workflow
-##   &amp;lt;list&amp;gt;       &amp;lt;chr&amp;gt;        &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;       &amp;lt;list&amp;gt;          &amp;lt;list&amp;gt;   
-## 1 &amp;lt;split [112… train/test … &amp;lt;tibble [2 ×… &amp;lt;tibble [0 … &amp;lt;tibble [38 × … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
+## # A tibble: 1 × 6
+##   splits           id               .metrics   .notes    .predictions  .workflow
+##   &amp;lt;list&amp;gt;           &amp;lt;chr&amp;gt;            &amp;lt;list&amp;gt;     &amp;lt;list&amp;gt;    &amp;lt;list&amp;gt;        &amp;lt;list&amp;gt;   
+## 1 &amp;lt;split [112/38]&amp;gt; train/test split &amp;lt;tibble [… &amp;lt;tibble … &amp;lt;tibble [38 … &amp;lt;workflo…&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;confusion-matrices&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Confusion Matrices&lt;/h1&gt;
-&lt;p&gt;Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and predictions are set across rows. This confusion matrix might look confusing because all predictions are correct.&lt;/p&gt;
+&lt;div id=&#34;confusion-matrices&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Confusion Matrices&lt;/h2&gt;
+&lt;p&gt;Finally, let’s generate a multiclass confusion matrix with the results from our test data. The confusion matrix provides a count of each outcome for all possible outcomes. The columns contain the true values and the predictions are assigned to the rows.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_glmnet)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 4
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -366,9 +1086,9 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_glmnet) %&amp;gt;%
   conf_mat(species, .pred_class) %&amp;gt;% 
   autoplot(type = &amp;#39;heatmap&amp;#39;) &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_metrics(final_rf)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 4
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;               
 ## 1 accuracy multiclass     0.974 Preprocessor1_Model1
@@ -376,12 +1096,13 @@ final_rf&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;collect_predictions(final_rf) %&amp;gt;%
   conf_mat(species, .pred_class) %&amp;gt;% 
   autoplot(type = &amp;#39;heatmap&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/iris-classification/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.gabemednick.com/post/iris-classification/index_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;final-thoughts&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Final thoughts&lt;/h1&gt;
-&lt;p&gt;It’s always good to ask the question, ‘Do my results make sense’? Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say yes, there is a clear distinction between species when comparing the explanatory features. Now that we have a model, we have the power to predict iris type on new data 😄.&lt;/p&gt;
-&lt;p&gt;I would like to thank the unsung heroes of the tidyverse and tidymodels: &lt;strong&gt;Julia Silge&lt;/strong&gt;, &lt;strong&gt;David Robinson&lt;/strong&gt; and &lt;strong&gt;Andrew Couch&lt;/strong&gt; for creating and sharing amazing, open source learning resources.&lt;/p&gt;
+&lt;div id=&#34;final-thoughts&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Final thoughts&lt;/h2&gt;
+&lt;p&gt;Both models exhibit near perfect predictive power but are they really that good? From our visual analysis, we can confidently say that the combination of explanatory features provide for a clean separation of species. So yes, our toy model is that good!&lt;/p&gt;
+&lt;p&gt;Special thanks to &lt;strong&gt;Julia Silge&lt;/strong&gt;, &lt;strong&gt;David Robinson&lt;/strong&gt; and &lt;strong&gt;Andrew Couch&lt;/strong&gt; for creating and sharing many amazing learning resources for mastering the tidyverse and tidymodels data science packages.&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>

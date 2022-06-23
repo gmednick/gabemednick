@@ -1,12 +1,12 @@
 ---
-title: Hello Tidyverse and generating many models
+title: Hello Tidyverse and generating many linear regression models
 author: Gabe Mednick
 date: '2020-09-03'
 slug: hello-tidyverse
 categories: []
 tags: []
-subtitle: 'Work in progress'
-summary: 'This post explores crop yield data with visualization and the lm() function to generate many regression models (a model for each country (25) and crop (4).'
+subtitle: 'Always a work in progress'
+summary: 'This post explores crop yield data with visualization and the lm() function to generate models for 25 countries and 4 crops.'
 authors: []
 lastmod: '2020-10-20'
 featured: no
@@ -17,8 +17,11 @@ image:
   preview_only: no
 projects: []
 ---
+
 # Intro 
-This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their analyses and visualizations on Twitter with the hashtag, #TidyTuesday. This week's dataset (September 1st, 2020) is from [Our World in Data](https://ourworldindata.org/crop-yields). There are actually five datasets but we are going to focus on global crop yields. 
+This post uses data from the <i class='fab fa-r-project'  style='color: #367588'></i> for Data Science online learning community. Each Tuesday, a dataset is posted and people share their insights and visualizations like fine wine. You can Twitter the hashtag #TidyTuesday to sample the vintage of the week. This week's dataset (September 1st, 2020) is from [Our World in Data](https://ourworldindata.org/crop-yields). There are actually five datasets but we are going to focus on global crop yields. 
+
+After exploring the data, we will create a model that predict the yield per hectare (yield_hectare ~ population + year), using the year and population. The dataset is too big to use every country and crop we will choose the top 25 countries by population and select 4 common crops. Altother, that will produce 100 linear models. Since that's too much to digest in a table, we will present the model results as a labeled data visualization where each point represents a model's adjusted p-value (y-axis) and estimate or slope (x-axis) for a given country and crop.
 
 ```{r, out.width="100%", include=FALSE}
 library(knitr)
@@ -35,8 +38,9 @@ library(lubridate)
 library(tidytext)
 theme_set(theme_light())
 ```
+
 # Download and view the data
-Let's start by downloading the data from the [R4DS Github](https://github.com/rfordatascience/tidytuesday) account and take a look at it. the tidytuesdayR package (by Ellis Hughes, co-host of the screencast 'TidyX') is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I'm going to stick with the `readr::read_csv()` from the tidyverse to import the data as a tibble (data frame).
+Let's start by downloading the data from the [R4DS Github](https://github.com/rfordatascience/tidytuesday) account and take a look at it. The tidytuesdayR package (by Ellis Hughes, co-host of the screencast 'TidyX') is a handy package for checking out available datasets, exploring the data dictionary in the Rstudio viewer and loading the desired data (and more). Although simple to use, I'm going to stick with the `readr::read_csv()` to import the data as a tibble (`Tidyverse` lingo for a modern dataframe object).
 
 ```{r}
 # Load the data with a readr function
@@ -59,7 +63,8 @@ skimr::skim(crop_yields)
 # View(crop_yields)
 ```
 # Tidy data: cleaning and reshaping
-Let's start with a little data cleaning! `skim()` from `skimr` provides a convenient summary. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This long format facilitates fluent analysis with the tidyverse. The function `pivot_longer()` from the tidyr package allows us to reshape the data and prepare it for exploratory data analysis (EDA).   
+Let's start with a little data cleaning! `skim()` from `skimr` provides a convenient way to get summary statistics and more. By looking at the data we can see that there are missing values that need to be removed or imputed but other than that, the data is clean. One thing we should consider is whether the data is in a tidy format where each column is a feature and each row a sample. This format is important when we want to model the data but sometimes it's helpful to pivot the data into a long format for creating visualizations across multiple categories with `ggplot2::facet_wrap()` and related functions. We will use the handy function, `pivot_longer()`, from the tidyr package to combine crops into a single column and present their respective values in a separate column in preparation for exploratory data analysis (EDA).   
+
 ```{r}
 # Use pivot_longer from tidyr to tidy the data.
 crop_yield_tidy <- crop_yield %>% 
@@ -79,11 +84,11 @@ top_pops <- land_use  %>%
 
 
 kable(head(crop_yield_tidy, n = 10))
-
 ```
 # What can we learn from this dataset?
+A great place to start any analysis is by counting the representation of certain categories in the dataset using the `count()` or `add_count()` function. For instance, we might want to know the count of each country across years which will tell us the number of crops recorded for each country. It often makes sense to combine `count()` with a bar plot to visualize meaningful distributions. 
 
-A great place to start any analysis is by grouping and counting predictive features using the `count()` function. It often makes sense to combine `count()` with a bar plot to visualize meaningful distributions. EDA is arguably the most important step in a machine learning workflow because it gives us insight that we can then use to generate a predictive model. When we run a machine learning model, we should already have an intutive sense about what to expect from our model. 
+EDA is often where I have the most fun in my workflow..plus it's arguably the most important step in a data analysis pipeline. Among other things, it provides insights that will help us have an intuitive sense about what to expect when we generate machine learning models and evaluate their performance. 
 
 ```{r}
 crop_yield_tidy %>%
@@ -104,20 +109,11 @@ crop_yield_tidy %>% # 249 unique countries
 ```
 # Visual analysis
 
-Now the data is tidy, we are ready to take a closer look at it. Our initial EDA should have given us some ideas about what relationships we might want to pursue with visual analysis. Let's start by comparing crop yield by country. There are too many countries to add to a single plot, so we might need to plot a subset of the data. For more refined control of country selection, we c code into a Shiny dashboard.
+Let's start by comparing crop yield by country for the United States to see how crop yields have changed over time. While we're at it, let's look at the most abundant crop yields overall.
 
-We will use `slice_sample()` to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. Let's choose 9 countries to get a feel for crop yields over time without overwhelming our senses. 
 ```{r}
-# Randomly select 9 country names
-# set.seed(1014) if you want to select the same 9 countries each time
-crops <- crop_yield_tidy %>% distinct(crop) %>%  pull()
-country_random <- crop_yield_tidy %>% 
-  select(country) %>% 
-  distinct() %>% 
-  slice_sample(n = 9) %>% 
-  pull()
-
-crop_yield_tidy %>% 
+# Potatoes!
+us_yields <- crop_yield_tidy %>% 
   filter(country == 'United States') %>% 
   ggplot(aes(year, yield_hectare, color = crop)) +
   geom_line() +
@@ -129,6 +125,7 @@ crop_yield_tidy %>%
     x = 'tonnes per hectare per year'
   )
 
+us_yields
 
 # plot of USA data only
 crop_yield_tidy %>% 
@@ -144,6 +141,21 @@ crop_yield_tidy %>%
     y = 'Crop',
     x = 'tonnes per hectare'
   )
+```
+
+There are too many countries to add to a single plot, so we will likely need to decide how we want to subset the data. For this analysis, let's use `dplyr::slice_sample()` to randomly select a subset of the total countries. Unless a seed is set, the selection will be different each time we run the code chunk. To start, let's choose 9 countries and visualize the change in crop yields over time. 
+
+```{r}
+# set.seed(1014) if you want to select the same 9 countries each time
+
+# Randomly select 9 country names
+crops <- crop_yield_tidy %>% distinct(crop) %>%  pull()
+
+country_random <- crop_yield_tidy %>% 
+  select(country) %>% 
+  distinct() %>% 
+  slice_sample(n = 9) %>% 
+  pull()
 
 # Plot crop yield per hectare per year.
 crop_yield_tidy %>% 
@@ -194,18 +206,33 @@ crop_yield_tidy %>%
 
 ```
 
-Next, let's make a regression model for each of the top 20 countries.
+Next, let's make a regression model for each of the top 25 countries. 
+
 ```{r}
-library(tidymodels)
+library(broom)
 library(ggrepel)
-crop_yield_tidy %>%
+
+many_models <- crop_yield_tidy %>%
   drop_na() %>%
   filter(country %in% top_pops,
          crop %in% c('maize', 'potatoes', 'wheat', 'bananas')) %>%
   nest(mod_data = c(year, yield_hectare, population)) %>%
   mutate(model = map(mod_data, ~lm(yield_hectare ~ population + year, data = .))) %>%
   mutate(coefs = map(model, tidy)) %>%
-  unnest(coefs) %>%
+  unnest(coefs)
+```
+
+Here's what the data looks like after unnesting the coefficients.
+
+```{r}
+many_models %>% 
+  select(country, code, crop, term, estimate, std.error, statistic, p.value, everything())
+  head()
+```
+
+Finally, let's make the results more meaningful by creating a visualization to summarize the model results. 
+```{r}
+many_models %>%
   filter(term == "year") %>%
   mutate(p.value = p.adjust(p.value)) %>% 
   ggplot(aes(estimate, p.value, label = country)) +

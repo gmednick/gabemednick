@@ -66,7 +66,7 @@ package_category <- pkgs %>% firstInBioc() %>%
        x = "Package count",
        y = "",
        color = "Category") +
-  theme(legend.position = 'none')
+  theme(legend.position = 'none') 
 
 top_downloads <- pkgs %>% 
   group_by(Package) %>% 
@@ -80,7 +80,7 @@ top_downloads <- pkgs %>%
        x = "Total downloads",
        y = "") +
   scale_x_continuous(labels = scales::scientific) +
-  theme(axis.text.x = element_text(angle = 45, hjust = +1))
+  theme(axis.text.x = element_text(angle = 45, hjust = +1)) 
 
 
 package_category | top_downloads

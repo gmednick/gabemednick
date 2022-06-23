@@ -23,7 +23,7 @@
   
   
 
-  
+  <meta name="author" content="Gabriel Mednick, PhD">
 
   
   
@@ -34,7 +34,7 @@
    ">
 
   
-  <link rel="alternate" hreflang="en-us" href="/license/">
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/license/">
 
   
 
@@ -220,6 +220,44 @@
 
 
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
   
 
 
@@ -232,7 +270,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/license/">
+  <link rel="canonical" href="https://www.gabemednick.com/license/">
 
   
   
@@ -248,11 +286,11 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gabe Mednick">
-  <meta property="og:url" content="/license/">
+  <meta property="og:url" content="https://www.gabemednick.com/license/">
   <meta property="og:title" content="LICENSE: CC-BY-SA | Gabe Mednick">
   <meta property="og:description" content="My blog posts are released under a Creative Commons Attribution-ShareAlike 4.0 International License.
-   "><meta property="og:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
-  <meta property="twitter:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+   "><meta property="og:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
   
     
       <meta property="article:published_time" content="2018-06-28T00:00:00&#43;01:00">
@@ -376,64 +414,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#about"><span>About</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#experience"><span>Experience</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link " href="/#posts"><span>Blog</span></a>
         </li>
 
@@ -464,6 +444,28 @@
 
         <li class="nav-item">
           <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
         </li>
 
         
@@ -745,7 +747,7 @@
   
 
   <p class="powered-by">
-    © Gabe Mednick 2021
+    © Gabe Mednick 2022
   </p>
 
   

@@ -1,0 +1,1708 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gabriel Mednick, PhD">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Do you have what it takes to predict a home run?">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/baseball/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(339, 90%, 68%)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i%7CKarla:400,400i,700,700i%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://www.gabemednick.com/post/baseball/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Gabe Mednick">
+  <meta property="og:url" content="https://www.gabemednick.com/post/baseball/">
+  <meta property="og:title" content="Home run analysis | Gabe Mednick">
+  <meta property="og:description" content="Do you have what it takes to predict a home run?"><meta property="og:image" content="https://www.gabemednick.com/post/baseball/featured.jpg">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/baseball/featured.jpg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-09-13T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-09-13T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.gabemednick.com/post/baseball/"
+  },
+  "headline": "Home run analysis",
+  
+  "image": [
+    "https://www.gabemednick.com/post/baseball/featured.jpg"
+  ],
+  
+  "datePublished": "2021-09-13T00:00:00Z",
+  "dateModified": "2021-09-13T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gabe Mednick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Do you have what it takes to predict a home run?"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Home run analysis | Gabe Mednick</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/resume/gmednickCV.pdf"><span>Resume</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Home run analysis</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 13, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 480px;">
+  <div style="position: relative">
+    <img src="/post/baseball/featured_hu890cb33fc15e16d4bcdfb458a9a1b5b1_1128938_720x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.gabemednick.com/post/baseball/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this post, I’m going to explore a baseball dataset that was recently used in the Sliced machine learning competition on Kaggle. The goal was to build a model to predict home runs. In the competition, log loss was used to evaluate model performance. We will build and tune several models to compare with each other and the Sliced competition <a href="https://www.kaggle.com/c/sliced-s01e09-playoffs-1/leaderboard">leaderboard</a>.</p>
+<p>During the Sliced competition, Jesse Mostipak and David Robinson used the <code>meme</code> package to woo the online audience and win the popular vote. Who knew that cat memes and machine learning went so well together? So, of course, I knew I had to give the package a whirl in my next post. In addition to creating memes, the package can also be used to add an image to the background of plots made with the <code>ggplot2</code> package.</p>
+<p>Before we get started, I would like to add the following disclaimer: I am utterly ignorant about the rules and lingo of baseball but I will try my best to not offend any diehard fans. With that said, let’s start by exploring the variables we have to build our <strong>home run</strong> prediction model.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(patchwork)
+theme_set(theme_light())
+library(grid)
+library(meme)
+library(ggimage)
+library(gt)
+doParallel::registerDoParallel()</code></pre>
+<pre class="r"><code>#u &lt;- system.file(&quot;memes/safe.png&quot;, package=&quot;meme&quot;)
+u &lt;- &quot;memes/safe.png&quot;
+x = meme(u, &quot;Safe!&quot;, &quot;Models be like&quot;)
+x</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>baseball &lt;- read_csv(&#39;train.csv&#39;)</code></pre>
+</div>
+<div id="data-viz" class="section level2">
+<h2>Data Viz</h2>
+<p>The baseball dataset has the following features: is_batter_lefty, is_pitcher_lefty, bb_type, bearing, pitch_name, park, inning, outs_when_up, balls, strikes, plate_x, plate_z, pitch_mph, launch_speed, launch_angle. Visualizing our data can help us get a sense of what variables are important for predicting home runs. Let’s first look at the number of home runs by pitch type.</p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(pitch_name != &#39;Forkball&#39;) %&gt;% 
+  mutate(pitch_name = fct_reorder(pitch_name, is_home_run, sum)) %&gt;% 
+  ggplot(aes(is_home_run, pitch_name, fill = pitch_name)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d(option=&quot;plasma&quot;, alpha = .9) +
+  labs(x=&#39;Home runs&#39;,
+       y=&#39;&#39;,
+       title=&#39;Number of home runs by pitch type&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>A 4-seem fastball pitch has resulted in the most home runs by far. Next, let’s see what types of batting hits result in a home run.</p>
+<pre class="r"><code>color2 &lt;- c(&quot;#FEBC2AFF&quot;, &quot;#F48849FF&quot;)
+baseball %&gt;% 
+  filter(bb_type == &quot;line_drive&quot; | bb_type == &quot;fly_ball&quot;) %&gt;% 
+  filter(is_home_run == 1) %&gt;% 
+  #mutate(pitch_name = fct_reorder(bb_type, is_home_run, sum)) %&gt;% 
+  ggplot(aes(bb_type, is_home_run, fill = bb_type)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  #scale_fill_manual(values = color2) +
+  labs(x=&#39;&#39;,
+       y=&#39;&#39;,
+       title=&#39;Number of home runs for line drive and fly ball hits&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Only the fly ball and line drive result in a home run. The next two plots use the hit trajectory and coordinates relative to home plate to see where home runs occur. For enhanced satisfaction, I’ve added a baseball field to the first plot. This is more of a qualitative image since the position of the field is based on an image and not actual coordinates.</p>
+<pre class="r"><code>s &lt;- &quot;memes/bb_field.png&quot;
+v = meme(s)
+
+baseball %&gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview= v + aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, alpha = .4) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &quot;Hex plot using color to represent homerun percentage based on the\
+       ball&#39;s trajectory coordinates&quot;, x = &#39;Ball position relative to home plate&#39;, y = &#39;Ball height above ground&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>baseball %&gt;% 
+  ggplot(aes(plate_x, plate_z, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, alpha = .8) +
+  scale_x_continuous(limits=c(-2,2)) +
+  labs(title = &quot;Hex plot using color to represent homerun percentage based on the\
+       ball&#39;s trajectory coordinates&quot;, x = &#39;Ball position relative to home plate&#39;, y = &#39;Ball height above ground&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The following two plots also use the hex style fill and consider home runs based on the hit’s launch angle and launch speed.</p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(launch_angle &gt;= 10 &amp; launch_angle &lt;= 55, launch_speed &gt;= 85) %&gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  geom_subview(x = 0, y = 0, subview=v+aes(size=3), width=Inf, height=Inf) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, , alpha = .5) +
+  labs(title = &quot;Hex plot using color to represent homerun\
+       percentage based on the ball&#39;s launch\
+       angle and speed.&quot;, x = &#39;Ball launch angle&#39;, y = &#39;Ball launch speed&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>baseball %&gt;% 
+  filter(launch_angle &gt;= 10 &amp; launch_angle &lt;= 55, launch_speed &gt;= 85) %&gt;% 
+  ggplot(aes(launch_angle, launch_speed, z = is_home_run)) +
+  stat_summary_hex(bins=15) +
+  scale_fill_viridis_c(option = &#39;A&#39;, labels = percent, , alpha = .8) +
+  labs(title = &quot;Hex plot using color to represent homerun\
+       percentage based on the ball&#39;s launch\
+       angle and speed.&quot;, x = &#39;Ball launch angle&#39;, y = &#39;Ball launch speed&#39;, fill = &#39;home runs (%)&#39;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>In the next plot, I create three categories for speed and count the number of home runs for each category.</p>
+<pre class="r"><code>baseball %&gt;% 
+  mutate(speed_cat = case_when((pitch_mph &gt; 90) ~ &quot;Pitch speed &gt; 80 mph&quot;,
+                                 (pitch_mph &gt; 80) &amp; (pitch_mph &lt;=  90) ~ &quot;70-80 mph&quot;,
+                                  (pitch_mph &gt; 70) &amp; (pitch_mph &lt;=  80) ~ &quot;60-70 mph&quot;,
+                                 TRUE ~ &quot;Pitch speed &lt; 70 mph&quot;)) %&gt;% 
+  group_by(speed_cat) %&gt;% 
+  filter(is_home_run == 1, speed_cat != &#39;Pitch speed &lt; 70 mph&#39;) %&gt;%
+  ggplot(aes(is_home_run, speed_cat, fill = speed_cat)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d() +
+  labs(title = &quot;home runs based on Pitch speed&quot;,
+       x = &#39;Home runs&#39;,
+       y = &quot;&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="machine-learning" class="section level2">
+<h2>Machine learning</h2>
+<p>The first step is to clean the data and generate resamples using <code>vfold_cv()</code>. The training set is used for the resamples so as to prevent any data linkage.</p>
+<pre class="r"><code># Create splits and resamples
+baseball_clean &lt;- baseball %&gt;% 
+  drop_na() %&gt;% 
+  mutate(is_home_run = case_when(is_home_run == 1 ~ &#39;yes&#39;,
+                                 TRUE ~ &#39;no&#39;),
+         is_home_run = factor(is_home_run))
+split &lt;- initial_split(baseball_clean)
+
+home_runs_train &lt;- training(split) 
+home_runs_test &lt;- testing(split)
+
+folds &lt;- home_runs_train %&gt;% 
+  vfold_cv(v=5)</code></pre>
+<div id="logistic-regression" class="section level3">
+<h3>Logistic regression</h3>
+<p>I’m going to use a logistic regression as the first model for comparison. For each model, I will use the log loss and accuracy for evaluation metrics.</p>
+<pre class="r"><code>glm_recipe &lt;-
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&gt;% 
+  step_zv(all_predictors())
+
+glm_spec &lt;- logistic_reg() %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;glm&quot;)
+
+glm_workflow &lt;-
+  workflow(glm_recipe, glm_spec)
+
+set.seed(1013)
+glm_fit_resamps &lt;- fit_resamples(
+  glm_workflow,
+  resamples = folds,
+  metrics = metric_set(accuracy, mn_log_loss),
+  control = control_resamples(save_pred = TRUE))
+
+glm_fit_resamps %&gt;% collect_metrics() %&gt;%             
+  select(.metric, .estimator, .estimate = mean) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   .metric     .estimator .estimate
+##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy    binary         0.951
+## 2 mn_log_loss binary         0.119</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**Logistic regression results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body()) </code></pre>
+</div>
+<div id="random-forest-model" class="section level3">
+<h3>Random forest model</h3>
+<p>In the code chunk I will tune a random forrest model, select the best hyperparameters and then use the <code>last_fit()</code> function to train the model on the training data and predict on the testset.</p>
+<pre class="r"><code>ranger_recipe &lt;-
+  recipe(formula = is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph +
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean)
+
+ranger_spec &lt;-
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&gt;%
+  set_mode(&quot;classification&quot;) %&gt;%
+  set_engine(&quot;ranger&quot;)
+
+ranger_workflow &lt;-
+  workflow() %&gt;%
+  add_recipe(ranger_recipe) %&gt;%
+  add_model(ranger_spec)
+
+set.seed(90431)
+ranger_tune &lt;-
+  tune_grid(ranger_workflow, 
+            resamples = folds, 
+            grid = 20,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE)
+            )
+
+ranger_tune %&gt;% autoplot()</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>best_params &lt;- ranger_tune %&gt;%
+  select_best()
+
+final_wkflow &lt;- finalize_workflow(ranger_workflow, best_params)
+
+final_fit &lt;- last_fit(final_wkflow, split)
+
+final_fit %&gt;% 
+  collect_metrics() %&gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.980</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**Random forrest results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body())</code></pre>
+</div>
+<div id="xgboost-model" class="section level3">
+<h3>XGboost model</h3>
+<p>No modeling post is complete without an XGboost model. We will follow the similar tuning procedure as was done for the random forest model.</p>
+<pre class="r"><code>xgboost_recipe &lt;- 
+  recipe(is_home_run ~ is_batter_lefty + is_pitcher_lefty + pitch_mph + 
+    launch_speed + launch_angle + plate_x + plate_z, data = baseball_clean) %&gt;% 
+  #step_string2factor(one_of(is_home_run)) %&gt;% 
+  step_zv(all_predictors()) 
+
+xgboost_spec &lt;- 
+  boost_tree(trees = 1000, 
+             min_n = tune(), 
+             tree_depth = tune(), 
+             learn_rate = tune(), 
+    loss_reduction = tune(), 
+    sample_size = tune()) %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;xgboost&quot;) 
+
+xgboost_workflow &lt;- 
+  workflow() %&gt;% 
+  add_recipe(xgboost_recipe) %&gt;% 
+  add_model(xgboost_spec) 
+
+set.seed(99176)
+xgboost_tune &lt;-
+  tune_grid(xgboost_workflow, 
+            resamples = folds, 
+            grid = 5,
+            metrics = metric_set(accuracy, mn_log_loss),
+            control = control_resamples(save_pred = TRUE))
+
+xgboost_tune %&gt;% autoplot()</code></pre>
+<p><img src="https://www.gabemednick.com/post/baseball/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>xg_best_params &lt;- xgboost_tune %&gt;%
+  select_best()
+
+xg_final_wkflow &lt;- finalize_workflow(xgboost_workflow, xg_best_params)
+
+xg_final_fit &lt;- last_fit(xg_final_wkflow, split)
+
+xg_final_fit %&gt;% 
+  collect_metrics() %&gt;% 
+  select(-.config, Metric = .metric, Estimate = .estimate, Estimator = .estimator) #%&gt;% </code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   Metric   Estimator Estimate
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
+## 1 accuracy binary       0.974
+## 2 roc_auc  binary       0.971</code></pre>
+<pre class="r"><code>  # gt() %&gt;%
+  # tab_header(title = md(&quot;**XGboost results**&quot;))  %&gt;%
+  # tab_options(container.height = 400,
+  #             container.overflow.y = TRUE,
+  #             heading.background.color = &quot;#21908CFF&quot;,
+  #             table.width = &quot;75%&quot;,
+  #             column_labels.background.color = &quot;black&quot;,
+  #             table.font.color = &quot;black&quot;) %&gt;%
+  # tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+  #           locations = cells_body())</code></pre>
+</div>
+</div>
+<div id="summary-results" class="section level2">
+<h2>Summary Results</h2>
+<pre class="r"><code>model = c(&quot;glm&quot;, &quot;glm&quot;, &quot;random forest&quot;, &quot;random forest&quot;, &quot;xgboost&quot;, &quot;xgboost&quot;)
+bind_rows(glm_fit_resamps %&gt;%
+            collect_metrics() %&gt;% 
+            select(.metric, .estimator, .estimate = mean), 
+          final_fit %&gt;% 
+  collect_metrics(), 
+  xg_final_fit %&gt;% 
+  collect_metrics()) %&gt;% 
+  bind_cols(tibble(model)) %&gt;% 
+  select(-.config, model,  Metric = .metric, Estimate = .estimate, Estimator = .estimator) %&gt;% 
+  select(model, everything()) %&gt;% 
+  gt() %&gt;%
+  tab_header(title = md(&quot;**Model summary results**&quot;))  %&gt;%
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = &quot;#21908CFF&quot;,
+              table.width = &quot;75%&quot;,
+              column_labels.background.color = &quot;black&quot;,
+              table.font.color = &quot;black&quot;) %&gt;%
+  tab_style(style = list(cell_fill(color = &quot;gray&quot;)),
+            locations = cells_body())</code></pre>
+<div id="hlljgevasf" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#hlljgevasf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_heading {
+  background-color: #21908C;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_title {
+  color: #FFFFFF;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hlljgevasf .gt_subtitle {
+  color: #FFFFFF;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hlljgevasf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #000000;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hlljgevasf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hlljgevasf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hlljgevasf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hlljgevasf .gt_group_heading {
+  padding: 8px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hlljgevasf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hlljgevasf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hlljgevasf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hlljgevasf .gt_stub {
+  color: #000000;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hlljgevasf .gt_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_grand_summary_row {
+  color: #000000;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hlljgevasf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hlljgevasf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_sourcenotes {
+  color: #000000;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hlljgevasf .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hlljgevasf .gt_left {
+  text-align: left;
+}
+
+#hlljgevasf .gt_center {
+  text-align: center;
+}
+
+#hlljgevasf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hlljgevasf .gt_font_normal {
+  font-weight: normal;
+}
+
+#hlljgevasf .gt_font_bold {
+  font-weight: bold;
+}
+
+#hlljgevasf .gt_font_italic {
+  font-style: italic;
+}
+
+#hlljgevasf .gt_super {
+  font-size: 65%;
+}
+
+#hlljgevasf .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>Model summary results</strong></th>
+    </tr>
+    
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">model</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Metric</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Estimate</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9510207</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">glm</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">mn_log_loss</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.1187313</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9740179</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">random forest</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9803071</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">accuracy</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9737086</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">xgboost</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">roc_auc</td>
+<td class="gt_row gt_left" style="background-color: #BEBEBE;">binary</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">0.9709157</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>The accuracy turned out to be slightly better for the random forest and xgboost models but there was no standout winner. The models appear to have worked really well..I would like to go beyond the test data and see how they perform. I would also still like to compare them to the Sliced leaderboard but, for some reason, the log loss metric was not computed for the latter two models. One question that I plan to follow up on is whether I should down sample the data. I assume there is an overrepresentation of hits that are not home runs. Although we would lose a lot of data, it could result in a much more accurate model.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/machine-learning/">machine learning</a>
+  
+  <a class="badge badge-light" href="/tag/tidymodels/">tidymodels</a>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
+        
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="far fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GabeMednick" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/gmednick" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/" >
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/iris-classification/">Iris Classification</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks",
+        'slides' : "Slides"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.72756512af279b10e3e4b09540ed6e9f.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © Gabe Mednick 2022
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF69B4"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #FF69B4"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #FF69B4"></i>! Stunning photo of the Milky Way taken by Kristopher Roller.
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

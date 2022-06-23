@@ -23,7 +23,7 @@
   
   
 
-  
+  <meta name="author" content="Gabriel Mednick, PhD">
 
   
   
@@ -33,7 +33,7 @@
   <meta name="description" content="">
 
   
-  <link rel="alternate" hreflang="en-us" href="/404.html">
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/404.html">
 
   
 
@@ -219,6 +219,44 @@
 
 
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
   
 
 
@@ -231,7 +269,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/404.html">
+  <link rel="canonical" href="https://www.gabemednick.com/404.html">
 
   
   
@@ -247,10 +285,10 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gabe Mednick">
-  <meta property="og:url" content="/404.html">
+  <meta property="og:url" content="https://www.gabemednick.com/404.html">
   <meta property="og:title" content="404 Page not found | Gabe Mednick">
-  <meta property="og:description" content=""><meta property="og:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
-  <meta property="twitter:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  <meta property="og:description" content=""><meta property="og:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
   
     
   
@@ -369,64 +407,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#about"><span>About</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#experience"><span>Experience</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link " href="/#posts"><span>Blog</span></a>
         </li>
 
@@ -457,6 +437,28 @@
 
         <li class="nav-item">
           <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
         </li>
 
         
@@ -528,25 +530,25 @@
   <h2>Latest</h2>
   <ul>
     
-      <li><a href="/post/ameshousing/">Housing Price Predictions</a></li>
+      <li><a href="/post/yeast_expression/">Transcriptomic analysis of yeast in response to selective nutrient limitation</a></li>
     
-      <li><a href="/post/marine-voyages/">Marine Voyages</a></li>
+      <li><a href="/post/hsapiens/">Exploring the human genome with Bioconductor</a></li>
     
-      <li><a href="/post/santa-cruz-surf-report/">Swell Tracker</a></li>
+      <li><a href="/post/yeast/">Exploring the yeast genome with Bioconductor</a></li>
     
-      <li><a href="/post/covid-shiny-app/">COVID Shiny App</a></li>
+      <li><a href="/post/baseball/">Home run analysis</a></li>
     
-      <li><a href="/post/iris-classification/">Iris Classification</a></li>
+      <li><a href="/post/loans/">Loan data analysis</a></li>
     
-      <li><a href="/post/hello-tidyverse/">Hello Tidyverse and generating many models</a></li>
+      <li><a href="/post/python-r/">Fun with Python and R</a></li>
     
-      <li><a href="/projects/">Projects</a></li>
+      <li><a href="/post/kmer-counter/">K-mer counting tool</a></li>
     
-      <li><a href="/about/">Resume</a></li>
+      <li><a href="/post/crypto-dash/">Crypto Dash</a></li>
     
-      <li><a href="/talks/">Talks &amp; Workshops</a></li>
+      <li><a href="/post/penguin/">Palmer penguins</a></li>
     
-      <li><a href="/license/">LICENSE: CC-BY-SA</a></li>
+      <li><a href="/post/launchpads/">Crypto launchpad platforms</a></li>
     
   </ul>
   
@@ -673,7 +675,7 @@
   
 
   <p class="powered-by">
-    © Gabe Mednick 2021
+    © Gabe Mednick 2022
   </p>
 
   

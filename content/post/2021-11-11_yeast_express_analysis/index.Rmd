@@ -51,13 +51,14 @@ yeast_df <- read_rds("yeast_data")
 
 yeast_df %>% 
   head(5) %>% 
-  gt() %>% 
-  tab_style(
-    style = list(
-      cell_fill(color = "#E0FFFF"),
-      cell_text(weight = "bold")
-      ),
-    locations = cells_body())
+  kableExtra::kable()
+  # gt() %>% 
+  # tab_style(
+  #   style = list(
+  #     cell_fill(color = "#E0FFFF"),
+  #     cell_text(weight = "bold")
+  #     ),
+  #   locations = cells_body())
 ```
 
 ## Cleaning the data
@@ -85,21 +86,15 @@ Let's look at the data again after cleaning it!
 ```{r}
 yeast_df_tidy %>% 
   head(5) %>% 
-  gt() %>% 
-  tab_style(
-    style = list(
-      cell_fill(color = "#E0FFFF"),
-      cell_text(weight = "bold")
-      ),
-    locations = cells_body())
+  kableExtra::kable()
 ```
 
-Cool, let's explore some of the benefits of Tidying our data? For starters, we can explore the data with the data visualization package, `GGplot2`. When we cleaned the data, we separated important annotation information about each gene. Let's use this information to count each category and see what the most common molecular processes in .
+Cool, let's explore some of the benefits of Tidying our data? For starters, we can explore the data with the data visualization package, `GGplot2`. When we cleaned the data, we separated important annotation information about each gene. Let's use it to count each category and see what the most common molecular processes are.
 
 ```{r}
 # plotting most common gene product associated molecular processes
 yeast_df_tidy %>% 
-  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
   drop_na(molec_process) %>%
   group_by(gene_name, molec_process) %>% 
   count(sort = T) %>%
@@ -115,13 +110,12 @@ yeast_df_tidy %>%
   theme(plot.title = element_text(color = "blue", size = 14, face = "bold", hjust = -1))
 
 ```
-
 Let's also look at the annotation for gene product activity.
 
 ```{r}
 # plotting most common gene product function
 yeast_df_tidy %>% 
-  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
   drop_na(activity) %>%
   group_by(gene_name, activity) %>% 
   count(sort = T) %>%
@@ -138,22 +132,29 @@ yeast_df_tidy %>%
 
 ```
 
-Visualizing relationships in our data can help us check for inconsistencies and deepen our intuition about the relationships between variables. For instance, let's consider how expression levels depend on growth rate for each of the nutrient limiting categories. Genes that show an increase or decrease in expression may be directly affected by the specific nutrient limitation. Let's start off by looking at a couple of individual genes under each nutrient limiting condition and then expand our visual exploration to look for patterns based on activity or molecular process.
+Visualizing relationships in our data can help us check for inconsistencies and deepen our intuition about the relationships between variables. For instance, let's consider how expression levels depend on growth rate for each of the nutrient limiting categories. Genes that show an increase or decrease in expression are likely directly affected by the specific nutrient limitation.
 
 ```{r}
-#Let's replace the nutrient symbols with names
+#For readability, let's also replace the nutrient symbols with their respective names
 nutrients <- c(G = 'Glucose', L = 'Leucine', N = 'Nitrogen', P  = 'Phosphate', S = 
 'Sulfate', N = 'Ammonia', U = 'Uracil')
 
 yeast_df_tidy <- yeast_df_tidy %>% 
   mutate(nutrient = recode(
     nutrient, !!!nutrients
-  ))
+  )) # !!! is referred to as the splice operator -- it injects a list of arguments into a function call (can be used in place of do.call)
 ```
 
+
+```{r}
+
+```
+
+Let's look at a couple of individual genes under each nutrient limiting condition and then expand our visual exploration to look for patterns based on activity or molecular process.
+ 
 ```{r}
 yeast_df_tidy %>% 
-  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>% 
+  select(gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%
   filter(gene_name == "SUL1") %>% 
   ggplot(aes(growth_rate, expression_levels, color = nutrient)) +
   geom_line() +
@@ -161,9 +162,10 @@ yeast_df_tidy %>%
        subtitle = "SUL1 is involved in sulfate transport",
        x = "Growth rate",
        y = "Expression")
+
 ```
 
-Without more information about SUL1, it's hard to know what we should expect. I would expect it's activity to increase with growth rate under sulfate limiting conditions (more sulfate present in the media). Instead, it appears to increase wit increasing uracil and phosphate.
+According to the Saccharomyces genome database, SUL1 is a 'High affinity sulfate permease of the SulP anion transporter family; sulfate uptake is mediated by specific sulfate transporters Sul1p and Sul2p, which control the concentration of endogenous activated sulfate intermediates'. We see that SUL1 expression decreases with increasing growth rate under sulfate limitation. It's also interesting to note that SUL1 expression increases under phosphate and uracil limitation. This analysis can lend itself to insights regarding the gene product's function and corresponding phenotype changes.
 
 This time, let's try a gene whose protein product is directly involved in the synthesis of a limiting nutrient. For this, we will use LEU1 which is involved in the synthesis of leucine.
 
@@ -191,7 +193,7 @@ yeast_df_tidy %>%
   ungroup() %>% 
   distinct(gene_name, .keep_all = T) %>% 
   select(gene_name, activity, molec_process, nutrient) %>% 
-  DT::datatable() 
+  kableExtra::kable() 
 
 yeast_df_tidy %>% 
   select(gid, gene_name, activity, molec_process, nutrient, growth_rate, expression_levels) %>%

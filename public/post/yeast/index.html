@@ -1,0 +1,1453 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gabriel Mednick, PhD">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Accessing and exploring the yeast genome with key packages from Bioconductor">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/yeast/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(339, 90%, 68%)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i%7CKarla:400,400i,700,700i%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://www.gabemednick.com/post/yeast/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Gabe Mednick">
+  <meta property="og:url" content="https://www.gabemednick.com/post/yeast/">
+  <meta property="og:title" content="Exploring the yeast genome with Bioconductor | Gabe Mednick">
+  <meta property="og:description" content="Accessing and exploring the yeast genome with key packages from Bioconductor"><meta property="og:image" content="https://www.gabemednick.com/post/yeast/featured.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/yeast/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-10-12T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-10-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.gabemednick.com/post/yeast/"
+  },
+  "headline": "Exploring the yeast genome with Bioconductor",
+  
+  "image": [
+    "https://www.gabemednick.com/post/yeast/featured.png"
+  ],
+  
+  "datePublished": "2021-10-12T00:00:00Z",
+  "dateModified": "2021-10-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gabe Mednick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Accessing and exploring the yeast genome with key packages from Bioconductor"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Exploring the yeast genome with Bioconductor | Gabe Mednick</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/resume/gmednickCV.pdf"><span>Resume</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Exploring the yeast genome with Bioconductor</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Oct 12, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 477px;">
+  <div style="position: relative">
+    <img src="/post/yeast/featured_hue12f1c60788a273365a2f9287786301f_2826925_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.gabemednick.com/post/yeast/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code># load packages
+library(tidyverse)
+library(patchwork)
+library(ggridges)
+library(BSgenome)
+library(glue)
+library(GenomicRanges)
+library(AnnotationHub)
+library(org.Sc.sgd.db)
+library(plyranges)
+library(GenomicFeatures)
+theme_set(theme_light())
+library(Gviz)
+library(ggbio)
+library(BiocPkgTools)
+library(biocViews)</code></pre>
+<div id="what-is-bioconductor" class="section level2">
+<h2>What is Bioconductor</h2>
+<p>Bioconductor is a repository of packages for bioinformatics. Bioconductor contains over 5000 peer reviewed packages that can be categorized as data analysis software, experimental data or annotation data. We can explore the Bioconductor repository using the <code>BiocPkgTools</code> package.</p>
+<p>Let’s visualize the package count by category and the most downloaded packages.</p>
+<pre class="r"><code>#library(BiocPkgTools)
+pkgs &lt;- biocDownloadStats()
+
+pkgs %&gt;% 
+  distinct(Package) %&gt;% 
+  dplyr::count() </code></pre>
+<pre><code>## # A tibble: 1 × 1
+##       n
+##   &lt;int&gt;
+## 1  5646</code></pre>
+<pre class="r"><code>package_category &lt;- pkgs %&gt;% firstInBioc() %&gt;% 
+  group_by(repo) %&gt;%
+  dplyr::count() %&gt;% 
+  ggplot(aes(n, fct_reorder(repo, n), fill = repo)) +
+  geom_col() +
+  labs(title = &quot;Categories&quot;,
+       x = &quot;Package count&quot;,
+       y = &quot;&quot;,
+       color = &quot;Category&quot;) +
+  theme(legend.position = &#39;none&#39;)
+
+top_downloads &lt;- pkgs %&gt;% 
+  group_by(Package) %&gt;% 
+  summarize(tot_downloads = sum(Nb_of_downloads)) %&gt;% 
+  slice_max(n = 30, tot_downloads) %&gt;% 
+  mutate(Package = fct_reorder(Package, tot_downloads)) %&gt;%
+  ggplot(aes(tot_downloads, Package, fill = tot_downloads)) +
+  geom_col() +
+  theme(legend.position = &quot;none&quot;) +
+  labs(title = &quot;Top downloads&quot;,
+       x = &quot;Total downloads&quot;,
+       y = &quot;&quot;) +
+  scale_x_continuous(labels = scales::scientific) +
+  theme(axis.text.x = element_text(angle = 45, hjust = +1))
+
+
+package_category | top_downloads</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>We can use the following incantation to visualize the most popular packages in each category.</p>
+<pre class="r"><code>library(tidytext)
+
+pkgs %&gt;%
+  group_by(repo, Package) %&gt;% 
+  summarize(tot_downloads = sum(Nb_of_downloads)) %&gt;% 
+  ungroup() %&gt;% 
+  group_by(repo) %&gt;% 
+  slice_max(tot_downloads, n = 8) %&gt;% 
+  mutate(repo = as.factor(repo),
+         Package = reorder_within(Package, tot_downloads, repo)) %&gt;%
+  ggplot(aes(tot_downloads, Package, fill = repo)) +
+  geom_col() +
+  facet_wrap(~repo, scales = &#39;free&#39;, ncol = 1) +
+  scale_y_reordered() +
+  theme(legend.position = &quot;none&quot;) +
+  labs(title = &quot;Most downloaded packages by category&quot;,
+       x = &quot;Total downloads&quot;,
+       y = &quot;&quot;) +
+  theme(plot.title = element_text(hjust = 0))</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Let’s finish our exploration of the Bioconductor repository by looking at how the package count has grown over time in each category.</p>
+<pre class="r"><code>labels &lt;- pkgs %&gt;% group_by(repo) %&gt;% summarize()
+library(ggrepel)
+pkgs %&gt;%  firstInBioc() %&gt;% 
+  group_by(Date, repo) %&gt;% 
+  count() %&gt;% 
+  ungroup() %&gt;% 
+  group_by(repo) %&gt;% 
+  mutate(tot_packages = cumsum(n),
+         label = if_else(tot_packages == max(tot_packages), repo, NA_character_),
+         label = glue(&quot;{repo} ({max(tot_packages)})&quot;)) %&gt;% 
+  ggplot(aes(Date, tot_packages, color = label,)) +
+  geom_line(size = 1) +
+  labs(title = &quot;Bioconductor package count over time&quot;,
+       x = &quot;Year&quot;,
+       y = &quot;Count&quot;,
+       color = &quot;Category&quot;) </code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="diving-into-the-yeast-genome" class="section level2">
+<h2>Diving into the yeast genome</h2>
+<p>To explore the yeast genome, we will use the <code>BSgenome.Scerevisiae.UCSC.sacCer3</code> package to access yeast sequence data, <code>TxDb.Scerevisiae.UCSC.sacCer3.sgdGene</code> to access genetic ranges such as genes, transcripts, promoters, and use the <code>org.Sc.sgd.db</code> package to access various annotation sources.</p>
+<p>These packages are available for other model organisms as well. For instance, we can load the <code>BSgenome.Hsapiens.UCSC.hg19</code> package to access the human genome. The function, <code>available.genomes()</code>, provides a complete list of the available BSgenome objects.</p>
+<pre class="r"><code># The complete list includes &gt;100 genomes from UCSC
+available.genomes() %&gt;% 
+  head()</code></pre>
+<pre><code>## [1] &quot;BSgenome.Alyrata.JGI.v1&quot;                
+## [2] &quot;BSgenome.Amellifera.BeeBase.assembly4&quot;  
+## [3] &quot;BSgenome.Amellifera.NCBI.AmelHAv3.1&quot;    
+## [4] &quot;BSgenome.Amellifera.UCSC.apiMel2&quot;       
+## [5] &quot;BSgenome.Amellifera.UCSC.apiMel2.masked&quot;
+## [6] &quot;BSgenome.Aofficinalis.NCBI.V1&quot;</code></pre>
+<p>Next let’s take a look inside the yeast BSgenome object.</p>
+<pre class="r"><code>library(BSgenome.Scerevisiae.UCSC.sacCer3)
+library(Biostrings)
+
+# Access the yeast genome
+yeast &lt;- BSgenome.Scerevisiae.UCSC.sacCer3
+yeast</code></pre>
+<pre><code>## Yeast genome:
+## # organism: Saccharomyces cerevisiae (Yeast)
+## # genome: sacCer3
+## # provider: UCSC
+## # release date: April 2011
+## # 17 sequences:
+## #   chrI    chrII   chrIII  chrIV   chrV    chrVI   chrVII  chrVIII chrIX  
+## #   chrX    chrXI   chrXII  chrXIII chrXIV  chrXV   chrXVI  chrM           
+## # (use &#39;seqnames()&#39; to see all the sequence names, use the &#39;$&#39; or &#39;[[&#39; operator
+## # to access a given sequence)</code></pre>
+<p>Use the following function to view a list of the available acessor functions for working with our BSgenome objects.</p>
+<pre class="r"><code>#The available BSgenome accessors are:
+.S4methods(class = &quot;BSgenome&quot;)</code></pre>
+<pre><code>##  [1] $               coerce          show            [[             
+##  [5] autoplot        length          names           as.list        
+##  [9] seqinfo         seqnames        organism        metadata       
+## [13] commonName      countPWM        export          extractAt      
+## [17] getSeq          injectSNPs      masknames       matchPWM       
+## [21] mseqnames       provider        providerVersion releaseDate    
+## [25] releaseName     seqinfo&lt;-       seqnames&lt;-      snpcount       
+## [29] SNPlocs_pkgname snplocs         sourceUrl       vcountPattern  
+## [33] Views           vmatchPattern   vcountPDict     vmatchPDict    
+## [37] bsgenomeName    metadata&lt;-     
+## see &#39;?methods&#39; for accessing help and source code</code></pre>
+<p>Sequences derived from BSgenome objects are of the <code>DNAString</code> class and can be modified with functions from the <code>Biostrings</code> package.</p>
+<pre class="r"><code>class(yeast$chrI)</code></pre>
+<pre><code>## [1] &quot;DNAString&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;Biostrings&quot;</code></pre>
+<pre class="r"><code># provides a short description of the object
+seqinfo(yeast)</code></pre>
+<pre><code>## Seqinfo object with 17 sequences (1 circular) from sacCer3 genome:
+##   seqnames seqlengths isCircular  genome
+##   chrI         230218      FALSE sacCer3
+##   chrII        813184      FALSE sacCer3
+##   chrIII       316620      FALSE sacCer3
+##   chrIV       1531933      FALSE sacCer3
+##   chrV         576874      FALSE sacCer3
+##   ...             ...        ...     ...
+##   chrXIII      924431      FALSE sacCer3
+##   chrXIV       784333      FALSE sacCer3
+##   chrXV       1091291      FALSE sacCer3
+##   chrXVI       948066      FALSE sacCer3
+##   chrM          85779       TRUE sacCer3</code></pre>
+<pre class="r"><code># chromosome names
+yeast %&gt;% 
+  seqnames()</code></pre>
+<pre><code>##  [1] &quot;chrI&quot;    &quot;chrII&quot;   &quot;chrIII&quot;  &quot;chrIV&quot;   &quot;chrV&quot;    &quot;chrVI&quot;   &quot;chrVII&quot; 
+##  [8] &quot;chrVIII&quot; &quot;chrIX&quot;   &quot;chrX&quot;    &quot;chrXI&quot;   &quot;chrXII&quot;  &quot;chrXIII&quot; &quot;chrXIV&quot; 
+## [15] &quot;chrXV&quot;   &quot;chrXVI&quot;  &quot;chrM&quot;</code></pre>
+<p>The BSgenome object points to the genome object but does not import data into memory unless we ask for it. Let’s take a look at a couple of the functions for importing sequence data.</p>
+<pre class="r"><code># Select chromosome sequence by name, one or many. And select start, end and or width:
+getSeq(yeast, &quot;chrM&quot;, end = 50)</code></pre>
+<pre><code>## 50-letter DNAString object
+## seq: TTCATAATTAATTTTTTATATATATATTATATTATAATATTAATTTATAT</code></pre>
+<pre class="r"><code># alternative function to get specific sequence ranges
+subseq(yeast$chrI, 1,100)</code></pre>
+<pre><code>## 100-letter DNAString object
+## seq: CCACACCACACCCACACACCCACACACCACACCACA...CTAACACTACCCTAACACAGCCCTAATCTAACCCTG</code></pre>
+</div>
+<div id="a-custom-summary-function" class="section level2">
+<h2>A custom summary function</h2>
+<p>For fun, let’s create a summary function that returns the name, length and GC percentage for each chromosome</p>
+<pre class="r"><code># Yeast genome summary function: summarize_yeast_genome()
+summarize_yeast_genome &lt;- function() {
+
+# Chromosome names and sequence lengths
+#can also use org.Sc.sgdCHRLENGTHS from package: org.Sc.sgd.db
+print(&quot;The length of each chromosome is as follows: &quot;)
+print(seqlengths(yeast))
+
+#calculate GC percentage across chromosomes
+print(&quot;We can use bsapply to calculate GC percent across all chromosomes: &quot;)
+param &lt;- new(&quot;BSParams&quot;, X = Scerevisiae, FUN = letterFrequency)
+#bsapply(param, &quot;GC&quot;)
+sum(unlist(bsapply(param, &quot;GC&quot;)))/sum(seqlengths(yeast))
+unlist(bsapply(param, &quot;GC&quot;, as.prob = TRUE))
+
+}
+
+summarize_yeast_genome()</code></pre>
+<pre><code>## [1] &quot;The length of each chromosome is as follows: &quot;
+##    chrI   chrII  chrIII   chrIV    chrV   chrVI  chrVII chrVIII   chrIX    chrX 
+##  230218  813184  316620 1531933  576874  270161 1090940  562643  439888  745751 
+##   chrXI  chrXII chrXIII  chrXIV   chrXV  chrXVI    chrM 
+##  666816 1078177  924431  784333 1091291  948066   85779 
+## [1] &quot;We can use bsapply to calculate GC percent across all chromosomes: &quot;</code></pre>
+<pre><code>##    chrI.G|C   chrII.G|C  chrIII.G|C   chrIV.G|C    chrV.G|C   chrVI.G|C 
+##   0.3927017   0.3834102   0.3853231   0.3790642   0.3850737   0.3872876 
+##  chrVII.G|C chrVIII.G|C   chrIX.G|C    chrX.G|C   chrXI.G|C  chrXII.G|C 
+##   0.3806140   0.3849510   0.3890218   0.3837326   0.3806942   0.3847634 
+## chrXIII.G|C  chrXIV.G|C   chrXV.G|C  chrXVI.G|C    chrM.G|C 
+##   0.3820361   0.3863793   0.3816022   0.3806444   0.1710908</code></pre>
+</div>
+<div id="extracting-the-imp3-gene" class="section level2">
+<h2>Extracting the imp3 gene</h2>
+<p>After we introduce range objects and annotation, I will show how we can access a gene sequence by gene ID. Without that information, we need to know the ranges of the gene and create a custom GRanges object. Here, I use the Imp3 start and end sequence found <a href="https://www.yeastgenome.org/locus/S000001191/sequence">here</a>.</p>
+<pre class="r"><code># imp3 yeast gene on chrVIII
+imp3_start &lt;- &quot;ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGTTATTGAAAAAAGTAGA&quot;
+
+imp3_end &lt;- &quot;CTAAGATCAAGAAAACCTTGTTGAGATACAGAAACCAAATCGACGATTTTGATTTTTCATAA&quot;
+
+# count occurrences of imp3_start to ensure there is only one match
+countPattern(pattern=imp3_start,
+                            subject=yeast[[&#39;chrVIII&#39;]],
+                            max.mismatch = 2,
+                            min.mismatch = 0)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>The <code>countPattern()</code> function can be used to make sure that the sequence is found only once in the genome. The <code>matchPattern()</code> function, also from <code>Biostrings</code>, can be used to find the genomic coordinates.</p>
+<pre class="r"><code># Calculate imp3_start and and imp3_end positions
+imp3_start &lt;- matchPattern(pattern=imp3_start,
+             subject=yeast[[&#39;chrVIII&#39;]],
+             max.mismatch = 2,
+             min.mismatch = 0)
+
+imp3_end &lt;- matchPattern(pattern=imp3_end,
+             subject=yeast[[&#39;chrVIII&#39;]],
+             max.mismatch = 2,
+             min.mismatch = 0)
+
+# Create a GRanges object with coordinates of imp3
+imp3_range &lt;- GRanges(seqnames=&quot;chrVIII&quot;,
+                        ranges=IRanges(start=393534,
+                                       end=394085),
+                        strand=&quot;+&quot;)
+#GRanges(&quot;chrVIII&quot;, start = 393534, end = 394085)</code></pre>
+<p>After creating a GRanges object we can get the gene sequence with <code>getSeq()</code> and the amino acid sequence using <code>translate()</code>.</p>
+<pre class="r"><code># Extract imp3 sequence
+Imp3_seq &lt;- getSeq(yeast, names=imp3_range)
+Imp3_seq</code></pre>
+<pre><code>## DNAStringSet object of length 1:
+##     width seq
+## [1]   552 ATGGTTAGAAAACTAAAGCATCATGAGCAAAAGT...AGAAACCAAATCGACGATTTTGATTTTTCATAA</code></pre>
+<pre class="r"><code>imp3_protein &lt;- translate(Imp3_seq)
+imp3_protein</code></pre>
+<pre><code>## AAStringSet object of length 1:
+##     width seq
+## [1]   184 MVRKLKHHEQKLLKKVDFLEWKQDQGHRDTQVMR...RNMEDYVTWVDNSKIKKTLLRYRNQIDDFDFS*</code></pre>
+<pre class="r"><code># A blast search confirms its sequence and length:
+#https://www.ncbi.nlm.nih.gov/protein/AJU22745.1?report=genbank&amp;log$=protalign&amp;blast_rank=3&amp;RID=NWXDKM0T01N
+
+# alternative way to get imp3 using a BSgenome ranges and a txdb object (needs work)
+# this will extract all gene sequences
+# extractTranscriptSeqs(yeast,
+#                      transcripts=yeast_genes)</code></pre>
+<p>The complete sequence will not print to the console, so it is necessary to export the data to file to view the sequence. In order to do so, a fasta file can be generated with the function, <code>writeXStringSet(yeastGeneSeqs,"yeastGeneSeqs.fa")</code></p>
+</div>
+<div id="working-with-txdb-objects" class="section level2">
+<h2>Working with TxDb objects</h2>
+<p>The TxDb package provides an efficient data container for extracting promoters, genes, exons and transcripts. There are TxDb packages for many model organisms but one can also create custom TxDb objects as well. The functions to work with TxDb objects are mostly from the <code>GenomicFeatures</code> package. When we use a function such as <code>gene()</code>, the function will return a GRanges object with the gene coordinates for each chromosome. The function <code>.S4methods(class = 'GenomicRanges')</code> provides a summary list of available methods to work with the GRanges object.</p>
+<pre class="r"><code>#BiocManager::install(&quot;TxDb.Scerevisiae.UCSC.sacCer3.sgdGene&quot;)
+# .S4methods(class = &#39;GenomicRanges&#39;) find available methods
+library(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
+#GenomicFeatures is loaded with the TxDb package 
+
+yeast_genome &lt;- TxDb.Scerevisiae.UCSC.sacCer3.sgdGene
+seqlevels(yeast_genome)</code></pre>
+<pre><code>##  [1] &quot;chrI&quot;    &quot;chrII&quot;   &quot;chrIII&quot;  &quot;chrIV&quot;   &quot;chrV&quot;    &quot;chrVI&quot;   &quot;chrVII&quot; 
+##  [8] &quot;chrVIII&quot; &quot;chrIX&quot;   &quot;chrX&quot;    &quot;chrXI&quot;   &quot;chrXII&quot;  &quot;chrXIII&quot; &quot;chrXIV&quot; 
+## [15] &quot;chrXV&quot;   &quot;chrXVI&quot;  &quot;chrM&quot;</code></pre>
+<pre class="r"><code>yeast_genes &lt;- genes(yeast_genome) 
+
+# ggbio 
+autoplot(yeast_genes, layout = &#39;karyogram&#39;, color = &#39;lightblue&#39;, coverage.col = &quot;gray50&quot;) + 
+  labs(title = &quot;Karyogram layout displaying gene distribution&quot;) </code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code># Let&#39;s extract all transcript sequences
+yeastGeneSeqs &lt;- getSeq(yeast, names=yeast_genes)
+yeastGeneSeqs</code></pre>
+<pre><code>## DNAStringSet object of length 6534:
+##        width seq                                            names               
+##    [1]   464 ATATATTATATTATATTTTTAT...AATATACTTTATATTTTATAA Q0010
+##    [2]   291 ATATTAATAATATATATATTAT...AAGTTTTTATATTCATTATAA Q0032
+##    [3] 12884 ATGGTACAAAGATGATTATATT...ACACCAGCTGTACAATCTTAA Q0055
+##    [4]  1100 ATATTAATATTATTAATAATAA...CATTATAACAATATCGAATAA Q0075
+##    [5]   147 ATGCCACAATTAGTTCCATTTT...TTATTTATTTCTAAATTATAA Q0080
+##    ...   ... ...
+## [6530]   393 ATGGTAAGTTTCATAACGTCTA...AAATTGATTGTTAGTGGTTGA YPR200C
+## [6531]  1215 ATGTCAGAAGATCAAAAAAGTG...ATATGGAACAATAGAAATTAA YPR201W
+## [6532]  1157 ATGGAAATTGAAAACGAACGTA...CATGTGTGCTGCCCAAGTTGA YPR202W
+## [6533]   483 ATGATGCCTGCTAAACTGCAGC...CAGCATTCTCTCCACAGCTAG YPR204C-A
+## [6534]  3099 ATGGCAGACACACCCTCTGTGG...AGCAGAGAAGTTGGAGAGTGA YPR204W</code></pre>
+</div>
+<div id="incorporating-ggplot2" class="section level1">
+<h1>Incorporating ggplot2</h1>
+<p>In order to use ggplot2, we need to extract a GRanges object from the TxDb object and then convert it into a tibble.</p>
+<pre class="r"><code>yeast_genes_df &lt;- yeast_genes %&gt;%
+  as_tibble()
+
+tot_yeast_genes &lt;- yeast_genes_df %&gt;%
+  summarize(n=n())
+
+# plotting gene count by chromosome
+yeast_genes_df %&gt;%
+  group_by(seqnames) %&gt;%
+  add_count(seqnames) %&gt;%
+  mutate(chromosome_gene = glue(&quot;{seqnames} ({n} genes)&quot;)) %&gt;%
+  group_by(chromosome_gene) %&gt;%
+  ggplot(aes(n, fct_reorder(chromosome_gene, n), fill = n)) +
+  geom_col() +
+  theme(legend.position = &#39;none&#39;) +
+  labs(title = expression(paste(&quot;Gene count by chromosome for &quot;, italic(&quot;S. cerevisiae&quot;))),
+       subtitle = &quot;Total genes = 6534&quot;,
+       x = &#39;Gene count&#39;,
+       y = &quot;&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Since we also have data on gene widths, we can plot the count density of gene width. The aesthetic, <code>geom_density_ridges()</code> from the <code>GGridges</code> package provides a nice way to visualize gene width across chromosomes.</p>
+<pre class="r"><code># I prefer the geom_density_ridges for viewing gene widths across chromosomes
+# yeast_genes_df %&gt;%
+#   group_by(seqnames) %&gt;%
+#   mutate(avg_width = mean(width)) %&gt;%
+#   add_count(seqnames) %&gt;%
+#   ggplot(aes(width, fill = avg_width)) +
+#   geom_density() +
+#   facet_wrap(~seqnames, scales = &quot;free_y&quot;) +
+#   scale_fill_viridis_c(alpha = 0.8) +
+#   labs(title = &#39;Distribution of gene width for each chromsome&#39;,
+#       x=&quot;Gene width density (log)&quot;,
+#       y = &quot;&quot;,
+#       fill = &quot;Avg width&quot;) +
+#   scale_x_log10()
+
+
+yeast_genes_df %&gt;%
+  group_by(seqnames) %&gt;%
+  mutate(avg_width = mean(width)) %&gt;%
+  add_count(seqnames) %&gt;%
+  ggplot(aes(width, seqnames, fill = avg_width), group = seqnames) +
+  geom_density_ridges() +
+  scale_fill_viridis_c(alpha = 0.8) +
+  labs(title = &#39;Density distribution of gene length by chromsome&#39;,
+      x=&quot;Gene length&quot;,
+      y = &quot;&quot;) +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<div id="annotation" class="section level2">
+<h2>Annotation</h2>
+<p>We can annotate our GRanges object using the <code>org.Sc.sgd.db</code> package which includes various annotation sources such as GEO and ENCODE. Here, I’m going to add the common name and description for each gene. We will then use the <code>tidytext</code> package to explore the most common words associated with each chromosome.</p>
+<pre class="r"><code>#columns(org.Sc.sgd.db::org.Sc.sgd.db) to look at annotation options
+# that can be provided to the column argument
+yeast_genes_df &lt;- yeast_genes_df %&gt;% 
+  mutate(common_name = AnnotationDbi::mapIds(org.Sc.sgd.db::org.Sc.sgd.db,
+                                        keys = gene_id,
+                                        keytype = &quot;ENSEMBL&quot;,
+                                        column = &quot;COMMON&quot;,
+                                        multiVals = &quot;first&quot;)) %&gt;% 
+  mutate(description = AnnotationDbi::mapIds(org.Sc.sgd.db::org.Sc.sgd.db,
+                                        keys = gene_id,
+                                        keytype = &quot;ENSEMBL&quot;,
+                                        column = &quot;DESCRIPTION&quot;,
+                                        multiVals = &quot;first&quot;))
+
+yeast_genes_df %&gt;% filter(common_name == &quot;IMP3&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   seqnames  start    end width strand gene_id common_name description           
+##   &lt;fct&gt;     &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;fct&gt;  &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;                 
+## 1 chrVIII  393534 394085   552 +      YHR148W IMP3        Component of the SSU …</code></pre>
+<p>Let’s use this information to isolate genes that include the word ‘kinase’ in their descriptions.</p>
+<pre class="r"><code>#Let&#39;s use the description annotation to sort kinases and display them using the karyogram layout
+kinase_karyogram &lt;- yeast_genes_df %&gt;% 
+  drop_na() %&gt;% 
+  filter(grepl(&quot;kinase&quot;, description)) %&gt;% 
+  as_granges() 
+  
+kinase_karyogram %&gt;% 
+  autoplot(layout = &quot;karyogram&quot;, color = &#39;darkblue&#39;) + 
+  labs(title = &quot;Distribution of kinases in the yeast genome&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>We can also use the gene descriptions to find the most frequent words associated with each chromosome. We will use the <code>Tidytext</code> package to facilitate this analysis.</p>
+<pre class="r"><code>library(tidytext)
+yeast_genes_df %&gt;% 
+  drop_na() %&gt;% 
+  unnest_tokens(&#39;word&#39;, &#39;description&#39;) %&gt;% 
+  anti_join(stop_words, by = &#39;word&#39;) %&gt;% 
+  count(seqnames, word, sort=T) %&gt;% 
+  group_by(seqnames) %&gt;% 
+  slice_max(n, n=5) %&gt;%
+  ungroup() %&gt;% 
+  mutate(word = reorder_within(word, n, seqnames)) %&gt;% 
+  ggplot(aes(n, word, fill = seqnames)) +
+  geom_col() +
+  facet_wrap(~seqnames, scales = &quot;free&quot;) +
+  scale_y_reordered() +
+  labs(
+    x = &quot;Word frequency&quot;, y = NULL,
+    title = &quot;Top words from gene description annotation by chromosome&quot;
+  ) + 
+  theme(legend.position = &quot;none&quot;) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>A more interesting selection of words can be found by selecting the unique words associated with each chromosome. We can do this by using the TF-IDF algorithm.</p>
+<pre class="r"><code>common_words &lt;- c(&quot;protein&quot;,&quot;involved&quot;, &quot;required&quot;, &quot;complex&quot;, &quot;subunit&quot;, &quot;involved&quot;, &quot;dna&quot;)
+tfidf &lt;- yeast_genes_df %&gt;% 
+  drop_na() %&gt;% 
+  unnest_tokens(&#39;word&#39;, &#39;description&#39;) %&gt;% 
+  filter(!word %in% common_words) %&gt;% 
+  anti_join(stop_words, by = &#39;word&#39;) %&gt;% 
+  dplyr::count(seqnames, word, sort=T) %&gt;% 
+  group_by(seqnames) %&gt;% 
+  slice_max(n, n=5)
+
+tfidf %&gt;% 
+  bind_tf_idf(word, seqnames, n) %&gt;% 
+  group_by(seqnames) %&gt;% 
+  #slice_max(tf_idf, n=12) %&gt;%
+  ungroup() %&gt;% 
+  mutate(word = reorder_within(word, tf_idf, seqnames)) %&gt;% 
+  ggplot(aes(tf_idf, word, fill = seqnames)) +
+  geom_col() +
+  facet_wrap(~seqnames, scales = &quot;free&quot;) +
+  scale_y_reordered() +
+  labs(
+    x = &quot;Word frequency&quot;, y = NULL,
+    title = &quot;TF_IDF algorithm&quot;
+  ) + 
+  theme(legend.position = &quot;none&quot;) +
+  labs(x = &quot;&quot;,
+       y = &quot;TF-IDF of chromosome-word pairs&quot;) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())</code></pre>
+<p><img src="https://www.gabemednick.com/post/yeast/index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>This post introduced several core Bioconductor packages for accessing, annotating and manipulating genomic data. We used packages such as <code>Biostrings</code>, <code>GenomicRanges</code>, <code>GenomicFeatures</code>, <code>Plyranges</code> and <code>ggbio</code>. Finally, we utilized the tidy data framework and used packages such as <code>Dplyr</code>, <code>GGplot2</code> and the <code>Tidytext</code> package for natural language processing. In a follow up post, I plan to dive deeper into the yeast genome using data from the <code>yeastExpData</code> and <code>yeastNagalakshmi</code> packages.</p>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
+        
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="far fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GabeMednick" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/gmednick" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/" >
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks",
+        'slides' : "Slides"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.72756512af279b10e3e4b09540ed6e9f.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © Gabe Mednick 2022
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF69B4"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #FF69B4"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #FF69B4"></i>! Stunning photo of the Milky Way taken by Kristopher Roller.
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

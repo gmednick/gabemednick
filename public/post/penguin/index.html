@@ -1,0 +1,3959 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gabriel Mednick, PhD">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Having fun with penguin predictions">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/penguin/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(339, 90%, 68%)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i%7CKarla:400,400i,700,700i%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://www.gabemednick.com/post/penguin/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Gabe Mednick">
+  <meta property="og:url" content="https://www.gabemednick.com/post/penguin/">
+  <meta property="og:title" content="Palmer penguins | Gabe Mednick">
+  <meta property="og:description" content="Having fun with penguin predictions"><meta property="og:image" content="https://www.gabemednick.com/post/penguin/featured.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/penguin/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-07-07T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-07-07T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.gabemednick.com/post/penguin/"
+  },
+  "headline": "Palmer penguins",
+  
+  "image": [
+    "https://www.gabemednick.com/post/penguin/featured.png"
+  ],
+  
+  "datePublished": "2021-07-07T00:00:00Z",
+  "dateModified": "2021-07-07T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gabe Mednick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Having fun with penguin predictions"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Palmer penguins | Gabe Mednick</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/resume/gmednickCV.pdf"><span>Resume</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Palmer penguins</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 7, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 293px;">
+  <div style="position: relative">
+    <img src="/post/penguin/featured_hu23a2ff6767279debab043a6c8f0a6157_878472_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.gabemednick.com/post/penguin/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this post, I use the Palmer penguins dataset from the <code>palmerpenguins</code> package to create a classification model for predicting penguin species. The data contains three penguin species and includes measurements of bill length, bill depth, flipper length and body mass. We will use bill length and depth as explanatory variables and accuracy will be the metric used to compare model performance. The following models are compared: <strong>multinomia lregression</strong>, <strong>random forest</strong>, <strong>k-nearest neighbors</strong> and <strong>xgboost</strong>.</p>
+<p>After training these models and comparing the results, we will convert the R script into a command line tool that lets the user select a model and bill length and bill depth, and returns the predicted penguin species. If you find yourself predicting penguins in the Palmer Archipelago, this tool was made for you 😄!</p>
+<pre class="r"><code>library(tidyverse)
+library(palmerpenguins) # maintained by Allison Horst
+library(gt)
+library(patchwork)
+theme_set(theme_light())
+
+#load data from the palmerpenguins package
+palmer_df &lt;- read_csv(path_to_file(&quot;penguins.csv&quot;))
+
+palmer_df %&gt;% head() %&gt;% 
+  gt() %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="mebycxzfqf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mebycxzfqf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mebycxzfqf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mebycxzfqf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mebycxzfqf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mebycxzfqf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mebycxzfqf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mebycxzfqf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mebycxzfqf .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mebycxzfqf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mebycxzfqf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mebycxzfqf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mebycxzfqf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mebycxzfqf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#mebycxzfqf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mebycxzfqf .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mebycxzfqf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mebycxzfqf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mebycxzfqf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mebycxzfqf .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mebycxzfqf .gt_left {
+  text-align: left;
+}
+
+#mebycxzfqf .gt_center {
+  text-align: center;
+}
+
+#mebycxzfqf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mebycxzfqf .gt_font_normal {
+  font-weight: normal;
+}
+
+#mebycxzfqf .gt_font_bold {
+  font-weight: bold;
+}
+
+#mebycxzfqf .gt_font_italic {
+  font-style: italic;
+}
+
+#mebycxzfqf .gt_super {
+  font-size: 65%;
+}
+
+#mebycxzfqf .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_depth_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">flipper_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">body_mass_g</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">sex</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">year</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">39.1</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">18.7</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">181</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3750</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">male</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">39.5</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">17.4</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">186</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3800</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">female</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">40.3</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">18.0</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">195</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3250</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">female</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">NA</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">NA</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">NA</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">NA</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">NA</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">36.7</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">19.3</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">193</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3450</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">female</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">39.3</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">20.6</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">190</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3650</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">male</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<pre class="r"><code>palmer_df %&gt;% 
+  count(species) %&gt;% 
+  gt() %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),       
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="hwbjqaxbdj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#hwbjqaxbdj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hwbjqaxbdj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hwbjqaxbdj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hwbjqaxbdj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hwbjqaxbdj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hwbjqaxbdj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hwbjqaxbdj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hwbjqaxbdj .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hwbjqaxbdj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hwbjqaxbdj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hwbjqaxbdj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hwbjqaxbdj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hwbjqaxbdj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hwbjqaxbdj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hwbjqaxbdj .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hwbjqaxbdj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hwbjqaxbdj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hwbjqaxbdj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hwbjqaxbdj .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hwbjqaxbdj .gt_left {
+  text-align: left;
+}
+
+#hwbjqaxbdj .gt_center {
+  text-align: center;
+}
+
+#hwbjqaxbdj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hwbjqaxbdj .gt_font_normal {
+  font-weight: normal;
+}
+
+#hwbjqaxbdj .gt_font_bold {
+  font-weight: bold;
+}
+
+#hwbjqaxbdj .gt_font_italic {
+  font-style: italic;
+}
+
+#hwbjqaxbdj .gt_super {
+  font-size: 65%;
+}
+
+#hwbjqaxbdj .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">152</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Chinstrap</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">68</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Gentoo</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">124</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<pre class="r"><code>palmer_df %&gt;% 
+  count(island) %&gt;% 
+  gt() %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="mzfdqkpjiy" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mzfdqkpjiy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mzfdqkpjiy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mzfdqkpjiy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mzfdqkpjiy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mzfdqkpjiy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mzfdqkpjiy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mzfdqkpjiy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mzfdqkpjiy .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mzfdqkpjiy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mzfdqkpjiy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mzfdqkpjiy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mzfdqkpjiy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mzfdqkpjiy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#mzfdqkpjiy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mzfdqkpjiy .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mzfdqkpjiy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mzfdqkpjiy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mzfdqkpjiy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mzfdqkpjiy .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mzfdqkpjiy .gt_left {
+  text-align: left;
+}
+
+#mzfdqkpjiy .gt_center {
+  text-align: center;
+}
+
+#mzfdqkpjiy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mzfdqkpjiy .gt_font_normal {
+  font-weight: normal;
+}
+
+#mzfdqkpjiy .gt_font_bold {
+  font-weight: bold;
+}
+
+#mzfdqkpjiy .gt_font_italic {
+  font-style: italic;
+}
+
+#mzfdqkpjiy .gt_super {
+  font-size: 65%;
+}
+
+#mzfdqkpjiy .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Biscoe</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">168</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Dream</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">124</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">52</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<pre class="r"><code>palmer_df %&gt;% 
+  count(species, island) %&gt;% 
+  gt() %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  ) #since chinstrap and gentoo inhabit Dream and Biscoe repectively, it would not be a fair predictor variable</code></pre>
+<div id="hpsusqirmn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#hpsusqirmn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hpsusqirmn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hpsusqirmn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hpsusqirmn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hpsusqirmn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hpsusqirmn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hpsusqirmn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hpsusqirmn .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hpsusqirmn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hpsusqirmn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hpsusqirmn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hpsusqirmn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hpsusqirmn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#hpsusqirmn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hpsusqirmn .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hpsusqirmn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hpsusqirmn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hpsusqirmn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hpsusqirmn .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#hpsusqirmn .gt_left {
+  text-align: left;
+}
+
+#hpsusqirmn .gt_center {
+  text-align: center;
+}
+
+#hpsusqirmn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hpsusqirmn .gt_font_normal {
+  font-weight: normal;
+}
+
+#hpsusqirmn .gt_font_bold {
+  font-weight: bold;
+}
+
+#hpsusqirmn .gt_font_italic {
+  font-style: italic;
+}
+
+#hpsusqirmn .gt_super {
+  font-size: 65%;
+}
+
+#hpsusqirmn .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Biscoe</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">44</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Dream</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">56</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Torgersen</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">52</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Chinstrap</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Dream</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">68</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Gentoo</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Biscoe</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">124</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<pre class="r"><code>palmer_df %&gt;% 
+  summarize(min_year = min(year),
+            max_year = max(year),
+            observations = n(),
+            missing_obs = sum(is.na(.))) %&gt;% 
+  gt() %&gt;%   
+  tab_style(style = list(cell_fill(color = &quot;#2D6A65&quot;)), locations = cells_body()) %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="eyfviccetx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#eyfviccetx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#eyfviccetx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#eyfviccetx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#eyfviccetx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#eyfviccetx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#eyfviccetx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#eyfviccetx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#eyfviccetx .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#eyfviccetx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#eyfviccetx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#eyfviccetx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#eyfviccetx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#eyfviccetx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#eyfviccetx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eyfviccetx .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eyfviccetx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#eyfviccetx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#eyfviccetx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eyfviccetx .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#eyfviccetx .gt_left {
+  text-align: left;
+}
+
+#eyfviccetx .gt_center {
+  text-align: center;
+}
+
+#eyfviccetx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#eyfviccetx .gt_font_normal {
+  font-weight: normal;
+}
+
+#eyfviccetx .gt_font_bold {
+  font-weight: bold;
+}
+
+#eyfviccetx .gt_font_italic {
+  font-style: italic;
+}
+
+#eyfviccetx .gt_super {
+  font-size: 65%;
+}
+
+#eyfviccetx .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">min_year</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max_year</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">observations</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">missing_obs</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2007</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">2009</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">344</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">19</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<pre class="r"><code>palmer_long &lt;- palmer_df %&gt;% 
+  drop_na() %&gt;%
+  pivot_longer(bill_length_mm:body_mass_g, 
+               names_to = &quot;characteristic&quot;, 
+               values_to = &quot;value&quot;) 
+
+palmer_long %&gt;%
+  group_by(species) %&gt;% 
+ # filter(characteristic != &quot;body_mass_g&quot;) %&gt;% 
+  ggplot(aes(value, species, fill = species)) +
+  geom_boxplot() +
+  facet_wrap(~characteristic, scales = &#39;free_x&#39;) +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d()</code></pre>
+<p><img src="https://www.gabemednick.com/post/penguin/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>palmer_long %&gt;%
+  group_by(species) %&gt;% 
+ # filter(characteristic != &quot;body_mass_g&quot;) %&gt;% 
+  ggplot(aes(value, species, fill = sex)) +
+  geom_boxplot() +
+  facet_wrap(~characteristic, scales = &#39;free_x&#39;) +
+  scale_fill_discrete(type = c(&quot;#DCE318FF&quot;, &quot;#287D8EFF&quot;))</code></pre>
+<p><img src="https://www.gabemednick.com/post/penguin/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>palmer_long %&gt;%
+  group_by(species) %&gt;% 
+ # filter(characteristic != &quot;body_mass_g&quot;) %&gt;% 
+  ggplot(aes(value, fill = species)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~characteristic, scales = &#39;free&#39;) +
+  theme(legend.position = &#39;none&#39;) +
+  scale_fill_viridis_d()</code></pre>
+<p><img src="https://www.gabemednick.com/post/penguin/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>palmer_df %&gt;% 
+  group_by(species) %&gt;% 
+  drop_na() %&gt;% 
+  summarize(`average bill depth` = median(bill_depth_mm),
+            `average bill length` = median(bill_length_mm),
+            `average body mass` = median(body_mass_g),
+            `average flipper length` = median(flipper_length_mm)) %&gt;% 
+  mutate(across(.cols = starts_with(&quot;average&quot;), .fns = round))  %&gt;% #across(.cols = everything(), .fns = NULL, ..., .names = NULL)
+  gt() %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="smgsdtymfn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#smgsdtymfn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#smgsdtymfn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#smgsdtymfn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#smgsdtymfn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#smgsdtymfn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#smgsdtymfn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#smgsdtymfn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#smgsdtymfn .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#smgsdtymfn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#smgsdtymfn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#smgsdtymfn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#smgsdtymfn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#smgsdtymfn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#smgsdtymfn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#smgsdtymfn .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#smgsdtymfn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#smgsdtymfn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#smgsdtymfn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#smgsdtymfn .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#smgsdtymfn .gt_left {
+  text-align: left;
+}
+
+#smgsdtymfn .gt_center {
+  text-align: center;
+}
+
+#smgsdtymfn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#smgsdtymfn .gt_font_normal {
+  font-weight: normal;
+}
+
+#smgsdtymfn .gt_font_bold {
+  font-weight: bold;
+}
+
+#smgsdtymfn .gt_font_italic {
+  font-style: italic;
+}
+
+#smgsdtymfn .gt_super {
+  font-size: 65%;
+}
+
+#smgsdtymfn .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">average bill depth</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">average bill length</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">average body mass</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">average flipper length</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Adelie</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">18</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">39</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3700</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">190</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Chinstrap</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">18</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">50</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">3700</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">196</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">Gentoo</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">15</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">47</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">5050</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">216</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="prediction-model" class="section level2">
+<h2>Prediction model</h2>
+<pre class="r"><code>library(tidymodels)
+set.seed(777)
+
+spl &lt;- palmer_df %&gt;% initial_split(prop = .8, strata = species)
+
+palmer_train &lt;- training(spl)
+
+palmer_test &lt;- testing(spl)
+
+cv_resamples &lt;- palmer_train %&gt;% vfold_cv()</code></pre>
+<p>Before we can train our models, we need to decide which feature engineering steps are needed. We also need to specify the formula that tells our model what we are predicting and which explanatory features to use.</p>
+<pre class="r"><code>recipe_1 &lt;- recipe(species ~ ., data = palmer_train) %&gt;% 
+  step_impute_median(all_numeric_predictors()) %&gt;%
+  step_corr(all_numeric_predictors()) %&gt;% 
+  step_impute_knn(sex) %&gt;% 
+  step_dummy(all_nominal(), -all_outcomes()) %&gt;% 
+  step_normalize(all_numeric_predictors()) 
+
+recipe &lt;- recipe(species ~ bill_length_mm + bill_depth_mm, data = palmer_train) %&gt;% 
+  step_impute_median(all_predictors()) %&gt;%
+  step_normalize(all_predictors()) </code></pre>
+</div>
+<div id="create-models-set-modes-and-engines" class="section level2">
+<h2>Create models, set modes and engines</h2>
+<pre class="r"><code>mn_mod &lt;- multinom_reg() %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&#39;nnet&#39;)
+  
+rf_mod &lt;- rand_forest() %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;ranger&quot;)
+
+knn_mod &lt;- nearest_neighbor() %&gt;% 
+  set_mode(&quot;classification&quot;) %&gt;% 
+  set_engine(&quot;kknn&quot;)
+
+xg_mod &lt;- boost_tree() %&gt;%
+  set_mode(&quot;classification&quot;) %&gt;%
+  set_engine(&quot;xgboost&quot;)</code></pre>
+</div>
+<div id="weaving-it-together-with-workflow" class="section level2">
+<h2>Weaving it together with <code>workflow()</code></h2>
+<div id="multinomial-regression-model" class="section level4">
+<h4>Multinomial regression model</h4>
+<pre class="r"><code>mn_workflow &lt;- workflow() %&gt;% 
+  add_recipe(recipe) %&gt;% 
+  add_model(mn_mod)
+
+mn_mod_fit &lt;- mn_workflow %&gt;% 
+  fit(data = palmer_train)
+
+mn_mod_preds &lt;- mn_mod_fit %&gt;% 
+  predict(new_data = palmer_test,
+          type = &#39;class&#39;)
+
+mn_results &lt;- palmer_test %&gt;% 
+  select(species) %&gt;% 
+  bind_cols(mn_mod_preds) 
+
+metrics &lt;- metric_set(accuracy, sens, spec)
+
+metric_results &lt;- mn_results %&gt;%
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;multinom_reg&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)
+
+mn_p &lt;- mn_results %&gt;% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %&gt;% 
+  autoplot(type = &quot;heatmap&quot;) +
+  ggtitle(&quot;Multinomial regression&quot;)</code></pre>
+</div>
+<div id="random-forest-model" class="section level4">
+<h4>Random Forest model</h4>
+<pre class="r"><code>rf_workflow &lt;- workflow() %&gt;% 
+  add_recipe(recipe) %&gt;% 
+  add_model(rf_mod) 
+
+rf_mod_fit &lt;- rf_workflow %&gt;% 
+  fit(data = palmer_train)
+
+rf_mod_preds &lt;- rf_mod_fit %&gt;% 
+  predict(new_data = palmer_test,
+          type = &#39;class&#39;)
+
+rf_results &lt;- palmer_test %&gt;% 
+  select(species) %&gt;% 
+  bind_cols(rf_mod_preds) 
+
+rf_results %&gt;% 
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;rf_mod&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy multiclass     0.971
+## 2 sens     macro          0.976
+## 3 spec     macro          0.988</code></pre>
+<pre class="r"><code>rf_p &lt;- rf_results %&gt;% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %&gt;% 
+  autoplot(type = &quot;heatmap&quot;) +
+  ggtitle(&quot;Random forest&quot;)</code></pre>
+</div>
+<div id="k-nearest-neighbors-model" class="section level4">
+<h4>K-nearest neighbors model</h4>
+<pre class="r"><code>knn_workflow &lt;- workflow() %&gt;% 
+  add_recipe(recipe) %&gt;% 
+  add_model(knn_mod) 
+
+knn_mod_fit &lt;- knn_workflow %&gt;% 
+  fit(data = palmer_train)
+
+knn_mod_preds &lt;- knn_mod_fit %&gt;% 
+  predict(new_data = palmer_test,
+          type = &#39;class&#39;)
+
+knn_results &lt;- palmer_test %&gt;% 
+  select(species) %&gt;% 
+  bind_cols(knn_mod_preds) 
+
+knn_results %&gt;% 
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;knn_mod&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy multiclass     0.971
+## 2 sens     macro          0.976
+## 3 spec     macro          0.986</code></pre>
+<pre class="r"><code>knn_p &lt;- knn_results %&gt;% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %&gt;% 
+  autoplot(type = &quot;heatmap&quot;) +
+  ggtitle(&quot;k-nearest neighbors&quot;)</code></pre>
+</div>
+<div id="xgboost-model" class="section level4">
+<h4>Xgboost model</h4>
+<pre class="r"><code>xg_workflow &lt;- workflow() %&gt;% 
+  add_recipe(recipe) %&gt;% 
+  add_model(xg_mod)
+
+xg_mod_fit &lt;- xg_workflow %&gt;% 
+  fit(data = palmer_train)</code></pre>
+<pre><code>## [21:01:59] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective &#39;multi:softprob&#39; was changed from &#39;merror&#39; to &#39;mlogloss&#39;. Explicitly set eval_metric if you&#39;d like to restore the old behavior.</code></pre>
+<pre class="r"><code>xg_mod_preds &lt;- xg_mod_fit %&gt;% 
+  predict(new_data = palmer_test,
+          type = &#39;class&#39;)
+
+xg_results &lt;- palmer_test %&gt;% 
+  select(species) %&gt;% 
+  bind_cols(xg_mod_preds) 
+
+metrics &lt;- metric_set(accuracy, sens, spec)
+
+xg_results %&gt;%
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;xgboost&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy multiclass     0.971
+## 2 sens     macro          0.976
+## 3 spec     macro          0.986</code></pre>
+<pre class="r"><code>xg_p &lt;- xg_results %&gt;% conf_mat(.,
+         truth = species,
+         estimate = .pred_class) %&gt;% 
+  autoplot(type = &quot;heatmap&quot;) +
+  ggtitle(&quot;XGBoost&quot;)</code></pre>
+</div>
+<div id="confusion-matrices" class="section level4">
+<h4>Confusion matrices</h4>
+<pre class="r"><code>(mn_p + rf_p) / (knn_p + xg_p)</code></pre>
+<p><img src="https://www.gabemednick.com/post/penguin/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="results-table" class="section level4">
+<h4>Results table</h4>
+<pre class="r"><code>metric_results &lt;- mn_results %&gt;%
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;multinom_reg&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class) %&gt;% 
+  bind_rows(rf_results %&gt;% 
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;rf_mod&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)) %&gt;% 
+  bind_rows(knn_results %&gt;% 
+  mutate_if(is.character, as.factor) %&gt;% 
+  mutate(model = &#39;knn_mod&#39;) %&gt;% 
+  metrics(truth = species,
+          estimate = .pred_class)) %&gt;% 
+  bind_rows(xg_results %&gt;%
+  mutate_if(is.character, as.factor) %&gt;%
+  mutate(model = &#39;xg_mod&#39;) %&gt;%
+  metrics(truth = species,
+          estimate = .pred_class)) %&gt;%
+  bind_cols(model_type = c(&#39;multinomial regression&#39;, &#39;multinomial regression&#39;, &#39;multinomial regression&#39;, &#39;random forest&#39;, &#39;random forest&#39;, &#39;random forest&#39;, &#39;knn&#39;, &#39;knn&#39;, &#39;knn&#39;, &#39;xgboost&#39;, &#39;xgboost&#39;, &#39;xgboost&#39;)) 
+
+metric_results %&gt;% 
+  select(model = model_type, measure = `.metric`, value = `.estimate`) %&gt;% 
+  filter(measure == &#39;accuracy&#39;) %&gt;% 
+  arrange(-value) %&gt;% 
+  gt() %&gt;%
+  tab_header(
+    title = md(&quot;Summary of all four models&quot;),
+    subtitle = &quot;Compaing model accuracies&quot;
+  ) %&gt;%
+  tab_style(
+    style = list(
+      cell_fill(color = &quot;#2D6A65&quot;),
+      cell_text(weight = &quot;bold&quot;)
+      ),
+    locations = cells_body(
+    )    
+  )</code></pre>
+<div id="yciuokgcvi" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#yciuokgcvi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yciuokgcvi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yciuokgcvi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yciuokgcvi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yciuokgcvi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yciuokgcvi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yciuokgcvi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yciuokgcvi .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yciuokgcvi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yciuokgcvi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yciuokgcvi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yciuokgcvi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yciuokgcvi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#yciuokgcvi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yciuokgcvi .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yciuokgcvi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yciuokgcvi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yciuokgcvi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yciuokgcvi .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yciuokgcvi .gt_left {
+  text-align: left;
+}
+
+#yciuokgcvi .gt_center {
+  text-align: center;
+}
+
+#yciuokgcvi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yciuokgcvi .gt_font_normal {
+  font-weight: normal;
+}
+
+#yciuokgcvi .gt_font_bold {
+  font-weight: bold;
+}
+
+#yciuokgcvi .gt_font_italic {
+  font-style: italic;
+}
+
+#yciuokgcvi .gt_super {
+  font-size: 65%;
+}
+
+#yciuokgcvi .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style>Summary of all four models</th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Compaing model accuracies</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">model</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">measure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">random forest</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">accuracy</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">0.9714286</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">knn</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">accuracy</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">0.9714286</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">xgboost</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">accuracy</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">0.9714286</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">multinomial regression</td>
+<td class="gt_row gt_left" style="background-color: #2D6A65; font-weight: bold;">accuracy</td>
+<td class="gt_row gt_right" style="background-color: #2D6A65; font-weight: bold;">0.9571429</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+<div id="penguin-prediction-tool" class="section level1">
+<h1>penguin-prediction-tool</h1>
+<p>This <a href="https://github.com/gmednick/penguin-prediction-tool/blob/main/penguin_sh_tool.R">tool</a> uses classification algorithms to predict penguin species (Adelie, Chinstrap, Gentoo) based on bill length (mm) and bill depth (mm). Models include multinomial regression, k-nearest neighbors, random forest, xgboost (default hyperparameters settings were used).</p>
+<p>The script utilizes the argparser package in R for parsing command-line arguments. The following examples show the incantation for running the Rscript in the command-line with the following arguments: model, bill length and bill depth.</p>
+<p>Ex 1: Rscript penguin_sh_tool.R model=mn_mod_fit bill_length=39 bill_depth=18 <br>
+Ex 2: Rscript penguin_sh_tool.R knn_mod_fit 50 18 <br>
+Ex 3: Rscript penguin_sh_tool.R rf_mod_fit 50 18 <br>
+Ex 4. Rscript penguin_sh_tool.R xg_mod_fit 50 14 <br></p>
+<p>In the command line, the output of Ex 3 includes the following messages</p>
+<p><img width="685" alt="image" src="https://user-images.githubusercontent.com/45637747/125180220-6deff900-e1ac-11eb-80b3-d2c67b82295e.png"></p>
+<p>and returns the predicted species based on the user inputs.</p>
+<p><img width="240" alt="image" src="https://user-images.githubusercontent.com/45637747/125153850-704e4680-e10b-11eb-9933-ea8a855c5365.png"></p>
+<p>If you want to make your own penguin predictions, the penguin prediction tool (R script) is available on <a href="https://github.com/gmednick/penguin-prediction-tool/blob/main/penguin_sh_tool.R">GitHub</a> <br></p>
+<p>🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧 🐧</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
+        
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="far fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GabeMednick" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/gmednick" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/" >
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks",
+        'slides' : "Slides"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.72756512af279b10e3e4b09540ed6e9f.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © Gabe Mednick 2022
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF69B4"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #FF69B4"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #FF69B4"></i>! Stunning photo of the Milky Way taken by Kristopher Roller.
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

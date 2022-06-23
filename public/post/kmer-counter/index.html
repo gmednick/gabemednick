@@ -1,0 +1,3515 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gabriel Mednick, PhD">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="k-mers are substrings of length k contained in longer strings, such as proteins or DNA and RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the distribution of k-mer sequence counts are compared.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/kmer-counter/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(339, 90%, 68%)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i%7CKarla:400,400i,700,700i%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://www.gabemednick.com/post/kmer-counter/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Gabe Mednick">
+  <meta property="og:url" content="https://www.gabemednick.com/post/kmer-counter/">
+  <meta property="og:title" content="K-mer counting tool | Gabe Mednick">
+  <meta property="og:description" content="k-mers are substrings of length k contained in longer strings, such as proteins or DNA and RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the distribution of k-mer sequence counts are compared."><meta property="og:image" content="https://www.gabemednick.com/post/kmer-counter/Featured.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/kmer-counter/Featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-08-05T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-08-05T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.gabemednick.com/post/kmer-counter/"
+  },
+  "headline": "K-mer counting tool",
+  
+  "image": [
+    "https://www.gabemednick.com/post/kmer-counter/Featured.png"
+  ],
+  
+  "datePublished": "2021-08-05T00:00:00Z",
+  "dateModified": "2021-08-05T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gabe Mednick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "k-mers are substrings of length k contained in longer strings, such as proteins or DNA and RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the distribution of k-mer sequence counts are compared."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>K-mer counting tool | Gabe Mednick</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/resume/gmednickCV.pdf"><span>Resume</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>K-mer counting tool</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 5, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 326px;">
+  <div style="position: relative">
+    <img src="/post/kmer-counter/Featured_hua06eafdd6a5d15a88a8cfa8c122272d4_380165_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.gabemednick.com/post/kmer-counter/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This post contains a short analysis of 4 FASTA files each containing a single nucleotide sequence. The goal of the analysis is to determine if the sequences have a balanced number of k-mer (4-mer) counts. The post also includes instructions on how to use the <a href="https://github.com/gmednick/kmer-counting-tool/blob/main/kmer_counting_tool.R">kmer_counting_tool.R</a> script as a command line tool that lets the user select an input FASTA file and a k-mer length, and returns a file counts for each kmer sequence.</p>
+<div id="import-the-fasta-files-with-the-biostrings-package" class="section level2">
+<h2>Import the FASTA files with the Biostrings package</h2>
+<p>The nucleotide sequences are imported into R as DNAStringSet objects but I will convert them into a data frame and then slice the sequences into k-mers.</p>
+<pre class="r"><code>#101010 black
+#FDF7F7 white
+library(&quot;Biostrings&quot;)
+library(tidyverse)
+library(gt)
+library(patchwork)
+theme_set(theme_light())</code></pre>
+<pre class="r"><code>exp1 &lt;- readDNAStringSet(&#39;takehome/challenge1/experiment1.fasta&#39;)
+exp1</code></pre>
+<pre><code>## DNAStringSet object of length 1:
+##     width seq                                               names               
+## [1] 10000 GTATTTACAGCAAAATTATATAT...ACTGCCATTTTGTCTTTTATGAG</code></pre>
+<pre class="r"><code>exp2 &lt;- readDNAStringSet(&#39;takehome/challenge1/experiment2.fasta&#39;)
+exp3 &lt;- readDNAStringSet(&#39;takehome/challenge1/experiment3.fasta&#39;)
+exp4 &lt;- readDNAStringSet(&#39;takehome/challenge1/experiment4.fasta&#39;)
+#exp5 = readDNAStringSet(&quot;nonstandard_nucs.fasta&quot;)
+
+fasta_files = list(exp1, exp2, exp3, exp4)
+
+#Function:
+#convert_to_tibble()
+convert_to_tibble &lt;- function(s) {
+seq_name &lt;- names(s)
+sequence &lt;- paste(s)
+df &lt;- tibble(seq_name, sequence)
+}
+
+fasta_df &lt;- map_df(fasta_files, convert_to_tibble) 
+fasta_df$seq_name = c(&#39;exp1&#39;, &#39;exp2&#39;, &#39;exp3&#39;, &#39;exp4&#39;)
+
+# https://github.com/tidyverse/stringr/issues/292
+str_dice &lt;- function(s, length) { # does not return list
+   L &lt;- str_length(s)
+   str_sub(s, start=seq(1L,L-length+1,length), end=seq(length,L,length))
+}
+
+#Function:
+#kmer_len()
+kmer_len &lt;- function(tbl) {
+  tbl %&gt;% 
+    str_dice(length = 4) %&gt;% 
+    tibble() %&gt;% 
+    rename(kmer = &quot;.&quot;) %&gt;%
+    count(kmer, sort = T, name = &#39;kmer_count&#39;) %&gt;% 
+    mutate(kmer = fct_reorder(kmer, kmer_count)) %&gt;%
+    mutate(standard_nucs = str_detect(kmer, &quot;[non_stand_nucs]&quot;, negate = T))
+}</code></pre>
+</div>
+<div id="table-of-k-mer-counts-by-experiment" class="section level2">
+<h2>Table of K-mer counts by Experiment</h2>
+<p>This table is similar to the tab separated output file that is produced from the <code>kmer_counting_tool.R</code> where Exp1 = sequence 1 counts, etc.</p>
+<pre class="r"><code>seq1 &lt;- fasta_df$sequence[1] %&gt;%
+   kmer_len() %&gt;% 
+   mutate(experiment = &#39;Exp1_counts&#39;)
+ 
+ seq2 &lt;- fasta_df$sequence[2] %&gt;%
+  kmer_len() %&gt;% 
+   mutate(experiment = &#39;Exp2_counts&#39;)
+ 
+ seq3 &lt;- fasta_df$sequence[3] %&gt;%
+  kmer_len() %&gt;% 
+   mutate(experiment = &#39;Exp3_counts&#39;)
+ 
+ seq4 &lt;- fasta_df$sequence[4] %&gt;%
+  kmer_len() %&gt;% 
+   mutate(experiment = &#39;Exp4_counts&#39;)
+
+sequences &lt;- bind_rows(seq1, seq2, seq3, seq4) 
+
+sequences %&gt;% 
+  pivot_wider(names_from = experiment, values_from = kmer_count) %&gt;% 
+  gt() %&gt;% 
+  tab_header(title = md(&quot;**Kmer counts by experiment**&quot;))  %&gt;% 
+  tab_options(container.height = 400,
+              container.overflow.y = TRUE,
+              heading.background.color = &quot;#EFFBFC&quot;, 
+              table.width = &quot;75%&quot;, 
+              column_labels.background.color = &quot;black&quot;,
+              table.font.color = &quot;black&quot;) %&gt;% 
+  tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
+            locations = cells_body())</code></pre>
+<div id="oreuiqolax" style="overflow-x:auto;overflow-y:auto;width:auto;height:400px;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#oreuiqolax .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_heading {
+  background-color: #EFFBFC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#oreuiqolax .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#oreuiqolax .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_col_heading {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#oreuiqolax .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#oreuiqolax .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#oreuiqolax .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#oreuiqolax .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#oreuiqolax .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#oreuiqolax .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#oreuiqolax .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#oreuiqolax .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#oreuiqolax .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#oreuiqolax .gt_stub {
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#oreuiqolax .gt_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oreuiqolax .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_grand_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oreuiqolax .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#oreuiqolax .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_footnotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#oreuiqolax .gt_sourcenotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oreuiqolax .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#oreuiqolax .gt_left {
+  text-align: left;
+}
+
+#oreuiqolax .gt_center {
+  text-align: center;
+}
+
+#oreuiqolax .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#oreuiqolax .gt_font_normal {
+  font-weight: normal;
+}
+
+#oreuiqolax .gt_font_bold {
+  font-weight: bold;
+}
+
+#oreuiqolax .gt_font_italic {
+  font-style: italic;
+}
+
+#oreuiqolax .gt_super {
+  font-size: 65%;
+}
+
+#oreuiqolax .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>Kmer counts by experiment</strong></th>
+    </tr>
+    
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">kmer</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">standard_nucs</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Exp1_counts</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Exp2_counts</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Exp3_counts</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Exp4_counts</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">77</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">45</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">73</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">37</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">66</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">38</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">24</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TATT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">66</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">28</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">27</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">65</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">30</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AATT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">65</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">36</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">63</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">29</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">28</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">60</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">30</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">24</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">58</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">33</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">24</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">57</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">48</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">23</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AATA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">55</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">39</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">53</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">45</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">25</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">53</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">32</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">53</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">36</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">23</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TATA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">50</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">34</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">49</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">37</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GATT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">26</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">25</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TACT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">24</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TACA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CATA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AACA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CATT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AACT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">21</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">22</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">23</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">25</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">19</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GATA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TATC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">27</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TATG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">23</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AATG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">26</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">20</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AATC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CATC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GACA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AAGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TACC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CACT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CATG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GACT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GATG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">16</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AACG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CACA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CACG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCTT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GACG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GATC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TAGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AACC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ATGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CACC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGAT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCTA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGAA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TACG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">18</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TTGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGAC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GACC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCGT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">AGCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CTGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GTGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GAGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCAG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCTG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGGA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGTC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TCCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">4</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CAGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGCT</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">TGCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CCGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGCG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">8</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GGGG</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">1</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">14</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">CGCA</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">12</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">ACCC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">6</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">13</td></tr>
+    <tr><td class="gt_row gt_center" style="background-color: #BEBEBE;">GCGC</td>
+<td class="gt_row gt_center" style="background-color: #BEBEBE;">TRUE</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">NA</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">2</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>It may be helpful to visualize the k-mer count distributions to get a better feel for the similarities and differences between the sequences.</p>
+</div>
+<div id="bar-plots-of-count-distributions-for-each-experiment" class="section level2">
+<h2>Bar plots of count distributions for each experiment</h2>
+<pre class="r"><code>#Function:
+#create bar plots with bar_plot()
+bar_plot &lt;- function(tbl) { 
+  tbl %&gt;%
+    ggplot(aes(kmer_count, kmer, fill = kmer_count)) +
+    geom_col() +
+    scale_fill_viridis_c() +
+    theme(legend.position = &#39;none&#39;) +
+    theme(axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()) +
+    labs(x = &quot;K-mer counts&quot;)
+}
+
+p1 &lt;- fasta_df$sequence[1] %&gt;% 
+  kmer_len() %&gt;% 
+  bar_plot() +
+  labs(title = &#39;Exp1 kmer counts&#39;)
+  
+  
+p2 &lt;- fasta_df$sequence[2] %&gt;% 
+  kmer_len() %&gt;% 
+  bar_plot() +
+  labs(title = &#39;Exp2 kmer counts&#39;) 
+
+p3 &lt;- fasta_df$sequence[3] %&gt;% 
+  kmer_len() %&gt;% 
+  bar_plot() +
+  labs(title = &#39;Exp3 kmer counts&#39;) 
+
+p4 &lt;- fasta_df$sequence[4] %&gt;% 
+  kmer_len() %&gt;% 
+  bar_plot() +
+  labs(title = &#39;Exp4 kmer counts&#39;) 
+
+(p1 + p2) / (p3 + p4)</code></pre>
+<p><img src="https://www.gabemednick.com/post/kmer-counter/index_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Notably, the count distributions are progressively less varied.</p>
+</div>
+<div id="summary-table" class="section level2">
+<h2>Summary table</h2>
+<p>The <code>max count</code> and <code>sd count</code> variation are worth exploring further.</p>
+<pre class="r"><code>#create a summary table with the median, min and max
+sequences %&gt;%
+  group_by(experiment) %&gt;%
+  drop_na() %&gt;%
+  summarize(`median count` = median(kmer_count),
+            `mean count` = round(mean(kmer_count)),
+            `sd count` = round(sd(kmer_count)),
+            `max count` = max(kmer_count)) %&gt;%
+  gt() %&gt;%
+  tab_header(title = md(&quot;**K-mer counts summary table**&quot;),)  %&gt;%
+  tab_options(
+              heading.background.color = &quot;#EFFBFC&quot;,
+              table.width = &quot;75%&quot;,
+              column_labels.background.color = &quot;black&quot;,
+              table.font.color = &quot;black&quot;) %&gt;%
+  tab_style(style = list(cell_fill(color = &quot;Grey&quot;)),
+            locations = cells_body())</code></pre>
+<div id="qidqjbagqz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#qidqjbagqz .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 75%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_heading {
+  background-color: #EFFBFC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qidqjbagqz .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qidqjbagqz .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_col_heading {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qidqjbagqz .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: black;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qidqjbagqz .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qidqjbagqz .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qidqjbagqz .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qidqjbagqz .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qidqjbagqz .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qidqjbagqz .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qidqjbagqz .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qidqjbagqz .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qidqjbagqz .gt_stub {
+  color: black;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#qidqjbagqz .gt_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qidqjbagqz .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_grand_summary_row {
+  color: black;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qidqjbagqz .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qidqjbagqz .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_footnotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#qidqjbagqz .gt_sourcenotes {
+  color: black;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qidqjbagqz .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#qidqjbagqz .gt_left {
+  text-align: left;
+}
+
+#qidqjbagqz .gt_center {
+  text-align: center;
+}
+
+#qidqjbagqz .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qidqjbagqz .gt_font_normal {
+  font-weight: normal;
+}
+
+#qidqjbagqz .gt_font_bold {
+  font-weight: bold;
+}
+
+#qidqjbagqz .gt_font_italic {
+  font-style: italic;
+}
+
+#qidqjbagqz .gt_super {
+  font-size: 65%;
+}
+
+#qidqjbagqz .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>K-mer counts summary table</strong></th>
+    </tr>
+    
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">experiment</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">median count</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">mean count</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">sd count</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">Exp1_counts</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">11</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">15</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">77</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">Exp2_counts</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">7</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">48</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">Exp3_counts</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">9</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">5</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">28</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #BEBEBE;">Exp4_counts</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">10</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">3</td>
+<td class="gt_row gt_right" style="background-color: #BEBEBE;">17</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="density-plots" class="section level2">
+<h2>Density plots</h2>
+<p>We can get a better feeling for the count distributions with density plots.</p>
+<pre class="r"><code>sequences %&gt;% 
+  group_by(experiment) %&gt;% 
+  ggplot(aes(kmer_count, fill = experiment)) +
+  geom_density() +
+  facet_wrap(~experiment) +
+  scale_fill_viridis_d() +
+  theme(legend.position = &#39;none&#39;) +
+  labs(title = &quot;Density distributions of k-mers (4-mers) by count&quot;,
+       x = &quot;Kmer count&quot;,
+       y = &quot;Density&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/kmer-counter/index_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="binning-the-kmer-counts-for-a-more-general-pattern" class="section level2">
+<h2>Binning the kmer counts for a more general pattern</h2>
+<p>In the next two plots, the k-mer counts are grouped into 8 categories (10-80 k-mer counts by 10 and an other category). For all experiments, most of the 256 possible k-mers appear less than 10 times. So as not to dwarf the k-mer counts that appear more than ten times, the ‘10 and under’ category is shown separately.</p>
+<pre class="r"><code>sequences %&gt;% 
+  mutate(kmer_count = as.numeric(kmer_count),
+         counts_bins40_200 = case_when(
+           kmer_count &lt;= 10 ~ as.character(&#39;10 and under&#39;),
+           between(kmer_count, 11, 20) ~ as.character(&#39;11-20&#39;),
+           between(kmer_count, 21, 30) ~ as.character(&#39;21-30&#39;),
+           between(kmer_count, 31, 40) ~ as.character(&#39;31-40&#39;),
+           between(kmer_count, 51, 60) ~ as.character(&#39;41-50&#39;),
+           between(kmer_count, 61, 70) ~ as.character(&#39;41-50&#39;),
+           kmer_count &gt;= 71 ~ as.character(&#39;71 and greater&#39;),
+           TRUE ~ &#39;other&#39;
+         )) %&gt;% 
+  filter(counts_bins40_200 == &quot;10 and under&quot;, counts_bins40_200 != &#39;11-20&#39;) %&gt;% 
+  group_by(counts_bins40_200) %&gt;% 
+  ggplot(aes(counts_bins40_200, fill = experiment)) +
+  stat_count() +
+  scale_fill_viridis_d() +
+  labs(title = &quot;Count of binned k-mers&quot;,
+       subtitle = &quot;The distribution of k-mer counts between 0-10&quot;,
+       x = &quot;K-mer count&quot;,
+       y = &quot;Density&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/kmer-counter/index_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sequences %&gt;% 
+  mutate(kmer_count = as.numeric(kmer_count),
+         counts_bins40_200 = case_when(
+           kmer_count &lt;= 20 ~ as.character(&#39;10 and under&#39;),
+           between(kmer_count, 11, 20) ~ as.character(&#39;11-20&#39;),
+           between(kmer_count, 21, 30) ~ as.character(&#39;21-30&#39;),
+           between(kmer_count, 31, 40) ~ as.character(&#39;31-40&#39;),
+           between(kmer_count, 51, 60) ~ as.character(&#39;41-50&#39;),
+           between(kmer_count, 61, 70) ~ as.character(&#39;41-50&#39;),
+           kmer_count &gt;= 71 ~ as.character(&#39;71 and greater&#39;),
+           TRUE ~ &#39;other&#39;
+         )) %&gt;% 
+  filter(counts_bins40_200 != &quot;10 and under&quot;, counts_bins40_200 != &#39;other&#39;) %&gt;% 
+  group_by(counts_bins40_200) %&gt;% 
+  ggplot(aes(counts_bins40_200, fill = experiment)) +
+  stat_count() +
+  scale_fill_viridis_d() +
+  labs(title = &quot;Count of binned k-mers&quot;,
+       subtitle = &quot;The distribution of kmer counts between 10-80&quot;,
+       x = &quot;K-mer count&quot;,
+       y = &quot;Density&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/kmer-counter/index_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We see that experiment 2 dominates k-mer counts in the 30-40 range and experiment 1 dominates in the greater than 40 range.</p>
+</div>
+<div id="instructions-k-mer-counting-script-for-the-command-line" class="section level2">
+<h2>Instructions: k-mer counting script for the command line</h2>
+<p>To help you check for imbalanced k-mer distributions in future experiments, I designed a k-mer counting analysis script that works from the command line. The k-mer counter let’s you input a FASTA file and k-mer length, and returns a tab separated file of k-mer counts ordered by frequency. The program also returns messages about the analysis including:<br />
+- Input sequence length<br />
+- K-mer length<br />
+- Which nonstandard nucleotides the program can identify<br />
+- Whether the k-mer length is acceptable for the sequence range<br />
+- The top 10 k-mers by count<br />
+- Whether the given sequence contains standard or nonstandard nucleotides. The nonstandard nucleotide warning can be tested with the following file: takehome/challenge1/nonstandard_nucs.fasta</p>
+<p>To use the k-mer counting tool:<br />
+1. Download the directory I sent you and open it in the command line<br />
+2. Change the permissions for kmer_counter_tool.R script to make it executable on your machine (chmod +x kmer_counter_tool.R)<br />
+3. Then run the following incantation in your command line (with custom input and output file names):<br />
+Rscript kmer_counter_tool.R ‘input_file’ kmer-length –output_file ‘output_file’<br />
+e.g., <img src="imgs/kmer-count-input.png" /><br />
+4. See the image below for the expected output in the command line (Note: I am working on a mac).<br />
+When running the script, a new output file (tab separated format) with k-mers ordered by frequency is generated.<br />
+</p>
+<p><img src="imgs/kmer-tool-output.png" /></p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
+        
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="far fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GabeMednick" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/gmednick" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/" >
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks",
+        'slides' : "Slides"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.72756512af279b10e3e4b09540ed6e9f.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © Gabe Mednick 2022
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF69B4"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #FF69B4"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #FF69B4"></i>! Stunning photo of the Milky Way taken by Kristopher Roller.
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -23,7 +23,7 @@
   
   
 
-  
+  <meta name="author" content="Gabriel Mednick, PhD">
 
   
   
@@ -33,7 +33,7 @@
   <meta name="description" content="">
 
   
-  <link rel="alternate" hreflang="en-us" href="/post/">
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/">
 
   
 
@@ -219,6 +219,44 @@
 
 
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
   
 
 
@@ -233,7 +271,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/post/">
+  <link rel="canonical" href="https://www.gabemednick.com/post/">
 
   
   
@@ -249,12 +287,12 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gabe Mednick">
-  <meta property="og:url" content="/post/">
+  <meta property="og:url" content="https://www.gabemednick.com/post/">
   <meta property="og:title" content="Blog | Gabe Mednick">
-  <meta property="og:description" content=""><meta property="og:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
-  <meta property="twitter:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  <meta property="og:description" content=""><meta property="og:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
   
-    <meta property="og:updated_time" content="2021-05-18T00:00:00&#43;00:00">
+    <meta property="og:updated_time" content="2021-11-11T00:00:00&#43;00:00">
   
 
   
@@ -371,64 +409,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#about"><span>About</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#experience"><span>Experience</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link " href="/#posts"><span>Blog</span></a>
         </li>
 
@@ -459,6 +439,28 @@
 
         <li class="nav-item">
           <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
         </li>
 
         
@@ -566,13 +568,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/ameshousing/" >Housing Price Predictions</a>
+      <a href="/post/yeast_expression/" >Transcriptomic analysis of yeast in response to selective nutrient limitation</a>
     </h3>
 
     
-    <a href="/post/ameshousing/" class="summary-link">
+    <a href="/post/yeast_expression/" class="summary-link">
       <div class="article-style">
-        Comparing regression models using the tidymodels framework for machine learning
+        This post demonstrates how the Tidyvere can enlighten any omics analysis
       </div>
     </a>
     
@@ -596,17 +598,12 @@
     
       
     
-    May 18, 2021
+    Nov 11, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    4 min read
-  </span>
   
 
   
@@ -628,8 +625,8 @@
     
     
     
-    <a href="/post/ameshousing/" >
-      <img src="/post/ameshousing/featured_hu7fba9da1679ce4a56c592454604cb9c1_375347_150x0_resize_q90_lanczos.jpg" alt="Housing Price Predictions">
+    <a href="/post/yeast_expression/" >
+      <img src="/post/yeast_expression/Featured_hue94254360be2004e3137984122d83109_1200593_150x0_resize_lanczos_2.png" alt="Transcriptomic analysis of yeast in response to selective nutrient limitation">
     </a>
     
   </div>
@@ -658,13 +655,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/marine-voyages/" >Marine Voyages</a>
+      <a href="/post/hsapiens/" >Exploring the human genome with Bioconductor</a>
     </h3>
 
     
-    <a href="/post/marine-voyages/" class="summary-link">
+    <a href="/post/hsapiens/" class="summary-link">
       <div class="article-style">
-        This post showcases yet another app made with Shinydashboard using a dataset on ship voyages.
+        A primer for accessing, annotating and visualizing the human genome with Bioconductor packages
       </div>
     </a>
     
@@ -687,20 +684,13 @@
     
     
       
-          Last updated on
-      
     
-    Jan 28, 2021
+    Oct 26, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    1 min read
-  </span>
   
 
   
@@ -722,8 +712,8 @@
     
     
     
-    <a href="/post/marine-voyages/" >
-      <img src="/post/marine-voyages/featured_hu4fde5f99535ddd1e932fdc20176af446_2686055_150x0_resize_q90_lanczos.jpg" alt="Marine Voyages">
+    <a href="/post/hsapiens/" >
+      <img src="/post/hsapiens/Featured_hu1b465668df9a49ad7ad9be2f43fcb67f_3126478_150x0_resize_lanczos_2.png" alt="Exploring the human genome with Bioconductor">
     </a>
     
   </div>
@@ -752,13 +742,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/santa-cruz-surf-report/" >Swell Tracker</a>
+      <a href="/post/yeast/" >Exploring the yeast genome with Bioconductor</a>
     </h3>
 
     
-    <a href="/post/santa-cruz-surf-report/" class="summary-link">
+    <a href="/post/yeast/" class="summary-link">
       <div class="article-style">
-        This app provides the most recent data from NOAA&rsquo;s wave model <br> (Pacific) and buoy data near Santa Cruz, California
+        Accessing and exploring the yeast genome with key packages from Bioconductor
       </div>
     </a>
     
@@ -781,20 +771,13 @@
     
     
       
-          Last updated on
-      
     
-    Dec 22, 2020
+    Oct 12, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 min read
-  </span>
   
 
   
@@ -816,8 +799,8 @@
     
     
     
-    <a href="/post/santa-cruz-surf-report/" >
-      <img src="/post/santa-cruz-surf-report/featured_hudba63a39a8829457ec0f5d4156d323ee_940798_150x0_resize_q90_lanczos.jpg" alt="Swell Tracker">
+    <a href="/post/yeast/" >
+      <img src="/post/yeast/featured_hue12f1c60788a273365a2f9287786301f_2826925_150x0_resize_lanczos_2.png" alt="Exploring the yeast genome with Bioconductor">
     </a>
     
   </div>
@@ -846,13 +829,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/covid-shiny-app/" >COVID Shiny App</a>
+      <a href="/post/baseball/" >Home run analysis</a>
     </h3>
 
     
-    <a href="/post/covid-shiny-app/" class="summary-link">
+    <a href="/post/baseball/" class="summary-link">
       <div class="article-style">
-        Covid cases and deaths in the United States
+        Do you have what it takes to predict a home run?
       </div>
     </a>
     
@@ -875,20 +858,13 @@
     
     
       
-          Last updated on
-      
     
-    Nov 6, 2020
+    Sep 13, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    166 min read
-  </span>
   
 
   
@@ -910,8 +886,8 @@
     
     
     
-    <a href="/post/covid-shiny-app/" >
-      <img src="/post/covid-shiny-app/featured_hua610f14890a65b5cd5f9f7fbef644f8b_78045_150x0_resize_q90_lanczos.jpg" alt="COVID Shiny App">
+    <a href="/post/baseball/" >
+      <img src="/post/baseball/featured_hu890cb33fc15e16d4bcdfb458a9a1b5b1_1128938_150x0_resize_q90_lanczos.jpg" alt="Home run analysis">
     </a>
     
   </div>
@@ -940,13 +916,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/iris-classification/" >Iris Classification</a>
+      <a href="/post/loans/" >Loan data analysis</a>
     </h3>
 
     
-    <a href="/post/iris-classification/" class="summary-link">
+    <a href="/post/loans/" class="summary-link">
       <div class="article-style">
-        Flower classification using Tidymodels
+        Predicting loan type, loan risk and loan payment status
       </div>
     </a>
     
@@ -969,20 +945,13 @@
     
     
       
-          Last updated on
-      
     
-    Oct 21, 2020
+    Sep 7, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    10 min read
-  </span>
   
 
   
@@ -1004,8 +973,8 @@
     
     
     
-    <a href="/post/iris-classification/" >
-      <img src="/post/iris-classification/featured_huf47acdf40ec2079971b734b17e6f4a8a_11737605_150x0_resize_lanczos_2.png" alt="Iris Classification">
+    <a href="/post/loans/" >
+      <img src="/post/loans/Featured_hu0077557da69298e06ead339d67809eab_3470447_150x0_resize_q90_lanczos.jpg" alt="Loan data analysis">
     </a>
     
   </div>
@@ -1034,13 +1003,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/hello-tidyverse/" >Hello Tidyverse and generating many models</a>
+      <a href="/post/python-r/" >Fun with Python and R</a>
     </h3>
 
     
-    <a href="/post/hello-tidyverse/" class="summary-link">
+    <a href="/post/python-r/" class="summary-link">
       <div class="article-style">
-        This post explores crop yield data with visualization and the lm() function to generate many regression models (a model for each country (25) and crop (4).
+        This post explores how we can use Python and R together to solve simple bioinformatics examples. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.
       </div>
     </a>
     
@@ -1063,20 +1032,13 @@
     
     
       
-          Last updated on
-      
     
-    Oct 20, 2020
+    Aug 9, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    8 min read
-  </span>
   
 
   
@@ -1098,8 +1060,356 @@
     
     
     
-    <a href="/post/hello-tidyverse/" >
-      <img src="/post/hello-tidyverse/featured_huccb15f16205dc33445eef65bb41e0758_3414650_150x0_resize_q90_lanczos.jpg" alt="Hello Tidyverse and generating many models">
+    <a href="/post/python-r/" >
+      <img src="/post/python-r/Featured_hu0bc5a4808755dc2ccf236a512e3d0792_3398686_150x0_resize_lanczos_2.png" alt="Fun with Python and R">
+    </a>
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/kmer-counter/" >K-mer counting tool</a>
+    </h3>
+
+    
+    <a href="/post/kmer-counter/" class="summary-link">
+      <div class="article-style">
+        k-mers are substrings of length k contained in longer strings, such as proteins or DNA and RNA molecules. In this post, 4 nucleic acid sequences are computationally sliced into 4-mers and the distribution of k-mer sequence counts are compared.
+      </div>
+    </a>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 5, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+    
+    <a href="/post/kmer-counter/" >
+      <img src="/post/kmer-counter/Featured_hua06eafdd6a5d15a88a8cfa8c122272d4_380165_150x0_resize_lanczos_2.png" alt="K-mer counting tool">
+    </a>
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/crypto-dash/" >Crypto Dash</a>
+    </h3>
+
+    
+    <a href="/post/crypto-dash/" class="summary-link">
+      <div class="article-style">
+        This interactive dashboard lets the user select a cryptocurrency and returns an interactive price chart. You can also explore Twitter using natural language processing
+      </div>
+    </a>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 9, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+    
+    <a href="/post/crypto-dash/" >
+      <img src="/post/crypto-dash/featured_huf652e1a66d6eab1f38d5a969f05430be_1531662_150x0_resize_lanczos_2.png" alt="Crypto Dash">
+    </a>
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/penguin/" >Palmer penguins</a>
+    </h3>
+
+    
+    <a href="/post/penguin/" class="summary-link">
+      <div class="article-style">
+        Having fun with penguin predictions
+      </div>
+    </a>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 7, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+    
+    <a href="/post/penguin/" >
+      <img src="/post/penguin/featured_hu23a2ff6767279debab043a6c8f0a6157_878472_150x0_resize_lanczos_2.png" alt="Palmer penguins">
+    </a>
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/launchpads/" >Crypto launchpad platforms</a>
+    </h3>
+
+    
+    <a href="/post/launchpads/" class="summary-link">
+      <div class="article-style">
+        Visualizing market dynamics, webscraping and accessing twitter data for natural language processing
+      </div>
+    </a>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 1, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+    
+    <a href="/post/launchpads/" >
+      <img src="/post/launchpads/featured_hu9226eacc09e93501225ad401a31cba13_4592936_150x0_resize_lanczos_2.png" alt="Crypto launchpad platforms">
     </a>
     
   </div>
@@ -1109,6 +1419,15 @@
   
 
   
+<nav>
+  <ul class="pagination justify-content-center">
+    
+    
+    <li class="page-item"><a class="page-link" href="/post/page/2/">&raquo;</a></li>
+    
+  </ul>
+</nav>
+
 
 
 </div>
@@ -1233,7 +1552,7 @@
   
 
   <p class="powered-by">
-    © Gabe Mednick 2021
+    © Gabe Mednick 2022
   </p>
 
   

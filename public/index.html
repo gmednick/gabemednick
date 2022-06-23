@@ -23,7 +23,7 @@
   
   
 
-  
+  <meta name="author" content="Gabriel Mednick, PhD">
 
   
   
@@ -33,7 +33,7 @@
   <meta name="description" content="">
 
   
-  <link rel="alternate" hreflang="en-us" href="/">
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/">
 
   
 
@@ -219,6 +219,44 @@
 
 
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
   
 
 
@@ -235,7 +273,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/">
+  <link rel="canonical" href="https://www.gabemednick.com/">
 
   
   
@@ -251,12 +289,12 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gabe Mednick">
-  <meta property="og:url" content="/">
+  <meta property="og:url" content="https://www.gabemednick.com/">
   <meta property="og:title" content="Gabe Mednick">
-  <meta property="og:description" content=""><meta property="og:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
-  <meta property="twitter:image" content="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  <meta property="og:description" content=""><meta property="og:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
   
-    <meta property="og:updated_time" content="2021-05-18T00:00:00&#43;00:00">
+    <meta property="og:updated_time" content="2021-11-11T00:00:00&#43;00:00">
   
 
   
@@ -267,10 +305,10 @@
   "@type": "WebSite",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "/?q={search_term_string}",
+    "target": "https://www.gabemednick.com/?q={search_term_string}",
     "query-input": "required name=search_term_string"
   },
-  "url": "/"
+  "url": "https://www.gabemednick.com/"
 }
 </script>
 
@@ -387,64 +425,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#about" data-target="#about"><span>About</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#experience" data-target="#experience"><span>Experience</span></a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link " href="/#posts" data-target="#posts"><span>Blog</span></a>
         </li>
 
@@ -475,6 +455,28 @@
 
         <li class="nav-item">
           <a class="nav-link " href="/#contact" data-target="#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
         </li>
 
         
@@ -601,7 +603,7 @@
   
   
 
-  <section id="demo0" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(&#39;/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 20px 0 20px 0;" >
+  <section id="demo0 copy" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(&#39;https://www.gabemednick.com/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 20px 0 20px 0;" >
     <div class="container">
       
 
@@ -676,11 +678,11 @@
 
       
       
-      <img class="avatar avatar-circle" src="/author/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="">
+      <img class="avatar avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
       
 
       <div class="portrait-title">
-        <h2></h2>
+        <h2>Gabriel Mednick, PhD</h2>
         
 
         
@@ -757,7 +759,7 @@
           
         
         <li>
-          <a href="https://www.linkedin.com/in/gabe-mednick-77a000199/" target="_blank" rel="noopener">
+          <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
             <i class="fab fa-linkedin-in big-icon"></i>
           </a>
         </li>
@@ -786,8 +788,8 @@
     
     
 
-    <p>During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. Each of these experiences has been full of valuable lessons and hidden blessings.</p>
-<p>I have had a growing interest in bioinformatics and data science over several years. What started out as an effort to expand my scientific toolbox turned into a passion for programming and predictive modeling that has transformed my skill set and expanded my professional repertoire. I enjoy the challenge of drawing insight from all types of data. Each step of the process, from data cleaning and exploration to creating models, deriving predictions and communicating results, is a blend of art and science. Finding that blend, deriving insight and creating value is what drives my passion as a data scientist.</p>
+    <p>During graduate school, I maintained a broad interdisciplinary approach that included microbiology, molecular biology, biochemistry, physical chemistry and spectroscopy. As a postdoc, I developed curriculum and taught biology and chemistry with an emphasis on interactive, inquiry-based learning. In my first role as a lead scientist with a startup, I worked on proprietary DNA and RNA synthesis. These experiences were filled with valuable lessons and hidden blessings that helped me grow into my current role as a data scientist and bioinformatician.</p>
+<p>My company, Deepen Analytics, provides contracting and consulting services to generate innovative data solutions. I can also be found teaching data science at various universities including Kansas State and San Diego State.</p>
 
 
     <div class="row">
@@ -797,21 +799,15 @@
         <h3>Interests</h3>
         <ul class="ul-interests">
           
-          <li>Working with data in R</li>
+          <li>R, SQL and Python</li>
           
-          <li>Data visualization and machine learning</li>
+          <li>Data visualization</li>
+          
+          <li>Machine learning</li>
           
           <li>Creating Dashboards</li>
           
-          <li>Workflow management</li>
-          
-          <li>Version control</li>
-          
           <li>Bioinformatics</li>
-          
-          <li>Command line tools and bash scripting</li>
-          
-          <li>R, SQL and Python</li>
           
         </ul>
       </div>
@@ -892,24 +888,26 @@
   
 
   
-
-  
-  
-
-  
-  
+    
   
 
   
   
+
   
   
   
 
   
   
+  
+  
+  
 
-  <section id="demo2" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(&#39;/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 20px 0 20px 0;" >
+  
+  
+
+  <section id="demo" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(&#39;https://www.gabemednick.com/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
     <div class="container">
       
 
@@ -917,330 +915,9 @@
 <div class="row">
   
     <div class="col-lg-12">
-      <h1>Insight and Imagination are Cornerstones</h1>
-      
-      <p><strong>Drylab skills</strong></p>
-<ul>
-<li>Bioinformatics and applied data science (machine learning)</li>
-<li>Biochemistry-based insights, technology and IP development</li>
-<li>Reactive web applications</li>
-<li>Webscraping and text mining</li>
-<li>Workflow and database management</li>
-</ul>
-<p><strong>Wetlab skills</strong></p>
-<ul>
-<li>Microbiology</li>
-<li>Molecular biology</li>
-<li>Nanopore sequencing</li>
-<li>Protein biochemistry</li>
-<li>Chromatography</li>
-<li>Spectroscopy</li>
-</ul>
-
-    </div>
-  
-</div>
-
-    </div>
-  </section>
-
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-  
-
-  
-  
-  
-
-  
-  
-  
-  
-  
-
-  
-  
-
-  <section id="experience" class="home-section wg-experience   "  >
-    <div class="container">
-      
-
-
-
-<div class="row">
-  <div class="col-12 col-lg-4 section-heading">
-    <h1>Experience</h1>
-    
-  </div>
-  <div class="col-12 col-lg-8">
-    
-
-    
-    
-    
-    <div class="row experience">
-      
-      <div class="col-auto text-center flex-column d-none d-sm-flex">
-        <div class="row h-50">
-          <div class="col ">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-        <div class="m-2">
-          <span class="badge badge-pill border exp-fill">&nbsp;</span>
-        </div>
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-      </div>
-      
-      <div class="col py-2">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title exp-title text-muted mt-0 mb-1">VP of informatics</h4>
-            <h4 class="card-title exp-company text-muted my-0">Deepen Analytics</h4>
-            <div class="text-muted exp-meta">
-              Aug 2020 –
-              
-                Present
-              
-              
-                <span class="middot-divider"></span>
-                <span>California</span>
-              
-            </div>
-            <div class="card-text"><p>Bioinformatics and Data Science Consulting</p>
-<ul>
-<li>Data analysis</li>
-<li>Bioinformatics analysis</li>
-<li>Applied machine learning</li>
-<li>Interactive web applications</li>
-<li>Workflow management</li>
-<li>IP development</li>
-</ul>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row experience">
-      
-      <div class="col-auto text-center flex-column d-none d-sm-flex">
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-        <div class="m-2">
-          <span class="badge badge-pill border ">&nbsp;</span>
-        </div>
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-      </div>
-      
-      <div class="col py-2">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title exp-title text-muted mt-0 mb-1">Computational biologist intern</h4>
-            <h4 class="card-title exp-company text-muted my-0">Claret Biosciences</h4>
-            <div class="text-muted exp-meta">
-              Apr 2020 –
-              
-                Aug 2020
-              
-              
-                <span class="middot-divider"></span>
-                <span>California</span>
-              
-            </div>
-            <div class="card-text"><p>Responsibilities included:</p>
-<ul>
-<li>R programming for proprietary genomics research</li>
-<li>Converting R scripts into command line tools and workflows</li>
-<li>Machine learning applied to biological problems using tidymodels</li>
-<li>Workflow and pipeline management</li>
-</ul>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row experience">
-      
-      <div class="col-auto text-center flex-column d-none d-sm-flex">
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-        <div class="m-2">
-          <span class="badge badge-pill border ">&nbsp;</span>
-        </div>
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-      </div>
-      
-      <div class="col py-2">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title exp-title text-muted mt-0 mb-1">Senior scientist</h4>
-            <h4 class="card-title exp-company text-muted my-0">UpRNA LLC</h4>
-            <div class="text-muted exp-meta">
-              Jan 2018 –
-              
-                Apr 2020
-              
-              
-                <span class="middot-divider"></span>
-                <span>California</span>
-              
-            </div>
-            <div class="card-text"><p>Responsibilities included:</p>
-<ul>
-<li>siRNA R&amp;D</li>
-<li>Nanopore sequencing</li>
-<li>Bioinformatics</li>
-</ul>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row experience">
-      
-      <div class="col-auto text-center flex-column d-none d-sm-flex">
-        <div class="row h-50">
-          <div class="col border-right">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-        <div class="m-2">
-          <span class="badge badge-pill border ">&nbsp;</span>
-        </div>
-        <div class="row h-50">
-          <div class="col ">&nbsp;</div>
-          <div class="col">&nbsp;</div>
-        </div>
-      </div>
-      
-      <div class="col py-2">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title exp-title text-muted mt-0 mb-1">Instructor</h4>
-            <h4 class="card-title exp-company text-muted my-0">UCSC</h4>
-            <div class="text-muted exp-meta">
-              Jan 2016 –
-              
-                Jan 2018
-              
-              
-                <span class="middot-divider"></span>
-                <span>California</span>
-              
-            </div>
-            <div class="card-text"><p>lecturer</p>
-<ul>
-<li>General chemistry</li>
-<li>Biology</li>
-<li>Equitable, student centered teaching</li>
-</ul>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    
-  </div>
-</div>
-
-    </div>
-  </section>
-
-  
-  
-  
-
-  
-
-  
-
-  
-    
-    
-    
-    
-    
-    
+      <h1>Passion ~ Knowledge ~ Data ~ Discovery</h1>
       
       
-    
-    
-      
-      
-    
-  
-
-  
-    
-    
-  
-
-  
-  
-
-  
-    
-  
-
-  
-  
-
-  
-  
-  
-
-  
-  
-  
-  
-  
-
-  
-  
-
-  <section id="demo3" class="home-section wg-blank dark  bg-image " style="background-image:  url(&#39;/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
-    <div class="container">
-      
-
-
-<div class="row">
-  
-    <div class="col-lg-12">
-      
-      
-      <p><img src="/home/demo3_files/h4ds_cyclePath.png" alt=""></p>
-
     </div>
   
 </div>
@@ -1357,13 +1034,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/ameshousing/" >Housing Price Predictions</a>
+      <a href="/post/yeast_expression/" >Transcriptomic analysis of yeast in response to selective nutrient limitation</a>
     </h3>
 
     
-    <a href="/post/ameshousing/" class="summary-link">
+    <a href="/post/yeast_expression/" class="summary-link">
       <div class="article-style">
-        Comparing regression models using the tidymodels framework for machine learning
+        This post demonstrates how the Tidyvere can enlighten any omics analysis
       </div>
     </a>
     
@@ -1387,17 +1064,12 @@
     
       
     
-    May 18, 2021
+    Nov 11, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    4 min read
-  </span>
   
 
   
@@ -1419,8 +1091,8 @@
     
     
     
-    <a href="/post/ameshousing/" >
-      <img src="/post/ameshousing/featured_hu7fba9da1679ce4a56c592454604cb9c1_375347_150x0_resize_q90_lanczos.jpg" alt="Housing Price Predictions">
+    <a href="/post/yeast_expression/" >
+      <img src="/post/yeast_expression/Featured_hue94254360be2004e3137984122d83109_1200593_150x0_resize_lanczos_2.png" alt="Transcriptomic analysis of yeast in response to selective nutrient limitation">
     </a>
     
   </div>
@@ -1449,13 +1121,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/marine-voyages/" >Marine Voyages</a>
+      <a href="/post/hsapiens/" >Exploring the human genome with Bioconductor</a>
     </h3>
 
     
-    <a href="/post/marine-voyages/" class="summary-link">
+    <a href="/post/hsapiens/" class="summary-link">
       <div class="article-style">
-        This post showcases yet another app made with Shinydashboard using a dataset on ship voyages.
+        A primer for accessing, annotating and visualizing the human genome with Bioconductor packages
       </div>
     </a>
     
@@ -1478,20 +1150,13 @@
     
     
       
-          Last updated on
-      
     
-    Jan 28, 2021
+    Oct 26, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    1 min read
-  </span>
   
 
   
@@ -1513,8 +1178,8 @@
     
     
     
-    <a href="/post/marine-voyages/" >
-      <img src="/post/marine-voyages/featured_hu4fde5f99535ddd1e932fdc20176af446_2686055_150x0_resize_q90_lanczos.jpg" alt="Marine Voyages">
+    <a href="/post/hsapiens/" >
+      <img src="/post/hsapiens/Featured_hu1b465668df9a49ad7ad9be2f43fcb67f_3126478_150x0_resize_lanczos_2.png" alt="Exploring the human genome with Bioconductor">
     </a>
     
   </div>
@@ -1543,13 +1208,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/santa-cruz-surf-report/" >Swell Tracker</a>
+      <a href="/post/yeast/" >Exploring the yeast genome with Bioconductor</a>
     </h3>
 
     
-    <a href="/post/santa-cruz-surf-report/" class="summary-link">
+    <a href="/post/yeast/" class="summary-link">
       <div class="article-style">
-        This app provides the most recent data from NOAA&rsquo;s wave model <br> (Pacific) and buoy data near Santa Cruz, California
+        Accessing and exploring the yeast genome with key packages from Bioconductor
       </div>
     </a>
     
@@ -1572,20 +1237,13 @@
     
     
       
-          Last updated on
-      
     
-    Dec 22, 2020
+    Oct 12, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 min read
-  </span>
   
 
   
@@ -1607,8 +1265,8 @@
     
     
     
-    <a href="/post/santa-cruz-surf-report/" >
-      <img src="/post/santa-cruz-surf-report/featured_hudba63a39a8829457ec0f5d4156d323ee_940798_150x0_resize_q90_lanczos.jpg" alt="Swell Tracker">
+    <a href="/post/yeast/" >
+      <img src="/post/yeast/featured_hue12f1c60788a273365a2f9287786301f_2826925_150x0_resize_lanczos_2.png" alt="Exploring the yeast genome with Bioconductor">
     </a>
     
   </div>
@@ -1637,13 +1295,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/covid-shiny-app/" >COVID Shiny App</a>
+      <a href="/post/baseball/" >Home run analysis</a>
     </h3>
 
     
-    <a href="/post/covid-shiny-app/" class="summary-link">
+    <a href="/post/baseball/" class="summary-link">
       <div class="article-style">
-        Covid cases and deaths in the United States
+        Do you have what it takes to predict a home run?
       </div>
     </a>
     
@@ -1666,20 +1324,13 @@
     
     
       
-          Last updated on
-      
     
-    Nov 6, 2020
+    Sep 13, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    166 min read
-  </span>
   
 
   
@@ -1701,8 +1352,8 @@
     
     
     
-    <a href="/post/covid-shiny-app/" >
-      <img src="/post/covid-shiny-app/featured_hua610f14890a65b5cd5f9f7fbef644f8b_78045_150x0_resize_q90_lanczos.jpg" alt="COVID Shiny App">
+    <a href="/post/baseball/" >
+      <img src="/post/baseball/featured_hu890cb33fc15e16d4bcdfb458a9a1b5b1_1128938_150x0_resize_q90_lanczos.jpg" alt="Home run analysis">
     </a>
     
   </div>
@@ -1731,13 +1382,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/iris-classification/" >Iris Classification</a>
+      <a href="/post/loans/" >Loan data analysis</a>
     </h3>
 
     
-    <a href="/post/iris-classification/" class="summary-link">
+    <a href="/post/loans/" class="summary-link">
       <div class="article-style">
-        Flower classification using Tidymodels
+        Predicting loan type, loan risk and loan payment status
       </div>
     </a>
     
@@ -1760,20 +1411,13 @@
     
     
       
-          Last updated on
-      
     
-    Oct 21, 2020
+    Sep 7, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    10 min read
-  </span>
   
 
   
@@ -1795,8 +1439,8 @@
     
     
     
-    <a href="/post/iris-classification/" >
-      <img src="/post/iris-classification/featured_huf47acdf40ec2079971b734b17e6f4a8a_11737605_150x0_resize_lanczos_2.png" alt="Iris Classification">
+    <a href="/post/loans/" >
+      <img src="/post/loans/Featured_hu0077557da69298e06ead339d67809eab_3470447_150x0_resize_q90_lanczos.jpg" alt="Loan data analysis">
     </a>
     
   </div>
@@ -1825,13 +1469,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/hello-tidyverse/" >Hello Tidyverse and generating many models</a>
+      <a href="/post/python-r/" >Fun with Python and R</a>
     </h3>
 
     
-    <a href="/post/hello-tidyverse/" class="summary-link">
+    <a href="/post/python-r/" class="summary-link">
       <div class="article-style">
-        This post explores crop yield data with visualization and the lm() function to generate many regression models (a model for each country (25) and crop (4).
+        This post explores how we can use Python and R together to solve simple bioinformatics examples. Rstudio, Rmarkdown and the Reticulate package get creds for making this possible.
       </div>
     </a>
     
@@ -1854,20 +1498,13 @@
     
     
       
-          Last updated on
-      
     
-    Oct 20, 2020
+    Aug 9, 2021
   </span>
   
 
   
 
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    8 min read
-  </span>
   
 
   
@@ -1889,8 +1526,8 @@
     
     
     
-    <a href="/post/hello-tidyverse/" >
-      <img src="/post/hello-tidyverse/featured_huccb15f16205dc33445eef65bb41e0758_3414650_150x0_resize_q90_lanczos.jpg" alt="Hello Tidyverse and generating many models">
+    <a href="/post/python-r/" >
+      <img src="/post/python-r/Featured_hu0bc5a4808755dc2ccf236a512e3d0792_3398686_150x0_resize_lanczos_2.png" alt="Fun with Python and R">
     </a>
     
   </div>
@@ -1899,6 +1536,13 @@
       
     
 
+    
+    <div class="see-all">
+      <a href="/post/">
+        See all posts
+        <i class="fas fa-angle-right"></i>
+      </a>
+    </div>
     
 
   </div>
@@ -1918,8 +1562,6 @@
   
     
     
-      
-    
     
     
     
@@ -1961,7 +1603,7 @@
   
   
 
-  <section id="demo" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(&#39;/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
+  <section id="demo3" class="home-section wg-blank dark  bg-image " style="background-image:  url(&#39;https://www.gabemednick.com/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
     <div class="container">
       
 
@@ -1969,174 +1611,10 @@
 <div class="row">
   
     <div class="col-lg-12">
-      <h1>Passion .. Knowledge .. Data .. Discovery</h1>
       
       
-    </div>
-  
-</div>
+      <p><img src="/home/demo3_files/h4ds_cyclePath.png" alt=""></p>
 
-    </div>
-  </section>
-
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-  
-
-  
-  
-  
-
-  
-  
-  
-  
-  
-
-  
-  
-
-  <section id="skills" class="home-section wg-featurette   "  >
-    <div class="container">
-      
-
-
-<div class="row featurette">
-  
-  <div class="col-md-12 section-heading">
-    <h1>Technology Toolkit</h1>
-    <p>Developmental modeling and machine learning</p>
-  </div>
-  
-
-  
-
-  
-  
-  
-  
-    
-  
-  <div class="col-12 col-sm-4">
-    
-    <div class="featurette-icon"><i class="fas fa-database"></i></div>
-    
-    <h3>SQL</h3>
-    
-  </div>
-  
-  
-  
-  
-    
-  
-  <div class="col-12 col-sm-4">
-    
-    <div class="featurette-icon"><i class="fab fa-r-project"></i></div>
-    
-    <h3>Tidyverse and Tidymodels framework</h3>
-    
-  </div>
-  
-  
-  
-  
-    
-  
-  <div class="col-12 col-sm-4">
-    
-    <div class="featurette-icon"><i class="fab fa-python"></i></div>
-    
-    <h3>Python</h3>
-    
-  </div>
-  
-</div>
-
-    </div>
-  </section>
-
-  
-  
-  
-
-  
-
-  
-
-  
-    
-    
-      
-    
-    
-    
-    
-    
-      
-      
-    
-    
-      
-      
-    
-  
-
-  
-    
-    
-  
-
-  
-  
-
-  
-    
-  
-
-  
-  
-
-  
-  
-  
-
-  
-  
-  
-  
-  
-
-  
-  
-
-  <section id="demo4" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(&#39;/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
-    <div class="container">
-      
-
-
-<div class="row">
-  
-    <div class="col-lg-12">
-      <h1>Unlock your data insights today!</h1>
-      
-      
     </div>
   
 </div>
@@ -2243,6 +1721,78 @@
     </ul>
 
  
+
+    </div>
+  </section>
+
+  
+  
+  
+
+  
+
+  
+
+  
+    
+    
+      
+    
+    
+    
+    
+    
+      
+      
+    
+    
+      
+      
+    
+  
+
+  
+    
+    
+  
+
+  
+  
+
+  
+    
+  
+
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+
+  <section id="demo4" class="home-section wg-blank dark  bg-image " style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(&#39;https://www.gabemednick.com/media/headers/fireball.jpg&#39;);background-size: cover;background-position: center;padding: 0px 0 20px 0;text-align: center" >
+    <div class="container">
+      
+
+
+<div class="row">
+  
+    <div class="col-lg-12">
+      
+      
+      
+    </div>
+  
+</div>
 
     </div>
   </section>
@@ -2381,7 +1931,7 @@
   
 
   <p class="powered-by">
-    © Gabe Mednick 2021
+    © Gabe Mednick 2022
   </p>
 
   

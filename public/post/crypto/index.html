@@ -1,0 +1,1230 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gabriel Mednick, PhD">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Web scraping to generate custom data for crypto analysis">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.gabemednick.com/post/crypto/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(339, 90%, 68%)">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i%7CKarla:400,400i,700,700i%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3KLD5FYH0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-Z3KLD5FYH0', {});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://www.gabemednick.com/post/crypto/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Gabe Mednick">
+  <meta property="og:url" content="https://www.gabemednick.com/post/crypto/">
+  <meta property="og:title" content="Hourly percentage change for top 100 cryptos | Gabe Mednick">
+  <meta property="og:description" content="Web scraping to generate custom data for crypto analysis"><meta property="og:image" content="https://www.gabemednick.com/post/crypto/featured.jpg">
+  <meta property="twitter:image" content="https://www.gabemednick.com/post/crypto/featured.jpg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-06-27T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-06-27T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.gabemednick.com/post/crypto/"
+  },
+  "headline": "Hourly percentage change for top 100 cryptos",
+  
+  "image": [
+    "https://www.gabemednick.com/post/crypto/featured.jpg"
+  ],
+  
+  "datePublished": "2021-06-27T00:00:00Z",
+  "dateModified": "2021-06-27T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Gabriel Mednick, PhD"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gabe Mednick",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Web scraping to generate custom data for crypto analysis"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Hourly percentage change for top 100 cryptos | Gabe Mednick</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gabe Mednick</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/experience/"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/resume/gmednickCV.pdf"><span>Resume</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Hourly percentage change for top 100 cryptos</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jun 27, 2021
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 521px;">
+  <div style="position: relative">
+    <img src="/post/crypto/featured_hu1b0670db95e76d54f95bccaf8863fe72_1954473_720x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.gabemednick.com/post/crypto/index_files/header-attrs/header-attrs.js"></script>
+<script src="https://www.gabemednick.com/post/crypto/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://www.gabemednick.com/post/crypto/index_files/hpackedbubble/oldie.js"></script>
+<script src="https://www.gabemednick.com/post/crypto/index_files/hpackedbubble-binding/hpackedbubble.js"></script>
+
+
+<p>In this post, I use the httr package to access bitcoin’s price chart from <a href="https://www.coingecko.com/en">CoinGecko’s</a> crypto market <a href="https://www.coingecko.com/en/api">API</a>. The rvest package is used to scrape the hourly percentage change for the top 100 cryptos (by market cap) from CG’s website. The cron task scheduler (macOS) is then set to run the web scraping script every 15 minutes and write the data to a spread sheet, giving me the percentage change on 15 minute intervals.</p>
+<p>Once enough data has been collected, I plan to use it for predicting the percentage change for Bitcoin. In order for this to work, the task scheduler and web scraping script will need to run in the cloud. Ideally, this post will be turned into a Shiny app so that it can be used for real time analysis and price prediction.</p>
+<p>Currently this post shows several ways to view the hourly percentage changes as a static snapshot. I’ve categorized the hourly percentage change as positive and negative, as well as creating a more nuanced scale with the following categories: <code>ice age (&lt; -6%), freezing (-4-6%), cold (-2-4%), chilly (-0-2%), neutral (0%), luke warm (0-2%), warm (2-4%), toasty (4-6%), hot (&gt;6%)</code>.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidyr)
+library(plotly)
+library(lubridate)
+library(httr)
+library(jsonlite)
+library(viridis)
+library(scales)
+library(rvest)
+library(cronR)
+library(patchwork)
+theme_set(theme_light())</code></pre>
+<pre class="r"><code>url_cg1 &lt;- &quot;https://www.coingecko.com/en&quot;
+url_cg2 &lt;- &quot;https://www.coingecko.com/en?page=2&quot;
+
+names &lt;- read_html(url_cg1) %&gt;% 
+  html_nodes(&#39;.font-bold.tw-justify-between&#39;) %&gt;% 
+  html_text() %&gt;% 
+  as_tibble()
+
+names2 &lt;- read_html(url_cg2) %&gt;% 
+  html_nodes(&#39;.font-bold.tw-justify-between&#39;) %&gt;% 
+  html_text() %&gt;% 
+  as_tibble()
+
+hourly &lt;- read_html(url_cg1) %&gt;% 
+  html_nodes(&#39;.change1h span&#39;) %&gt;% 
+  html_text() %&gt;% 
+  as_tibble() 
+ 
+hourly2 &lt;- read_html(url_cg2) %&gt;% 
+  html_nodes(&#39;.change1h span&#39;) %&gt;% 
+  html_text() %&gt;% 
+  as_tibble()
+
+hourly_df &lt;- bind_cols(names, hourly) %&gt;% 
+  rename(&quot;coin&quot; = `value...1`, &quot;hourly&quot; = `value...2`) %&gt;% 
+  mutate(coin = str_remove_all(coin, &quot;\n&quot;),
+         hourly = parse_number(hourly))
+
+# hourly_df2 &lt;- bind_cols(names2, hourly2) %&gt;% 
+#   rename(&quot;coin&quot; = `value...1`, &quot;hourly&quot; = `value...2`) %&gt;% 
+#   mutate(coin = str_remove_all(coin, &quot;\n&quot;),
+#          hourly = parse_number(hourly))
+# 
+# hourly_df200 &lt;- bind_rows(hourly_df, hourly_df2)
+
+granular_hourly &lt;- hourly_df %&gt;% 
+  mutate(change = case_when(hourly &gt; 0 ~ &quot;positive&quot;,
+                            hourly &lt;= 0 ~ &quot;negative&quot;),
+         granular = case_when((hourly &gt; 6) ~ &quot;hot (&gt;6%)&quot;,
+                              (hourly &gt; 4) &amp; (hourly &lt;= 6) ~ &quot;toasty (4-6%)&quot;,
+                              (hourly &gt; 2) &amp; (hourly &lt;= 4) ~ &quot;warm (2-4%)&quot;,
+                              (hourly &gt; 0) &amp; (hourly &lt;= 2) ~ &quot;luke warm (0-2%)&quot;,
+                              (hourly == 0) ~ &quot;neutral (0%)&quot;,
+                              (hourly &lt;= 0) &amp; (hourly &gt;= -2)  ~ &quot;chilly (-0-2%)&quot;,
+                              (hourly &lt;= -2) &amp; (hourly &gt; -4) ~ &quot;cold (-2-4%)&quot;,
+                              (hourly &lt;= -4) &amp;(hourly &gt; -6) ~ &quot;freezing (-4-6%)&quot;,
+                              TRUE ~ &quot;ice age (&lt; -6%)&quot;),
+         granular = factor(granular, 
+                           levels = c(&quot;ice age (&lt; -6%)&quot;, &quot;freezing (-4-6%)&quot;, &quot;cold (-2-4%)&quot;, 
+                                      &quot;chilly (-0-2%)&quot;, &quot;neutral (0%)&quot;, &quot;luke warm (0-2%)&quot;, &quot;warm (2-4%)&quot;, 
+                                      &quot;toasty (4-6%)&quot;, &quot;hot (&gt;6%)&quot;)),
+         time_stamp =  as_datetime(Sys.time()))
+
+
+# write_tsv(
+#   granular_hourly,
+#   &#39;granular_15min.tsv&#39;,
+#   na = &quot;NA&quot;,
+#   col_names = TRUE,
+#   append = TRUE
+# )
+library(viridis)
+granular_hourly %&gt;% 
+  mutate(granular = fct_rev(granular)) %&gt;% 
+  group_by(change, granular) %&gt;% 
+  count(change) %&gt;% 
+  ggplot(aes(change, n, fill = granular)) +
+  geom_col() +
+  #scale_fill_viridis_d(option = &quot;viridis&quot;) +
+  #scale_fill_discrete(guide = guide_legend(reverse = TRUE)) +
+  labs(title =  paste0(&quot;Hourly change for top 100 cryptos: &quot;, format(Sys.time(), &quot;%B %d, %Y @ %I:%M %p&quot;, tz = &quot;PST8PDT&quot;)),
+       fill = &quot;hourly % change&quot;,
+       y = &quot;&quot;, x = &quot;&quot;) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>#ggsave(&quot;hrly-barchart.png&quot;)</code></pre>
+<pre class="r"><code>library(hpackedbubble)
+
+hpackedbubble(granular_hourly$granular, 
+              granular_hourly$coin, granular_hourly$hourly,
+              title = &quot;Hourly percentage change&quot;,
+              titleColor = &quot;#F0FFF0&quot;,
+              pointFormat = &quot;&lt;br&gt;{point.name} &lt;/br&gt; Volume: {point.value}&quot;,
+              dataLabelsFilter = 100,
+              packedbubbleMinSize = &quot;50%&quot;,
+              packedbubbleMaxSize = &quot;250%&quot;,
+              theme = &quot;darkunica&quot;,
+              packedbubbleZMin = 0,
+              packedbubbleZmax = 10000, split = 0,
+              gravitational = 0.02,
+              parentNodeLimit = 1,
+              dragBetweenSeries = 0,
+              width = &quot;100%&quot;,
+              dataLabelsColor = &quot;white&quot;)</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="hpackedbubble html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"cat":["chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","neutral (0%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","neutral (0%)","neutral (0%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","neutral (0%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","neutral (0%)","neutral (0%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","neutral (0%)","neutral (0%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","neutral (0%)","cold (-2-4%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","luke warm (0-2%)","chilly (-0-2%)","luke warm (0-2%)","luke warm (0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)","chilly (-0-2%)"],"name":["Bitcoin","Ethereum","Cardano","Binance Coin","Tether","XRP","Dogecoin","USD Coin","Polkadot","Solana","Uniswap","Binance USD","Bitcoin Cash","Litecoin","Chainlink","Terra","Wrapped Bitcoin","Polygon","Internet Computer","Stellar","VeChain","Ethereum Classic","Avalanche","Filecoin","Theta Network","TRON","Dai","OKB","cETH","PancakeSwap","Monero","Cosmos","FTX Token","cUSDC","Aave","EOS","cDAI","The Graph","Klaytn","Axie Infinity","Crypto.com Coin","Tezos","NEO","Shiba Inu","Algorand","Maker","Lido Staked Ether","Bitcoin SV","Amp","LEO Token","IOTA","Elrond","BitTorrent","Kusama","THORChain","Quant","Dash","Celsius Network","TerraUSD","Decred","Waves","Hedera Hashgraph","Sushi","Huobi Token","Compound","Near","Synthetix Network Token","Helium","Chiliz","Huobi BTC","Holo","Enjin Coin","NEM","XDC Network","Theta Fuel","Zcash","SafeMoon","Stacks","Bitcoin Cash ABC","TrueUSD","Zilliqa","yearn.finance","Flow","Telcoin","Qtum","Ravencoin","Decentraland","Basic Attention Token","Arweave","Bitcoin Gold","Fantom","Harmony","NEXO","Siacoin","IOST","Constellation","Audius","Mdex","KuCoin Token","Bancor Network Token"],"value":[-0.2,-0.4,-1.9,0.1,-0,-1.5,-0.4,-0.3,-0.5,-0.8,0,-0,-0.3,-0.6,-0.4,-1.6,-0.2,-1.6,-0.6,-0.5,-0.5,0,-1.2,0.5,-0.3,-0.4,0,-0,-0.5,0.5,-0.8,-0.7,-0.3,-0.4,-0.3,-0.9,-0.4,-0.6,-0.3,-0.1,-0.3,-0.1,-0.9,0.3,-0.4,0.2,-0.5,-0.1,-0.2,-0.4,-0.7,0.5,-0.5,-0.3,-0.9,-0.1,-0.9,0.1,-0.1,1.2,-0.5,-0.4,-0.6,0.2,-0.4,-0.1,-0.4,2,-0,0,-0.4,-0.5,-0.3,0.5,-0.4,-0.5,-0.8,-1,-0.9,-0.2,-0.2,-0.3,-0,-2.4,-0.8,-0.5,-0.1,-0.3,1.2,-1.1,-0.4,-1.1,0.3,-0.6,0.8,1.3,-0.1,-0.3,-0.8,-0.9],"theme":"darkunica","title":"Hourly percentage change","titleAlign":"center","titleSize":"20px","titleColor":"#F0FFF0","subtitle":"","subtitleAlign":"center","subtitleSize":"","subtitleColor":"#666666","pointFormat":"<br>{point.name} <\/br> Volume: {point.value}","split":0,"packedbubbleMinSize":"50%","packedbubbleMaxSize":"250%","packedbubbleZMin":0,"packedbubbleZmax":10000,"gravitational":0.02,"seriesInteraction":1,"dragBetweenSeries":0,"parentNodeLimit":1,"dataLabels":1,"dataLabelsformat":"{point.name}","dataLabelsFilter":100,"dataLabelsColor":"white"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>pct_change_plot &lt;- granular_hourly %&gt;% 
+  count(granular) %&gt;% 
+  ggplot(aes(granular, n, fill = granular)) +
+  geom_col() +
+  labs(title = paste0(&quot;Hourly percent change for top 100 cryptos: &quot;, format(Sys.time(), &quot;%B %d @ %I:%M %p&quot;, tz = &quot;PST8PDT&quot;)),
+       x = &quot;&quot;, y = &quot;Coin count&quot;) + 
+  theme(legend.position = &quot;none&quot;)
+
+pct_change_plot</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>pct_change_btc_eth_removed &lt;- granular_hourly %&gt;% 
+  filter(!coin %in% c(&quot;Bitcoin&quot;, &quot;Ethereum&quot;)) %&gt;% 
+  count(granular) %&gt;% 
+  ggplot(aes(granular, n, fill = granular)) +
+  geom_col() +
+  labs(title = &quot;Hourly percent change for top 98 cryptos&quot;,
+       subtitle = &quot;Bitcoin and Ethereum removed&quot;,
+       x = &quot;&quot;, y = &quot;Coin count&quot;) + 
+  theme(legend.position = &quot;none&quot;) 
+
+pct_change_btc_eth_removed</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>#ggsave(&quot;pct_change_plot.png&quot;)</code></pre>
+<pre class="r"><code>api_ohlc &lt;- &quot;https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&amp;days=30&quot;
+
+ohlc &lt;- GET(api_ohlc)
+ohlc &lt;- content(ohlc, as = &#39;text&#39;)
+
+ohlc_df &lt;- fromJSON(ohlc, flatten = TRUE) %&gt;% 
+  as_tibble()
+
+names(ohlc_df) &lt;- c(&#39;time&#39;, &#39;open&#39;, &#39;high&#39;, &#39;low&#39;, &#39;close&#39;)
+
+
+ohlc_df %&gt;% 
+  mutate(time = time/1000,
+         time = as_datetime(time)) %&gt;% 
+  select(time, open) %&gt;% 
+  arrange(time) %&gt;% 
+  ggplot(aes(time, open, color = open)) +
+  geom_line() +
+  theme(legend.position = &quot;none&quot;) +
+  labs(title = &quot;Bitcoin monthly price chart&quot;,
+       x = &quot;&quot;, y = &quot;Value (USD)&quot;)</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>btc_url = &quot;https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&amp;days=1&quot;
+
+get_historical &lt;- function(url) {
+    url %&gt;% 
+    GET() %&gt;% 
+    content(., as = &quot;text&quot;) %&gt;% 
+    fromJSON(., flatten = TRUE)  
+}
+
+library(hms)
+#test function
+btc_chart &lt;- get_historical(btc_url) %&gt;% 
+  do.call(data.frame, .) %&gt;%
+          as_tibble() %&gt;% 
+  select(&#39;date&#39; = prices.1, &#39;price&#39; = prices.2,
+         &#39;market_cap&#39; = market_caps.2, &#39;volume&#39; = total_volumes.2) %&gt;% 
+  mutate(date = date/1000,
+         date = as.POSIXct(date, origin=&quot;1970-01-01&quot;),
+         time = format(date, format = &#39;%H:%M:%S&#39;, tz = &quot;PST8PDT&quot;) %&gt;% as_hms())
+
+btc_chart %&gt;% 
+  ggplot(aes(date, price, color = volume, group = 1)) +
+  geom_line() +
+  labs(title = &quot;24hr Bitcoin price chart&quot;) +
+  scale_x_datetime(
+    name = &quot;date&quot;,
+    labels = label_date(&quot;%I:%M %p&quot;, tz = &quot;PST8PDT&quot;))</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>q_minute &lt;- btc_chart %&gt;% 
+  filter(date &gt;= &#39;2021-06-26 14:54:57&#39;) 
+
+btc_minute_plot &lt;- q_minute %&gt;% 
+  ggplot(aes(date, price, color = volume, group = 1)) +
+  geom_line() +
+  labs(title = paste0(&quot;Bitcoin price chart for &quot;, format(Sys.time(), &quot;%B %d %Y&quot;)), x = &quot;&quot;, y = &quot;&quot;) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_x_datetime(
+    name = &quot;&quot;,
+    labels = label_date(&quot;%I:%M %p&quot;, tz = &quot;PST8PDT&quot;)) +
+  scale_y_continuous(labels = scales::dollar) 
+
+#ggsave(&quot;btc-hrly-pct.png&quot;, btc_minute_plot, bg = &quot;transparent&quot;)
+
+granular_15min &lt;- read_tsv(&quot;granular_15min.tsv&quot;) %&gt;% 
+  mutate(time_stamp = str_remove(time_stamp, &quot;Z&quot;),
+    time_stamp = ymd_hms(time_stamp)) %&gt;% 
+  filter(coin != &quot;coin&quot;) 
+
+bar_plot &lt;- granular_15min  %&gt;% 
+  group_by(time_stamp, granular, change) %&gt;% 
+  count(change) %&gt;% 
+  ggplot(aes(time_stamp, n, fill = granular)) +
+  geom_col() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  scale_x_datetime(
+    name = &quot;time&quot;,
+    labels = label_date(&quot;%I:%M %p&quot;, tz = &quot;PST8PDT&quot;)) +
+  labs(y = NULL)
+
+#ggsave(&quot;alt100-15min-pct.png&quot;, bar_plot, bg = &quot;transparent&quot;)
+
+btc_minute_plot / bar_plot</code></pre>
+<p><img src="https://www.gabemednick.com/post/crypto/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/gabriel-mednick-phd/avatar_huf2ab3986b89079c6aa2e784d1978d71e_646423_270x270_fill_q90_lanczos_center.jpg" alt="Gabriel Mednick, PhD">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="https://www.gabemednick.com/">Gabriel Mednick, PhD</a></h5>
+        
+        <p class="card-text">Data scientist, biochemist, computational biologist, educator, life enthusiast</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="far fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/GabeMednick" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/gmednick" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/gabe-mednick/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/" >
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks",
+        'slides' : "Slides"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.72756512af279b10e3e4b09540ed6e9f.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © Gabe Mednick 2022
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    This site was made with <a href="https://cran.r-project.org/" target="_blank" rel="noopener"><i class="fab fa-r-project"  style="color: #FF69B4"></i></a>, the<a href="https://github.com/rstudio/blogdown" target="_blank" rel="noopener"> Blogdown</a> package and the 
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>. Site deployed on <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify </a> with a little help from <a href="https://github.com/gmednick" target="_blank" rel="noopener"><i class="fab fa-github"  style="color: #FF69B4"></i></a>. Thank you Alison Hill <i class="fas fa-praying-hands" style="color: #FF69B4"></i> and others for sharing tutorials on how to get blogging with <i class="fab fa-r-project"  style="color: #FF69B4"></i>! Stunning photo of the Milky Way taken by Kristopher Roller.
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -182,9 +182,6 @@ columns(org.Hs.eg.db) # available annotation resource databases for homo sapiens
 
 library(AnnotationDbi)
 
-# Let's try an example using alpha-1-B glycoprotein (A1BG) as our gene of interest to annotate
-AnnotationDbi::select(org.Hs.eg.db, keys = "A1BG", keytype = "SYMBOL", 
-       columns = c("SYMBOL", "GENENAME", "CHR", "GO", "PROSITE"))
 #returns annotated data as a data.frame
 
 ## Annotating all genes
@@ -192,30 +189,30 @@ AnnotationDbi::select(org.Hs.eg.db, keys = "A1BG", keytype = "SYMBOL",
 geneIDs <- genes$gene_id
 genes_df <- AnnotationDbi::select(org.Hs.eg.db, keys = geneIDs, keytype = "ENTREZID",
                                  columns = c("SYMBOL", "GENENAME", "ENTREZID"))
-genes_df %>% head(30) %>% 
-  DT::datatable()
+genes_df %>% head(10) %>% 
+  kableExtra::kable()
 
 # annotating all genes
 # Method 2: Adds new annotation columns to original data frame   
 genes_df2 <- genes %>% 
   as_tibble() %>% 
   mutate(
-    gene_name = AnnotationDbi::mapIds(org.Hs.eg.db,
+    GENETYPE = AnnotationDbi::mapIds(org.Hs.eg.db,
                                       keys = genes$gene_id,
                                       keytype = "ENTREZID",
-                                      column = "GENENAME",
+                                      column = "GENETYPE",
                                       multiVals = "first"
     ),
-    pfam_id = AnnotationDbi::mapIds(org.Hs.eg.db,
+    UCSCKG = AnnotationDbi::mapIds(org.Hs.eg.db,
                                       keys = genes$gene_id,
                                       keytype = "ENTREZID",
-                                      column = "PFAM",
+                                      column = "UCSCKG",
                                       multiVals = "first"
     ))
 
 genes_df2 %>% 
-  head(30) %>% 
-  DT::datatable()
+  head(10) %>% 
+  kableExtra::kable()
 
 ```
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gabriel Mednick, PhD | Gabe Mednick</title>
+    <link>https://www.gabemednick.com/author/gabriel-mednick-phd/</link>
+      <atom:link href="https://www.gabemednick.com/author/gabriel-mednick-phd/index.xml" rel="self" type="application/rss+xml" />
+    <description>Gabriel Mednick, PhD</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© Gabe Mednick 2022</copyright>
+    <image>
+      <url>https://www.gabemednick.com/images/icon_hu2bd56874e2a90c0733f2eeed0ff2ec73_9038457_512x512_fill_lanczos_center_2.png</url>
+      <title>Gabriel Mednick, PhD</title>
+      <link>https://www.gabemednick.com/author/gabriel-mednick-phd/</link>
+    </image>
+    
+  </channel>
+</rss>
